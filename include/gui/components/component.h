@@ -9,21 +9,42 @@
 #include <memory>
 #include <functional>
 
+struct MouseInfo {
+	float PrevX = 0.0f;
+	float PrevY = 0.0f;
+	float CurrentX = 0.0f;
+	float CurrentY = 0.0f;
+	bool IsMouseDown = false;
+	bool IsMouseDrag = false;
+
+	void Update();
+};
+
 namespace gui {
+	struct DrawRect {
+		float PosX;
+		float PosY;
+		float ContainerWidth;
+		float ContainerHeight;
+	};
+
 	class Component {
 	public:
 		Component(std::initializer_list<Component*> children);
 		~Component();
 
+		virtual std::vector<DrawRect> ChildPositions(float posX, float posY, float containerWidth, float containerHeight) = 0;
 		virtual void Draw(float posX, float posY, float containerWidth, float containerHeight) = 0;
 		virtual float Width(float containerWidth, float containerHeight) = 0;
 		virtual float Height(float containerWidth, float containerHeight) = 0;
 		virtual void HoverEnter() {}
 		virtual void HoverExit() {}
 		virtual bool HandleMouseDown(float xPercentage, float yPercentage) { return false; }
-		virtual bool HandleMouseDrag(float prevXPerc, float prevYPerc, float xPerc, float yPerc) { return false; }
 		virtual bool HandleMouseUp(float xPercentage, float yPercentage) { return false; }
-		virtual bool HandleMouseClick(float xPercentage, float yPercentage) { return false; }
+		virtual bool HandleMouseDrag(float prevXPerc, float prevYPerc, float xPerc, float yPerc) { return false; }
+		virtual void MouseDownCancelled() {}
+
+		void Update(MouseInfo& mouse, DrawRect& rect);
 
 		void AddChild(Component* child) { this->children.push_back(std::unique_ptr<gui::Component>(child)); }
 		Component* operator[](int i) { return children.at(i).get(); }
@@ -32,9 +53,17 @@ namespace gui {
 		size_t ID() { return reinterpret_cast<size_t>(this); }
 
 	protected:
-		bool IsHovering();
-		bool IsMouseDown();
+		bool IsHovering = false;
+		bool IsMouseDown = false;
 		std::vector<std::unique_ptr<Component>> children;
+
+	private:
+		struct Events {
+			bool MouseDownWasHandled = false;
+			bool MouseDragWasHandled = false;
+			bool MouseUpWasHandled = false;
+		};
+		void update(MouseInfo& mouse, DrawRect& rect, Events& events);
 	};
 
 	struct Color {
