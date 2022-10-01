@@ -57,8 +57,7 @@ int main(void) {
 		}
 
 		BeginDrawing();
-
-		ClearBackground(RAYWHITE);
+		ClearBackground({0, 0, 0, 255});
 
 		BeginMode3D(*player.GetCamera());
 		if (collision.hit) {
@@ -94,6 +93,6 @@ int main(void) {
 
 void UpdateDrawFrame(void) {
 	BeginDrawing();
-	ClearBackground({0, 0, 0, 0});
+	ClearBackground({0, 0, 0, 255});
 	EndDrawing();
 }

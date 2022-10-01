@@ -13,6 +13,7 @@ namespace gui {
 	public:
 		VerticalPanel(std::initializer_list<Component*> children) : Component(children) {}
 		~VerticalPanel() = default;
+		std::vector<DrawRect> ChildPositions(float posX, float posY, float containerWidth, float containerHeight) override;
 		void Draw(float posX, float posY, float containerWidth, float containerHeight) override;
 		float Width(float containerWidth, float containerHeight) override;
 		float Height(float containerWidth, float containerHeight) override;

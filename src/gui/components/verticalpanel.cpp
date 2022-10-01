@@ -35,14 +35,10 @@ gui::VerticalPanel* gui::VerticalPanel::SetHoverColor(gui::Color color) {
 	return this;
 }
 
-void gui::VerticalPanel::Draw(float posX, float posY, float containerWidth, float containerHeight) {
+std::vector<gui::DrawRect> gui::VerticalPanel::ChildPositions(float posX, float posY, float containerWidth, float containerHeight) {
+	std::vector<gui::DrawRect> positions(children.size());
 	float width = Width(containerWidth, containerHeight);
 	float height = Height(containerWidth, containerHeight);
-	if (hoverColor.a > 0 && IsHovering()) {
-		DrawRectangle((int)posX, (int)posY, (int)width, (int)height, *reinterpret_cast<::Color*>(&hoverColor));
-	} else if (defaultColor.a > 0) {
-		DrawRectangle((int)posX, (int)posY, (int)width, (int)height, *reinterpret_cast<::Color*>(&defaultColor));
-	}
 
 	float totalChildHeight = 0;
 	for (auto& child: children) {
@@ -50,9 +46,26 @@ void gui::VerticalPanel::Draw(float posX, float posY, float containerWidth, floa
 	}
 	float childSpacing = (height - totalChildHeight) / ((float)(children.size()) + 1.0f);
 	float nextChildY = posY;
-	for (auto& child: children) {
+	for (int i = 0; i < children.size(); i++) {
 		nextChildY += childSpacing;
-		child->Draw(posX + ((width - child->Width(width, height)) / 2), nextChildY, width, height);
-		nextChildY += child->Height(width, height);
+		positions[i] = DrawRect{posX + ((width - children[i]->Width(width, height)) / 2), nextChildY, width, height};
+		nextChildY += children[i]->Height(width, height);
+	}
+	return positions;
+}
+
+void gui::VerticalPanel::Draw(float posX, float posY, float containerWidth, float containerHeight) {
+	float width = Width(containerWidth, containerHeight);
+	float height = Height(containerWidth, containerHeight);
+	if (hoverColor.a > 0 && IsHovering) {
+		DrawRectangle((int)posX, (int)posY, (int)width, (int)height, *reinterpret_cast<::Color*>(&hoverColor));
+	} else if (defaultColor.a > 0) {
+		DrawRectangle((int)posX, (int)posY, (int)width, (int)height, *reinterpret_cast<::Color*>(&defaultColor));
+	}
+
+	auto childPositions = ChildPositions(posX, posY, containerWidth, containerHeight);
+	for (int i = 0; i < childPositions.size(); i++) {
+		auto rect = childPositions[i];
+		children[i]->Draw(rect.PosX, rect.PosY, rect.ContainerWidth, rect.ContainerHeight);
 	}
 }
