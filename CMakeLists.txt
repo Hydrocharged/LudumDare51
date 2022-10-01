@@ -26,7 +26,7 @@ file(GLOB_RECURSE all_SRCS
     "${PROJECT_SOURCE_DIR}/src/*.cpp"
     "${PROJECT_SOURCE_DIR}/src/*.c")
 add_executable(${PROJECT_NAME} ${all_SRCS})
-target_link_libraries(${PROJECT_NAME} raylib)
+target_link_libraries(${PROJECT_NAME} raylib -static)
 
 # Web Configuration
 if (${PLATFORM} STREQUAL "Web")

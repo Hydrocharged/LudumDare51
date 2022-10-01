@@ -14,7 +14,7 @@ gui::Component::Component(std::initializer_list<Component*> children) {
 
 gui::Component::~Component() = default;
 
-void gui::Component::Update(MouseInfo& mouse, DrawRect& rect) {
+void gui::Component::Update(mouse::Info& mouse, DrawRect& rect) {
 	Events events;
 	update(mouse, rect, events);
 }
@@ -29,7 +29,7 @@ inline float clamp(float val) {
 	return val;
 }
 
-void gui::Component::update(MouseInfo& mouse, DrawRect& rect, Events& events) {
+void gui::Component::update(mouse::Info& mouse, DrawRect& rect, Events& events) {
 	float x = rect.PosX;
 	float y = rect.PosY;
 	float width = Width(rect.ContainerWidth, rect.ContainerHeight);

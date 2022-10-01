@@ -6,19 +6,9 @@
 
 #ifndef GUI_COMPONENTS_COMPONENT_H
 #define GUI_COMPONENTS_COMPONENT_H
+#include <mouse.h>
 #include <memory>
 #include <functional>
-
-struct MouseInfo {
-	float PrevX = 0.0f;
-	float PrevY = 0.0f;
-	float CurrentX = 0.0f;
-	float CurrentY = 0.0f;
-	bool IsMouseDown = false;
-	bool IsMouseDrag = false;
-
-	void Update();
-};
 
 namespace gui {
 	struct DrawRect {
@@ -44,7 +34,7 @@ namespace gui {
 		virtual bool HandleMouseDrag(float prevXPerc, float prevYPerc, float xPerc, float yPerc) { return false; }
 		virtual void MouseDownCancelled() {}
 
-		void Update(MouseInfo& mouse, DrawRect& rect);
+		void Update(mouse::Info& mouse, DrawRect& rect);
 
 		void AddChild(Component* child) { this->children.push_back(std::unique_ptr<gui::Component>(child)); }
 		Component* operator[](int i) { return children.at(i).get(); }
@@ -63,7 +53,7 @@ namespace gui {
 			bool MouseDragWasHandled = false;
 			bool MouseUpWasHandled = false;
 		};
-		void update(MouseInfo& mouse, DrawRect& rect, Events& events);
+		void update(mouse::Info& mouse, DrawRect& rect, Events& events);
 	};
 
 	struct Color {
