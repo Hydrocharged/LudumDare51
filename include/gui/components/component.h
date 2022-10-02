@@ -29,6 +29,7 @@ namespace gui {
 		virtual float Height(float containerWidth, float containerHeight) = 0;
 		virtual void HoverEnter() {}
 		virtual void HoverExit() {}
+		virtual void HandleUpdate() {}
 		virtual bool HandleMouseDown(float xPercentage, float yPercentage) { return false; }
 		virtual bool HandleMouseUp(float xPercentage, float yPercentage) { return false; }
 		virtual bool HandleMouseDrag(float prevXPerc, float prevYPerc, float xPerc, float yPerc) { return false; }
@@ -43,8 +44,8 @@ namespace gui {
 		size_t ID() { return reinterpret_cast<size_t>(this); }
 
 	protected:
-		bool IsHovering = false;
-		bool IsMouseDown = false;
+		bool isHovering = false;
+		bool isMouseDown = false;
 		std::vector<std::unique_ptr<Component>> children;
 
 	private:
