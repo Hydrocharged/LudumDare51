@@ -8,8 +8,8 @@ include(FetchContent)
 find_package(raylib 4.2.0 QUIET)
 if (NOT raylib_FOUND)
     FetchContent_Declare(
-            raylib
-            URL https://github.com/raysan5/raylib/archive/refs/tags/4.2.0.tar.gz
+        raylib
+        URL https://github.com/raysan5/raylib/archive/refs/tags/4.2.0.tar.gz
     )
     FetchContent_GetProperties(raylib)
     if (NOT raylib_POPULATED)
