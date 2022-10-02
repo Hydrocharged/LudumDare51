@@ -10,6 +10,7 @@
 #include <raylib.h>
 #include <mouse.h>
 #include <memory>
+#include <glm/glm.hpp>
 
 namespace character {
 	class Player {
@@ -18,6 +19,7 @@ namespace character {
 		~Player() = default;
 
 		void UpdatePosition(mouse::Info& mouse);
+		glm::vec3 GetPosition();
 
 		operator Camera();
 		operator Camera*();
