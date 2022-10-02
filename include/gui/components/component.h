@@ -21,7 +21,7 @@ namespace gui {
 	class Component {
 	public:
 		Component(std::initializer_list<Component*> children);
-		~Component();
+		virtual ~Component();
 
 		virtual std::vector<DrawRect> ChildPositions(float posX, float posY, float containerWidth, float containerHeight) = 0;
 		virtual void Draw(float posX, float posY, float containerWidth, float containerHeight) = 0;
