@@ -8,18 +8,19 @@
 #include <character/vampire.h>
 
 void character::Vampire::Draw() {
-	glm::vec3 pos = model[3];
-	Color c = BLACK;
+	Color c = WHITE;
 	if (moveState == 3) {
 		c = YELLOW;
 	}
-	DrawCube({pos.x, pos.y, pos.z}, 1, 1, 1, c);
+	glm::vec3 pos = model[3];
+	DrawModel(*modelObj, (Vector3){pos.x, pos.y, pos.z}, 1.0f, c);
 }
 
 void character::Vampire::SetTarget(glm::vec3 playerPos) {
 	glm::vec3 pos = model[3];
 	glm::vec3 dir = glm::normalize(playerPos - pos);
 	target = playerPos + 2.f * dir;
+	target.y = 0.0f;
 }
 
 void character::Vampire::Update(glm::vec3 playerPos) {

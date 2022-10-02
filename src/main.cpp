@@ -46,8 +46,17 @@ int main(void) {
 	);
 
 	// Load enemy models
-	Model skullModel = LoadModel("assets/models/skull.obj");
-	//Texture2D skullTexture = LoadTexture("assets/models/skull.png");
+	Model skullModel = LoadModel("../assets/models/skull/skull.obj");
+	Texture2D skullTexture = LoadTexture("../assets/models/skull/skull.png");
+	SetMaterialTexture(&skullModel.materials[0], MATERIAL_MAP_DIFFUSE, skullTexture);
+
+	Model turretModel = LoadModel("../assets/models/turret/turret.obj");
+	Texture2D turretTexture = LoadTexture("../assets/models/turret/turret.png");
+	SetMaterialTexture(&turretModel.materials[0], MATERIAL_MAP_DIFFUSE, turretTexture);
+
+	Model vampireModel = LoadModel("../assets/models/vampire/vampire.obj");
+	Texture2D vampireTexture = LoadTexture("../assets/models/vampire/vampire.png");
+	SetMaterialTexture(&vampireModel.materials[0], MATERIAL_MAP_DIFFUSE, vampireTexture);
 
 	// initialize enemies
 	std::vector<std::unique_ptr<character::Enemy>> enemies;
@@ -55,10 +64,10 @@ int main(void) {
 		enemies.push_back(std::make_unique<character::Skull>(glm::vec3{2.0f * i, 2.0f * i, 2.0f * i}, &skullModel));
 	}
 	for (int i = 0; i < 3; i++) {
-		enemies.push_back(std::make_unique<character::Turret>(glm::vec3{2.0f * i, 1.0f, 2.0f * i}, &skullModel));
+		enemies.push_back(std::make_unique<character::Turret>(glm::vec3{2.0f * i, 0.0f, 2.0f * i}, &turretModel));
 	}
 	for (int i = 0; i < 1; i++) {
-		enemies.push_back(std::make_unique<character::Vampire>(glm::vec3{2.0f * i, 1.0f, 2.0f * i}, &skullModel));
+		enemies.push_back(std::make_unique<character::Vampire>(glm::vec3{2.0f * i, 0.0f, 2.0f * i}, &vampireModel));
 	}
 
 #if defined(PLATFORM_WEB)
