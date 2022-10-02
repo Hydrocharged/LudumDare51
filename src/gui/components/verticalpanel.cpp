@@ -57,7 +57,7 @@ std::vector<gui::DrawRect> gui::VerticalPanel::ChildPositions(float posX, float 
 void gui::VerticalPanel::Draw(float posX, float posY, float containerWidth, float containerHeight) {
 	float width = Width(containerWidth, containerHeight);
 	float height = Height(containerWidth, containerHeight);
-	if (hoverColor.a > 0 && IsHovering) {
+	if (hoverColor.a > 0 && isHovering) {
 		DrawRectangle((int)posX, (int)posY, (int)width, (int)height, *reinterpret_cast<::Color*>(&hoverColor));
 	} else if (defaultColor.a > 0) {
 		DrawRectangle((int)posX, (int)posY, (int)width, (int)height, *reinterpret_cast<::Color*>(&defaultColor));

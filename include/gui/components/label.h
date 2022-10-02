@@ -24,7 +24,7 @@ namespace gui {
 		Label* SetColor(Color color);
 		Label* SetHoverColor(Color color);
 
-	private:
+	protected:
 		std::string text;
 		float xScale = 1.0f;
 		float yScale = 1.0f;

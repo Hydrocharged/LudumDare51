@@ -10,6 +10,9 @@
 #include <gui/components/horizontalpanel.h>
 #include <gui/components/verticalpanel.h>
 #include <gui/components/label.h>
+#include <gui/components/button.h>
+#include <gui/components/dynamiclabel.h>
+#include <gui/components/progressbar.h>
 
 namespace gui::fontmanager {
 	void Load();
