@@ -7,10 +7,8 @@
 #include <raylib.h>
 #include <vector>
 #include <character/player.h>
-#include <character/skull.h>
-#include <character/turret.h>
-#include <character/vampire.h>
 #include <gui/gui.h>
+#include <render/render.h>
 
 #if defined(PLATFORM_WEB)
 #include <emscripten/emscripten.h>
@@ -35,40 +33,28 @@ int main(void) {
 
 	gui::fontmanager::Load();
 	auto mouse = mouse::Info{};
-	character::Player player(4.0f, 2.0f, 4.0f);
-	Vector3 cubePosition = {0.0f, 0.0f, 0.0f};
-	Vector3 cubeSize = {2.0f, 2.0f, 2.0f};
-	Ray ray = {0};
-	RayCollision collision = {0};
+	character::Player player({4.0f, 2.0f, 4.0f});
+	auto centerItem = std::make_unique<physics::AABBBody>(
+		glm::vec3{0.0f, 0.0f, 0.0f},
+		glm::vec3{2.0f, 2.0f, 2.0f});
+
+	auto playerItem = std::make_unique<physics::SphereBody>(
+		glm::vec3{0.0f, -1.0f, 2.0f}, 0.25f);
+
+	//auto playerItem = std::make_unique<physics::CapsuleBody>(
+	//	glm::vec3{0.0f, -1.0f, 2.0f},
+	//	glm::vec3{-0.25f, 0.0f, 0.0f},
+	//	glm::vec3{0.25f, 0.0f, 0.0f}, 0.25f);
+
+	//auto playerItem = std::make_unique<physics::AABBBody>(
+	//	glm::vec3{0.0f, -1.0f, 2.0f},
+	//	glm::vec3{0.25f, 0.25f, 0.25f});
+
+	playerItem->SetParent(player.GetBody());
 
 	auto menu = std::unique_ptr<gui::Component>(
 		gui::NewVerticalPanel({})
 	);
-
-	// Load enemy models
-	Model skullModel = LoadModel("../assets/models/skull/skull.obj");
-	Texture2D skullTexture = LoadTexture("../assets/models/skull/skull.png");
-	SetMaterialTexture(&skullModel.materials[0], MATERIAL_MAP_DIFFUSE, skullTexture);
-
-	Model turretModel = LoadModel("../assets/models/turret/turret.obj");
-	Texture2D turretTexture = LoadTexture("../assets/models/turret/turret.png");
-	SetMaterialTexture(&turretModel.materials[0], MATERIAL_MAP_DIFFUSE, turretTexture);
-
-	Model vampireModel = LoadModel("../assets/models/vampire/vampire.obj");
-	Texture2D vampireTexture = LoadTexture("../assets/models/vampire/vampire.png");
-	SetMaterialTexture(&vampireModel.materials[0], MATERIAL_MAP_DIFFUSE, vampireTexture);
-
-	// initialize enemies
-	std::vector<std::unique_ptr<character::Enemy>> enemies;
-	for (int i = 0; i < 5; i++) {
-		enemies.push_back(std::make_unique<character::Skull>(glm::vec3{2.0f * i, 2.0f * i, 2.0f * i}, &skullModel));
-	}
-	for (int i = 0; i < 3; i++) {
-		enemies.push_back(std::make_unique<character::Turret>(glm::vec3{2.0f * i, 0.0f, 2.0f * i}, &turretModel));
-	}
-	for (int i = 0; i < 1; i++) {
-		enemies.push_back(std::make_unique<character::Vampire>(glm::vec3{2.0f * i, 0.0f, 2.0f * i}, &vampireModel));
-	}
 
 #if defined(PLATFORM_WEB)
 	emscripten_set_main_loop(UpdateDrawFrame, 0, 1);
@@ -78,40 +64,19 @@ int main(void) {
 		player.UpdatePosition(mouse);
 		menu->Update(mouse, screenRect);
 
-		if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-			if (!collision.hit) {
-				ray = GetMouseRay({screenRect.ContainerWidth / 2.0f, screenRect.ContainerHeight / 2.0f}, player);
-				collision = GetRayCollisionBox(ray,
-					BoundingBox{
-						Vector3{cubePosition.x - cubeSize.x / 2, cubePosition.y - cubeSize.y / 2, cubePosition.z - cubeSize.z / 2},
-						Vector3{cubePosition.x + cubeSize.x / 2, cubePosition.y + cubeSize.y / 2, cubePosition.z + cubeSize.z / 2},
-					}
-				);
-			} else {
-				collision.hit = false;
-			}
-		}
-
 		BeginDrawing();
 		ClearBackground({255, 255, 255, 255});
-		// TODO: add some of this logic to enemies
 		BeginMode3D(player);
 
-		if (collision.hit) {
-			DrawCube(cubePosition, cubeSize.x, cubeSize.y, cubeSize.z, RED);
-			DrawCubeWires(cubePosition, cubeSize.x, cubeSize.y, cubeSize.z, DARKGRAY);
+		render::Body(playerItem.get(), YELLOW);
+		if (centerItem->CollidesWith(playerItem.get())) {
+			render::Body(centerItem.get(), RED);
+			render::BodyWireframe(centerItem.get(), DARKGRAY);
 		} else {
-			DrawCube(cubePosition, cubeSize.x, cubeSize.y, cubeSize.z, GRAY);
-			DrawCubeWires(cubePosition, cubeSize.x, cubeSize.y, cubeSize.z, DARKGRAY);
+			render::Body(centerItem.get(), GRAY);
+			render::BodyWireframe(centerItem.get(), DARKGRAY);
 		}
-		DrawRay(ray, BLUE);
 		DrawGrid(10, 1.0f);
-
-		// Update enemies
-		for (auto& enemy: enemies) {
-			enemy->Update(player.GetPosition());
-			enemy->Draw();
-		}
 
 		EndMode3D();
 		menu->Draw(screenRect.PosX, screenRect.PosY, screenRect.ContainerWidth, screenRect.ContainerHeight);

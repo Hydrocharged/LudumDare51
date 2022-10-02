@@ -6,10 +6,9 @@
 
 #ifndef CHARACTER_SKULL_H
 #define CHARACTER_SKULL_H
-
 #include <character/enemy.h>
 
-#define SKULL_MOVETIME 1.5
+const float SKULL_MOVETIME = 1.5f;
 
 namespace character {
 	class Skull : public Enemy {
@@ -21,7 +20,6 @@ namespace character {
 
 		void Draw();
 		void Update(glm::vec3 playerPos);
-
 		void SetTarget(glm::vec3 playerPos);
 
 	private:

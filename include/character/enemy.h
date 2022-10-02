@@ -6,7 +6,6 @@
 
 #ifndef CHARACTER_ENEMY_H
 #define CHARACTER_ENEMY_H
-
 #include <raylib.h>
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
@@ -32,7 +31,6 @@ namespace character {
 
 		float health;
 		float damage;
-
 
 		// TODO: add more enemy properties
 		// damage, fire rate, health

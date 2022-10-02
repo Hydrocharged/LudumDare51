@@ -6,10 +6,9 @@
 
 #ifndef CHARACTER_TURRENT_H
 #define CHARACTER_TURRENT_H
-
 #include <character/enemy.h>
 
-#define TURRENT_MOVETIME 5
+const float TURRENT_MOVETIME = 5.0f;
 
 namespace character {
 	class Turret : public Enemy {
@@ -19,7 +18,6 @@ namespace character {
 
 		void Draw();
 		void Update(glm::vec3 playerPos);
-
 		glm::vec3 FindTarget(glm::vec3 playerPos);
 
 	private:
