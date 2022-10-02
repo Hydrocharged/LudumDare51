@@ -46,6 +46,8 @@ void character::Player::UpdatePosition(mouse::Info& mouse) {
 	auto backPressed = (float)IsKeyDown(KEY_S);
 	auto leftPressed = (float)IsKeyDown(KEY_A);
 	auto rightPressed = (float)IsKeyDown(KEY_D);
+	auto spacePressed = (float)IsKeyDown(KEY_SPACE);
+	auto ctrlPressed = (float)IsKeyDown(KEY_LEFT_CONTROL);
 
 	camera->position.x += (sinf(angleX) * backPressed -
 						   sinf(angleX) * forwardPressed -
@@ -56,6 +58,9 @@ void character::Player::UpdatePosition(mouse::Info& mouse) {
 						   cosf(angleX) * forwardPressed +
 						   sinf(angleX) * leftPressed -
 						   sinf(angleX) * rightPressed) * moveSpeed * GetFrameTime();
+
+	camera->position.y += spacePressed * moveSpeed * GetFrameTime();
+	camera->position.y -= ctrlPressed * moveSpeed * GetFrameTime();
 
 	angleX -= (mouse.CurrentX - mouse.PrevX) * mouseSensitivity * GetFrameTime();
 	angleY -= (mouse.CurrentY - mouse.PrevY) * mouseSensitivity * GetFrameTime();
