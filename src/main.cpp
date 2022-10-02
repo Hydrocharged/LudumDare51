@@ -18,7 +18,7 @@
 
 #endif //_WIN32
 
-std::vector<character::Enemy*> enemies;
+std::vector<character::Skull*> enemies;
 
 void UpdateDrawFrame(void);
 
@@ -40,7 +40,7 @@ int main(void) {
 
 	// initialize enemies
 	for (int i = 0; i < 5; i ++) {
-		enemies.push_back(new character::Enemy({2.0f * i, 2.0f * i, 2.0f * i}));
+		enemies.push_back(new character::Skull({2.0f * i, 2.0f * i, 2.0f * i}));
 	}
 
 #if defined(PLATFORM_WEB)
@@ -78,15 +78,15 @@ int main(void) {
 		}
 		DrawRay(ray, BLUE);
 		DrawGrid(10, 1.0f);
-		EndMode3D();
-
 
 		// Update enemies
-		for (character::Enemy* enemy : enemies) {
+		for (character::Skull* enemy : enemies) {
 			enemy->UpdatePosition(player.GetPosition());
 			enemy->Draw();
 		}
 
+
+		EndMode3D();
 		EndDrawing();
 	}
 #endif

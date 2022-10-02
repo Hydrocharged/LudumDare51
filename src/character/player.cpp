@@ -113,6 +113,7 @@ void character::Player::UpdatePosition(mouse::Info& mouse) {
 	camera->target.z = camera->position.z - matTransform.m14;
 }
 
-Vector3 character::Player::GetPosition() {
-	return camera->position;
+glm::vec3 character::Player::GetPosition() {
+	Vector3 pos = camera->position;
+	return {pos.x, pos.y, pos.z};
 }

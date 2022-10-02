@@ -4,9 +4,9 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Dependencies
+include(FetchContent)
 find_package(raylib 4.2.0 QUIET)
 if (NOT raylib_FOUND)
-    include(FetchContent)
     FetchContent_Declare(
             raylib
             URL https://github.com/raysan5/raylib/archive/refs/tags/4.2.0.tar.gz
@@ -19,6 +19,10 @@ if (NOT raylib_FOUND)
         add_subdirectory(${raylib_SOURCE_DIR} ${raylib_BINARY_DIR})
     endif()
 endif()
+FetchContent_Declare(glm
+    GIT_REPOSITORY https://github.com/g-truc/glm.git
+    GIT_TAG cc98465e3508535ba8c7f6208df934c156a018dc) # April 20, 2022
+FetchContent_MakeAvailable(glm)
 
 # Our Project
 include_directories(include src)
@@ -26,7 +30,7 @@ file(GLOB_RECURSE all_SRCS
     "${PROJECT_SOURCE_DIR}/src/*.cpp"
     "${PROJECT_SOURCE_DIR}/src/*.c")
 add_executable(${PROJECT_NAME} ${all_SRCS})
-target_link_libraries(${PROJECT_NAME} raylib -static)
+target_link_libraries(${PROJECT_NAME} glm raylib -static)
 
 # Web Configuration
 if (${PLATFORM} STREQUAL "Web")

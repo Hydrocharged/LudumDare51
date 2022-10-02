@@ -4,18 +4,15 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-#ifndef GUI_GUI_H
-#define GUI_GUI_H
-#include <gui/components/component.h>
-#include <gui/components/horizontalpanel.h>
-#include <gui/components/verticalpanel.h>
-#include <gui/components/label.h>
+#ifndef GUI_FONTMANAGER_H
+#define GUI_FONTMANAGER_H
+#include <raylib.h>
 
 namespace gui {
 	namespace fontmanager {
-		void Load();
-		void Unload();
+		Font GetSize(float size);
+		Font GetSize(int size);
 	}
 }
 
-#endif //GUI_GUI_H
+#endif //GUI_FONTMANAGER_H
