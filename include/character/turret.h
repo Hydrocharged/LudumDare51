@@ -12,7 +12,7 @@
 namespace character {
 	class Turret : public Enemy {
 	public:
-		Turret(glm::vec3 pos, Model* modelObj) : Enemy(pos, modelObj) {};
+		Turret(glm::vec3 pos, std::shared_ptr<Model> modelObj) : Enemy(pos, modelObj) {};
 		~Turret() = default;
 
 		void Draw();

@@ -7,27 +7,43 @@
 #ifndef LEVEL_H
 #define LEVEL_H
 
-#include <physics/body.h>
 #include <vector>
-#include <memory>
+
+#include <random.h>
+#include <physics/body.h>
+#include <character/player.h>
+#include <character/enemy.h>
+#include <character/skull.h>
+#include <character/turret.h>
+#include <character/vampire.h>
 
 namespace level {
 	class Level {
 	public:
-		Level() {};
+		Level();
 		~Level() = default;
 
 		void SetDimensions(glm::vec3 dimensions) { this->dimensions = dimensions; }
 		void SetPlayerSpawn(glm::vec3 playerSpawn) { this->playerSpawn = playerSpawn; }
 		void SetEnemySpawns(std::vector<glm::vec3>& enemySpawns);
 
+		enum EnemyType {
+			SKULL, TURRET, VAMPIRE
+		};
+		void SpawnEnemy(EnemyType enemyType, unsigned int numSpawns);
+
+		void Draw();
+
 	private:
+		std::shared_ptr<Model> skullModel, turretModel, vampireModel;
+
 		glm::vec3 dimensions;
 		glm::vec3 playerSpawn;
+		std::unique_ptr<character::Player> player;
 		std::vector<glm::vec3> enemySpawns;
+		std::vector<std::unique_ptr<character::Enemy>> enemies;
 
 		std::vector<std::unique_ptr<physics::Body>> bodies;
-
 	};
 }
 
