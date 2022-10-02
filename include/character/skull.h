@@ -14,7 +14,7 @@
 namespace character {
 	class Skull : public Enemy {
 	public:
-		Skull(glm::vec3 pos) : Enemy(pos) {
+		Skull(glm::vec3 pos, Model* modelObj) : Enemy(pos, modelObj) {
 			speed = 2.5f;
 		};
 		~Skull() = default;

@@ -6,6 +6,7 @@
 
 #include <character/enemy.h>
 
-character::Enemy::Enemy(glm::vec3 pos) {
+character::Enemy::Enemy(glm::vec3 pos, Model* modelObj) {
 	model = glm::translate(glm::mat4(1.0f), pos);
+	this->modelObj = modelObj;
 }
