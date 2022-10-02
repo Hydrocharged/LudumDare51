@@ -17,7 +17,7 @@
 namespace character {
 	class Vampire : public Enemy {
 	public:
-		Vampire(glm::vec3 pos) : Enemy(pos) {};
+		Vampire(glm::vec3 pos, Model* modelObj) : Enemy(pos, modelObj) {};
 		~Vampire() = default;
 
 		void Draw();

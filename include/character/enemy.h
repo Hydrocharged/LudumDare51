@@ -13,22 +13,22 @@
 #include <glm/gtx/transform.hpp>
 #include <random.h>
 
-
 namespace character {
 	class Enemy {
 	public:
-		Enemy(glm::vec3 pos);
+		Enemy(glm::vec3 pos, Model* model);
 		virtual ~Enemy() = default;
 
-		virtual void Update(glm::vec3 playerPos){};
-		virtual void Draw(){};
-		virtual void Attack(){};
-		virtual void Die(){};
-		virtual void TakeDamage(float dmg){};
+		virtual void Update(glm::vec3 playerPos) {};
+		virtual void Draw() {};
+		virtual void Attack() {};
+		virtual void Die() {};
+		virtual void TakeDamage(float dmg) {};
 
 	protected:
 		glm::mat4 model;
 		float speed;
+		Model* modelObj;
 
 		float health;
 		float damage;

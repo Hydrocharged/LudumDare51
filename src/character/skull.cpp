@@ -8,7 +8,7 @@
 
 void character::Skull::Draw() {
 	glm::vec3 pos = model[3];
-	DrawCube({pos.x, pos.y, pos.z}, 0.5, 0.5, 0.5, RED);
+	DrawModel(*modelObj, (Vector3){pos.x, pos.y, pos.z}, 1.0f, WHITE);
 }
 
 void character::Skull::SetTarget(glm::vec3 playerPos) {

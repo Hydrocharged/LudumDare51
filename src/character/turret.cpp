@@ -9,7 +9,7 @@
 
 void character::Turret::Draw() {
 	glm::vec3 pos = model[3];
-	DrawCube({pos.x, pos.y, pos.z}, 0.25, 2, 0.25, BLUE);
+	DrawModel(*modelObj, (Vector3){pos.x, pos.y, pos.z}, 1.0f, WHITE);
 }
 
 glm::vec3 character::Turret::FindTarget(glm::vec3 playerPos) {
