@@ -11,11 +11,9 @@
 #include <gui/components/verticalpanel.h>
 #include <gui/components/label.h>
 
-namespace gui {
-	namespace fontmanager {
-		void Load();
-		void Unload();
-	}
+namespace gui::fontmanager {
+	void Load();
+	void Unload();
 }
 
 #endif //GUI_GUI_H

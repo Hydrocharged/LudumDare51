@@ -8,11 +8,10 @@
 #define GUI_FONTMANAGER_H
 #include <raylib.h>
 
-namespace gui {
-	namespace fontmanager {
-		Font GetSize(float size);
-		Font GetSize(int size);
-	}
+namespace gui::fontmanager {
+	Font GetBySize(float size);
+	Font GetBySize(int size);
+	Font GetByWidth(float width, float maxHeight, float textLength, float& fontSize, float& widthAtSize);
 }
 
 #endif //GUI_FONTMANAGER_H

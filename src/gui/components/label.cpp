@@ -42,17 +42,13 @@ std::vector<gui::DrawRect> gui::Label::ChildPositions(float posX, float posY, fl
 void gui::Label::Draw(float posX, float posY, float containerWidth, float containerHeight) {
 	float width = Width(containerWidth, containerHeight);
 	float height = Height(containerWidth, containerHeight);
-	int fontSize = (int)height;
-	int fontLength = MeasureText(text.c_str(), fontSize);
-	float textLengthAt10 = (float)MeasureText(text.c_str(), 10);
-	if (fontLength > width) {
-		fontLength = width;
-		fontSize = (int)(((float)fontLength / textLengthAt10) * 10.0f);
-	}
 	auto color = defaultColor;
 	if (hoverColor.a > 0 && IsHovering) {
 		color = hoverColor;
 	}
-	DrawTextEx(gui::fontmanager::GetSize(fontSize), text.c_str(), Vector2{posX + (width / 2) - (fontLength / 2), posY + (height / 2) - (fontSize / 2)},
-		fontSize, 0.0f, *reinterpret_cast<::Color*>(&color));
+	float outFontSize = 0.0f;
+	float outTextWidth = 0.0f;
+	Font font = gui::fontmanager::GetByWidth(width, height, (float)text.length(), outFontSize, outTextWidth);
+	DrawTextEx(font, text.c_str(), Vector2{posX + (width / 2) - (outTextWidth / 2), posY + (height / 2) - (outFontSize / 2)},
+		outFontSize, 0.0f, *reinterpret_cast<::Color*>(&color));
 }

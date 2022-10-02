@@ -51,7 +51,7 @@ int main(void) {
 
 		if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
 			if (!collision.hit) {
-				ray = GetMouseRay({screenRect.ContainerWidth/2.0f, screenRect.ContainerHeight/2.0f}, player);
+				ray = GetMouseRay({screenRect.ContainerWidth / 2.0f, screenRect.ContainerHeight / 2.0f}, player);
 				collision = GetRayCollisionBox(ray,
 					BoundingBox{
 						Vector3{cubePosition.x - cubeSize.x / 2, cubePosition.y - cubeSize.y / 2, cubePosition.z - cubeSize.z / 2},
