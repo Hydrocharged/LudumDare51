@@ -8,6 +8,8 @@
 #include <vector>
 #include <character/player.h>
 #include <character/skull.h>
+#include <character/turret.h>
+#include <character/vampire.h>
 #include <gui/gui.h>
 
 #if defined(PLATFORM_WEB)
@@ -45,8 +47,14 @@ int main(void) {
 
 	// initialize enemies
 	std::vector<std::unique_ptr<character::Enemy>> enemies;
-	for (int i = 0; i < 5; i++) {
-		enemies.push_back(std::make_unique<character::Skull>(glm::vec3{2.0f * i, 2.0f * i, 2.0f * i}));
+//	for (int i = 0; i < 5; i++) {
+//		enemies.push_back(std::make_unique<character::Skull>(glm::vec3{2.0f * i, 2.0f * i, 2.0f * i}));
+//	}
+//	for (int i = 0; i < 3; i++) {
+//		enemies.push_back(std::make_unique<character::Turret>(glm::vec3{2.0f * i, 1.0f, 2.0f * i}));
+//	}
+	for (int i = 0; i < 1; i++) {
+		enemies.push_back(std::make_unique<character::Vampire>(glm::vec3{2.0f * i, 1.0f, 2.0f * i}));
 	}
 
 #if defined(PLATFORM_WEB)

@@ -6,6 +6,11 @@
 
 #include <character/skull.h>
 
+void character::Skull::Draw() {
+	glm::vec3 pos = model[3];
+	DrawCube({pos.x, pos.y, pos.z}, 0.5, 0.5, 0.5, RED);
+}
+
 void character::Skull::SetTarget(glm::vec3 playerPos) {
 	// Determine how to move on XZ-plane
 	float x = random::GetRandomRange(radMin, radMax);
@@ -46,9 +51,4 @@ void character::Skull::Update(glm::vec3 playerPos) {
 	// TODO: figure out how to make it look at player later
 	//glm::mat4 view = glm::lookAt(pos, playerPos, {0,1,0});
 	//glm::vec3 forward = normalize(glm::vec3(glm::inverse(view)[2]));
-}
-
-void character::Skull::Draw() {
-	glm::vec3 pos = model[3];
-	DrawCube({pos.x, pos.y, pos.z}, 1, 1, 1, RED);
 }

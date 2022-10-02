@@ -23,6 +23,8 @@ namespace character {
 		virtual void Update(glm::vec3 playerPos){};
 		virtual void Draw(){};
 		virtual void Attack(){};
+		virtual void Die(){};
+		virtual void TakeDamage(float dmg){};
 
 	protected:
 		glm::mat4 model;

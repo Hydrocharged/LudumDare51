@@ -4,35 +4,31 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-#ifndef CHARACTER_SKULL_H
-#define CHARACTER_SKULL_H
+#ifndef CHARACTER_TURRENT_H
+#define CHARACTER_TURRENT_H
 
 #include <character/enemy.h>
 
-#define SKULL_MOVETIME 1.5
+#define TURRENT_MOVETIME 5
 
 namespace character {
-	class Skull : public Enemy {
+	class Turret : public Enemy {
 	public:
-		Skull(glm::vec3 pos) : Enemy(pos) {
-			speed = 2.5f;
-		};
-		~Skull() = default;
+		Turret(glm::vec3 pos) : Enemy(pos) {};
+		~Turret() = default;
 
 		void Draw();
 		void Update(glm::vec3 playerPos);
 
-		void SetTarget(glm::vec3 playerPos);
+		glm::vec3 FindTarget(glm::vec3 playerPos);
 
 	private:
-		// number of seconds before it changes direction
-		float moveTime = SKULL_MOVETIME;
+		float moveTime = TURRENT_MOVETIME;
 
 		// will try to stay within this donut around the player
-		glm::vec3 target;
-		float radMin = 3.0f;
-		float radMax = 10.0f;
+		float radMin = 1.0f;
+		float radMax = 2.5f;
 	};
 }
 
-#endif //CHARACTER_SKULL_H
+#endif //CHARACTER_TURRENT_H
