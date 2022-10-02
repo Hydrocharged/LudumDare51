@@ -35,7 +35,7 @@ bool handleSphereCapsule(physics::SphereBody* aSphere, physics::CapsuleBody* bCa
 }
 
 bool handleSphereAABB(physics::SphereBody* aSphere, physics::AABBBody* bAABB) {
-	physics::Sphere sphere = *aSphere;
+	physics::Sphere sphere = aSphere->GetSphere();
 	physics::Point closestPoint = {};
 	physics::ClosestPtPointAABB(sphere.c, *bAABB, closestPoint);
 	return physics::TestSpherePoint(sphere, closestPoint);
@@ -47,14 +47,14 @@ bool handleCapsuleCapsule(physics::CapsuleBody* aCapsule, physics::CapsuleBody* 
 
 bool handleCapsuleAABB(physics::CapsuleBody* aCapsule, physics::AABBBody* bAABB) {
 	// We can do a quick comparison of the AABB's spherical bounds to see if we need to do a more in-depth check
-	physics::Capsule capsule = *aCapsule;
+	physics::Capsule capsule = aCapsule->GetCapsule();
 	auto aabbSphere = physics::Sphere{bAABB->Position(), bAABB->SphereRadius()};
 	if (!physics::TestSphereCapsule(aabbSphere, capsule)) {
 		return false;
 	}
 	// We're doing 3 tests here on spheres to approximate a proper test of the entire capsule. This is definitely not
 	// the best way to do this, but it works for now.
-	physics::AABB aabb = *bAABB;
+	physics::AABB aabb = bAABB->GetAABB();
 	physics::Point closestPoint = {};
 	// Check the first end cap
 	physics::ClosestPtPointAABB(capsule.a, aabb, closestPoint);

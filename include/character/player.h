@@ -6,25 +6,25 @@
 
 #ifndef CHARACTER_PLAYER_H
 #define CHARACTER_PLAYER_H
-
-#include <raylib.h>
 #include <mouse.h>
 #include <memory>
-#include <glm/glm.hpp>
+#include <physics/body.h>
 
 namespace character {
 	class Player {
 	public:
-		Player(float x, float y, float z);
+		Player(glm::vec3 position);
 		~Player() = default;
 
 		void UpdatePosition(mouse::Info& mouse);
 		glm::vec3 GetPosition();
+		physics::Body* GetBody();
 
 		operator Camera();
 		operator Camera*();
 
 	private:
+		std::unique_ptr<physics::CapsuleBody> body;
 		float angleX = 0.0f;
 		float angleY = 0.0f;
 		std::unique_ptr<Camera> camera;
