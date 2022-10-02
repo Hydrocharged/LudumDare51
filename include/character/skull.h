@@ -9,8 +9,6 @@
 
 #include <character/enemy.h>
 
-#define SKULL_MOVETIME 1.5
-
 namespace character {
 	class Skull : public Enemy {
 	public:
@@ -26,6 +24,7 @@ namespace character {
 
 	private:
 		// number of seconds before it changes direction
+		const float SKULL_MOVETIME = 1.5f;
 		float moveTime = SKULL_MOVETIME;
 
 		// will try to stay within this donut around the player

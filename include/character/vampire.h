@@ -9,11 +9,6 @@
 
 #include <character/enemy.h>
 
-#define VAMPIRE_MOVETIME 10
-#define VAMPIRE_STOPTIME 0.5
-#define VAMPIRE_DASH_SPEED 20
-#define VAMPIRE_WALK_SPEED 1
-
 namespace character {
 	class Vampire : public Enemy {
 	public:
@@ -25,10 +20,14 @@ namespace character {
 		void SetTarget(glm::vec3 playerPos);
 
 	private:
+		const float VAMPIRE_MOVETIME = 10.f;
+		const float VAMPIRE_STOPTIME = 0.5f;
+		const float VAMPIRE_DASH_SPEED = 20.f;
+		const float VAMPIRE_WALK_SPEED = 1.f;
+
 		glm::vec3 target;
 		float moveTime = VAMPIRE_MOVETIME;
 		float stopTime = VAMPIRE_STOPTIME;
-		bool isDashing = false;
 
 		int moveState = 0;
 	};

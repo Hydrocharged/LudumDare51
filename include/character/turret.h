@@ -9,8 +9,6 @@
 
 #include <character/enemy.h>
 
-#define TURRENT_MOVETIME 5
-
 namespace character {
 	class Turret : public Enemy {
 	public:
@@ -23,7 +21,8 @@ namespace character {
 		glm::vec3 FindTarget(glm::vec3 playerPos);
 
 	private:
-		float moveTime = TURRENT_MOVETIME;
+		const float TURRET_MOVETIME = 5.f;
+		float moveTime = TURRET_MOVETIME;
 
 		// will try to stay within this donut around the player
 		float radMin = 1.0f;

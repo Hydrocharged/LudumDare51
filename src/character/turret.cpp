@@ -32,7 +32,7 @@ void character::Turret::Update(glm::vec3 playerPos) {
 	// After some amount of time, reset the target
 	moveTime -= GetFrameTime();
 	if (moveTime <= 0.0f) {
-		moveTime = TURRENT_MOVETIME;
+		moveTime = TURRET_MOVETIME;
 		glm::vec3 pos = model[3];
 		glm::vec3 target = FindTarget(playerPos);
 		glm::vec3 delta = target - pos;
