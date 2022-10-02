@@ -8,6 +8,7 @@
 #include <vector>
 #include <character/player.h>
 #include <character/enemy.h>
+#include <gui/gui.h>
 
 #if defined(PLATFORM_WEB)
 #include <emscripten/emscripten.h>
@@ -28,15 +29,21 @@ int main(void) {
 #endif //_WIN32
 
 	SetConfigFlags(FLAG_WINDOW_RESIZABLE);
-	InitWindow(1280, 720, "RaylibStarter");
+	auto screenRect = gui::DrawRect{0, 0, 1280, 720};
+	InitWindow((int)screenRect.ContainerWidth, (int)screenRect.ContainerHeight, "RaylibStarter");
 	SetTargetFPS(GetMonitorRefreshRate(GetCurrentMonitor()));
 
+	gui::fontmanager::Load();
 	auto mouse = mouse::Info{};
 	character::Player player(4.0f, 2.0f, 4.0f);
 	Vector3 cubePosition = {0.0f, 0.0f, 0.0f};
 	Vector3 cubeSize = {2.0f, 2.0f, 2.0f};
 	Ray ray = {0};
 	RayCollision collision = {0};
+
+	auto menu = std::unique_ptr<gui::Component>(
+		gui::NewVerticalPanel({})
+	);
 
 	// initialize enemies
 	for (int i = 0; i < 5; i ++) {
@@ -49,10 +56,11 @@ int main(void) {
 	while (!WindowShouldClose()) {
 		mouse.Update();
 		player.UpdatePosition(mouse);
+		menu->Update(mouse, screenRect);
 
 		if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
 			if (!collision.hit) {
-				ray = GetMouseRay({(float)GetRenderWidth()/2.0f, (float)GetRenderHeight()/2.0f}, player);
+				ray = GetMouseRay({screenRect.ContainerWidth / 2.0f, screenRect.ContainerHeight / 2.0f}, player);
 				collision = GetRayCollisionBox(ray,
 					BoundingBox{
 						Vector3{cubePosition.x - cubeSize.x / 2, cubePosition.y - cubeSize.y / 2, cubePosition.z - cubeSize.z / 2},
@@ -87,10 +95,12 @@ int main(void) {
 
 
 		EndMode3D();
+		menu->Draw(screenRect.PosX, screenRect.PosY, screenRect.ContainerWidth, screenRect.ContainerHeight);
 		EndDrawing();
 	}
 #endif
 
+	gui::fontmanager::Unload();
 	CloseWindow();
 	return 0;
 }
