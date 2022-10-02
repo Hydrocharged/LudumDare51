@@ -24,7 +24,7 @@ glm::vec3 character::Turret::FindTarget(glm::vec3 playerPos) {
 	}
 
 	glm::vec3 pos = model[3];
-	glm::vec3 fuzz = {x, 2.f, z};
+	glm::vec3 fuzz = {x, 0.0f, z};
 	return playerPos + fuzz;
 }
 
@@ -35,6 +35,8 @@ void character::Turret::Update(glm::vec3 playerPos) {
 		moveTime = TURRENT_MOVETIME;
 		glm::vec3 pos = model[3];
 		glm::vec3 target = FindTarget(playerPos);
-		model = glm::translate(target - pos);
+		glm::vec3 delta = target - pos;
+		delta.y = 0.f;
+		model = glm::translate(model, delta);
 	}
 }

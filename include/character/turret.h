@@ -14,9 +14,7 @@
 namespace character {
 	class Turret : public Enemy {
 	public:
-		Turret(glm::vec3 pos) : Enemy(pos) {
-			pos.y = 2.0f; // always on the floor
-		};
+		Turret(glm::vec3 pos) : Enemy(pos) {};
 		~Turret() = default;
 
 		void Draw();
@@ -29,7 +27,7 @@ namespace character {
 
 		// will try to stay within this donut around the player
 		float radMin = 1.0f;
-		float radMax = 1.1f;
+		float radMax = 2.5f;
 	};
 }
 
