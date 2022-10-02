@@ -18,6 +18,7 @@ namespace character {
 		~Player() = default;
 
 		void UpdatePosition(mouse::Info& mouse);
+		Vector3 GetPosition();
 
 		operator Camera();
 		operator Camera*();

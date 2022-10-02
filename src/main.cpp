@@ -5,7 +5,9 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include <raylib.h>
+#include <vector>
 #include <character/player.h>
+#include <character/enemy.h>
 
 #if defined(PLATFORM_WEB)
 #include <emscripten/emscripten.h>
@@ -15,6 +17,8 @@
 #include <hideconsole.h>
 
 #endif //_WIN32
+
+std::vector<character::Enemy*> enemies;
 
 void UpdateDrawFrame(void);
 
@@ -33,6 +37,11 @@ int main(void) {
 	Vector3 cubeSize = {2.0f, 2.0f, 2.0f};
 	Ray ray = {0};
 	RayCollision collision = {0};
+
+	// initialize enemies
+	for (int i = 0; i < 5; i ++) {
+		enemies.push_back(new character::Enemy({2.0f * i, 2.0f * i, 2.0f * i}));
+	}
 
 #if defined(PLATFORM_WEB)
 	emscripten_set_main_loop(UpdateDrawFrame, 0, 1);
@@ -57,8 +66,9 @@ int main(void) {
 
 		BeginDrawing();
 		ClearBackground({255, 255, 255, 255});
-		BeginMode3D(player);
 
+		// TODO: add some of this logic to enemies
+		BeginMode3D(player);
 		if (collision.hit) {
 			DrawCube(cubePosition, cubeSize.x, cubeSize.y, cubeSize.z, RED);
 			DrawCubeWires(cubePosition, cubeSize.x, cubeSize.y, cubeSize.z, DARKGRAY);
@@ -66,11 +76,17 @@ int main(void) {
 			DrawCube(cubePosition, cubeSize.x, cubeSize.y, cubeSize.z, GRAY);
 			DrawCubeWires(cubePosition, cubeSize.x, cubeSize.y, cubeSize.z, DARKGRAY);
 		}
-
 		DrawRay(ray, BLUE);
 		DrawGrid(10, 1.0f);
-
 		EndMode3D();
+
+
+		// Update enemies
+		for (character::Enemy* enemy : enemies) {
+			enemy->UpdatePosition(player.GetPosition());
+			enemy->Draw();
+		}
+
 		EndDrawing();
 	}
 #endif

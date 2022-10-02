@@ -28,7 +28,7 @@ character::Player::Player(float x, float y, float z) {
 
 	angleX = atan2f(dx, dz);
 	angleY = atan2f(dy, sqrtf(dx * dx + dz * dz));
-	//DisableCursor();
+	DisableCursor();
 }
 
 character::Player::operator Camera() {
@@ -111,4 +111,8 @@ void character::Player::UpdatePosition(mouse::Info& mouse) {
 	camera->target.x = camera->position.x - matTransform.m12;
 	camera->target.y = camera->position.y - matTransform.m13;
 	camera->target.z = camera->position.z - matTransform.m14;
+}
+
+Vector3 character::Player::GetPosition() {
+	return camera->position;
 }
