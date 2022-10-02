@@ -21,6 +21,7 @@ namespace character {
 
 		void Draw();
 		void Update(glm::vec3 playerPos);
+
 		void SetTarget(glm::vec3 playerPos);
 
 	private:
