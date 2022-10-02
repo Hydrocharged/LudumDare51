@@ -7,8 +7,9 @@
 #include <raylib.h>
 #include <vector>
 #include <character/player.h>
-#include <character/enemy.h>
+#include <character/skull.h>
 #include <gui/gui.h>
+#include <iostream>
 
 #if defined(PLATFORM_WEB)
 #include <emscripten/emscripten.h>
@@ -19,7 +20,7 @@
 
 #endif //_WIN32
 
-std::vector<character::Skull*> enemies;
+
 
 void UpdateDrawFrame(void);
 
@@ -46,8 +47,9 @@ int main(void) {
 	);
 
 	// initialize enemies
+	std::vector<std::unique_ptr<character::Enemy>> enemies;
 	for (int i = 0; i < 5; i ++) {
-		enemies.push_back(new character::Skull({2.0f * i, 2.0f * i, 2.0f * i}));
+		enemies.push_back(std::make_unique<character::Skull>(glm::vec3{2.0f * i, 2.0f * i, 2.0f * i}));
 	}
 
 #if defined(PLATFORM_WEB)
@@ -88,8 +90,8 @@ int main(void) {
 		DrawGrid(10, 1.0f);
 
 		// Update enemies
-		for (character::Skull* enemy : enemies) {
-			enemy->UpdatePosition(player.GetPosition());
+		for (auto &enemy : enemies) {
+			enemy->Update(player.GetPosition());
 			enemy->Draw();
 		}
 

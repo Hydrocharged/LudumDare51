@@ -9,32 +9,27 @@
 #include <glm/gtx/transform.hpp>
 #include <random.h>
 
-#define SKULL_MOVETIME 1.5
 
 namespace character {
-	// TODO: polymorphism?
-	class Skull {
+	class Enemy {
 	public:
-		Skull(glm::vec3 pos);
-		~Skull() = default;
+		Enemy(glm::vec3 pos);
+		virtual ~Enemy() = default;
 
-		void UpdatePosition(glm::vec3 playerPos);
-		void SetTarget(glm::vec3 playerPos);
-		void Draw();
+		virtual void Update(glm::vec3 playerPos){};
+		virtual void Draw(){};
+		virtual void Attack(){};
 
-	private:
+	protected:
 		glm::mat4 model;
-		float speed = 2.5f;
-		float moveTime = SKULL_MOVETIME; // number of seconds before it changes direction
+		float speed;
 
-		// will try to stay within this donut around the player
-		glm::vec3 target;
-		float radMin = 3.0f;
-		float radMax = 10.0f;
+		float health;
+		float damage;
+
 
 		// TODO: add more enemy properties
 		// damage, fire rate, health
-		// TODO: will need their own transformation matrix so they "look at" player
 	};
 }
 
