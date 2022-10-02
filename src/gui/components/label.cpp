@@ -43,7 +43,7 @@ void gui::Label::Draw(float posX, float posY, float containerWidth, float contai
 	float width = Width(containerWidth, containerHeight);
 	float height = Height(containerWidth, containerHeight);
 	auto color = defaultColor;
-	if (hoverColor.a > 0 && IsHovering) {
+	if (hoverColor.a > 0 && isHovering) {
 		color = hoverColor;
 	}
 	float outFontSize = 0.0f;

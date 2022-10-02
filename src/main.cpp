@@ -9,7 +9,6 @@
 #include <character/player.h>
 #include <character/skull.h>
 #include <gui/gui.h>
-#include <iostream>
 
 #if defined(PLATFORM_WEB)
 #include <emscripten/emscripten.h>
@@ -19,8 +18,6 @@
 #include <hideconsole.h>
 
 #endif //_WIN32
-
-
 
 void UpdateDrawFrame(void);
 
@@ -48,7 +45,7 @@ int main(void) {
 
 	// initialize enemies
 	std::vector<std::unique_ptr<character::Enemy>> enemies;
-	for (int i = 0; i < 5; i ++) {
+	for (int i = 0; i < 5; i++) {
 		enemies.push_back(std::make_unique<character::Skull>(glm::vec3{2.0f * i, 2.0f * i, 2.0f * i}));
 	}
 
@@ -76,9 +73,9 @@ int main(void) {
 
 		BeginDrawing();
 		ClearBackground({255, 255, 255, 255});
-
 		// TODO: add some of this logic to enemies
 		BeginMode3D(player);
+
 		if (collision.hit) {
 			DrawCube(cubePosition, cubeSize.x, cubeSize.y, cubeSize.z, RED);
 			DrawCubeWires(cubePosition, cubeSize.x, cubeSize.y, cubeSize.z, DARKGRAY);
@@ -90,11 +87,10 @@ int main(void) {
 		DrawGrid(10, 1.0f);
 
 		// Update enemies
-		for (auto &enemy : enemies) {
+		for (auto& enemy: enemies) {
 			enemy->Update(player.GetPosition());
 			enemy->Draw();
 		}
-
 
 		EndMode3D();
 		menu->Draw(screenRect.PosX, screenRect.PosY, screenRect.ContainerWidth, screenRect.ContainerHeight);

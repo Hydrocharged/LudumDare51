@@ -22,7 +22,7 @@ namespace gui {
 		HorizontalPanel* SetColor(Color color);
 		HorizontalPanel* SetHoverColor(Color color);
 
-	private:
+	protected:
 		float xScale = 1.0f;
 		float yScale = 1.0f;
 		Color defaultColor = {0, 0, 0, 0};

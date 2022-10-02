@@ -30,6 +30,8 @@ inline float clamp(float val) {
 }
 
 void gui::Component::update(mouse::Info& mouse, DrawRect& rect, Events& events) {
+	HandleUpdate();
+
 	float x = rect.PosX;
 	float y = rect.PosY;
 	float width = Width(rect.ContainerWidth, rect.ContainerHeight);
@@ -47,34 +49,34 @@ void gui::Component::update(mouse::Info& mouse, DrawRect& rect, Events& events) 
 	}
 
 	// Handle Hover
-	if (withinBounds && !IsHovering) {
-		IsHovering = true;
+	if (withinBounds && !isHovering) {
+		isHovering = true;
 		HoverEnter();
-	} else if (!withinBounds && IsHovering) {
-		IsHovering = false;
+	} else if (!withinBounds && isHovering) {
+		isHovering = false;
 		HoverExit();
 	}
 
 	// Handle Clicks
 	if (mouse.IsMouseDown) {
 		if (withinBounds) {
-			if (IsMouseDown) {
+			if (isMouseDown) {
 				if (!events.MouseDragWasHandled) {
 					events.MouseDragWasHandled = HandleMouseDrag(prevXPercentage, prevYPercentage, xPercentage, yPercentage);
 				}
 			} else if (!mouse.IsMouseDrag) {
 				if (!events.MouseDownWasHandled) {
 					events.MouseDownWasHandled = HandleMouseDown(xPercentage, yPercentage);
-					IsMouseDown = true;
+					isMouseDown = true;
 				}
 			}
-		} else if (IsMouseDown && mouse.IsMouseDrag) {
+		} else if (isMouseDown && mouse.IsMouseDrag) {
 			if (!events.MouseDragWasHandled) {
 				events.MouseDragWasHandled = HandleMouseDrag(clamp(prevXPercentage), clamp(prevYPercentage), clamp(xPercentage), clamp(yPercentage));
 			}
 		}
 	} else {
-		if (IsMouseDown) {
+		if (isMouseDown) {
 			if (withinBounds) {
 				if (!events.MouseUpWasHandled) {
 					events.MouseUpWasHandled = HandleMouseUp(xPercentage, yPercentage);
@@ -84,7 +86,7 @@ void gui::Component::update(mouse::Info& mouse, DrawRect& rect, Events& events) 
 			} else {
 				MouseDownCancelled();
 			}
-			IsMouseDown = false;
+			isMouseDown = false;
 		}
 	}
 }

@@ -24,7 +24,7 @@ void character::Skull::SetTarget(glm::vec3 playerPos) {
 		y = -y;
 	}
 
-	glm::vec3 fuzz = {x,y,z};
+	glm::vec3 fuzz = {x, y, z};
 	target = playerPos + fuzz;
 }
 
