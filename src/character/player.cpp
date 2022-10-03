@@ -13,11 +13,12 @@
 
 const float moveSpeedConstant = 40.0f;
 const float sprintModifier = 3.0f;
-const float dashModifier = 2.5f;
+const float dashModifier = 1.2f;
+const float jumpForce = 15.0f;
 const float mouseSensitivity = 0.5f;
+const glm::vec3 cameraHeight = {0, 1.84f, 0};
 
 character::Player::Player(glm::vec3 position) {
-	// load weapons
 	Model pistol = LoadModel("../assets/models/pistol/pistol.obj");
 	Texture2D pistolTexture = LoadTexture("../assets/models/pistol/pistol.png");
 	SetMaterialTexture(&pistol.materials[0], MATERIAL_MAP_DIFFUSE, pistolTexture);
@@ -33,11 +34,11 @@ character::Player::Player(glm::vec3 position) {
 	SetMaterialTexture(&sniper.materials[0], MATERIAL_MAP_DIFFUSE, sniperTexture);
 	this->sniper = std::make_unique<Model>(sniper);
 
-	body = std::make_unique<physics::CapsuleBody>(position, glm::vec3{0, 1.84f, 0}, glm::vec3{0, 0, 0}, 0.5f);
-	body->SetGravity(false);
+	body = std::make_unique<physics::CapsuleBody>(position, cameraHeight, glm::vec3(0), 0.5f);
 
 	camera = std::make_unique<Camera>(Camera{0});
-	camera->position = Vector3{position.x, position.y, position.z};
+	auto cameraPos = position + cameraHeight;
+	camera->position = Vector3{cameraPos.x, cameraPos.y, cameraPos.z};
 	camera->target = Vector3{0.0f, 0.0f, 0.0f};
 	camera->up = Vector3{0.0f, 1.0f, 0.0f};
 	camera->fovy = 90.0f;
@@ -52,15 +53,15 @@ character::Player::Player(glm::vec3 position) {
 	DisableCursor();
 }
 
-character::Player::operator ::Camera() {
-	glm::vec3 bodyPosition = body->Position();
-	camera->position = {bodyPosition.x, bodyPosition.y, bodyPosition.z};
+character::Player::operator Camera() {
+	glm::vec3 cameraPosition = body->Position() + cameraHeight;
+	camera->position = {cameraPosition.x, cameraPosition.y, cameraPosition.z};
 	return *camera.get();
 }
 
-character::Player::operator ::Camera*() {
-	glm::vec3 bodyPosition = body->Position();
-	camera->position = {bodyPosition.x, bodyPosition.y, bodyPosition.z};
+character::Player::operator Camera*() {
+	glm::vec3 cameraPosition = body->Position() + cameraHeight;
+	camera->position = {cameraPosition.x, cameraPosition.y, cameraPosition.z};
 	return camera.get();
 }
 
@@ -103,20 +104,22 @@ void character::Player::UpdatePosition(mouse::Info& mouse) {
 		if (IsKeyPressed(KEY_F)) {
 			body->ApplyInstantForce(direction, dashModifier * moveSpeedConstant);
 		} else {
-			body->ApplyForce(direction, moveSpeedConstant * (IsKeyDown(KEY_LEFT_SHIFT) ? sprintModifier : 1.0f), GetFrameTime());
+			body->ApplyFrameForce(direction, moveSpeedConstant * (IsKeyDown(KEY_LEFT_SHIFT) ? sprintModifier : 1.0f));
 		}
 	} else {
 		glm::vec3 hVelocity = body->GetHorizontalVelocity();
 		float hMagnitude = glm::length(hVelocity);
 		if (hMagnitude > FLT_EPSILON) {
 			if (hMagnitude > 0.25f) {
-				body->ApplyForce(-glm::normalize(hVelocity), 20.0f, GetFrameTime());
+				body->ApplyFrameForce(-glm::normalize(hVelocity), 20.0f);
 			} else {
 				body->ApplyInstantForce(-glm::normalize(hVelocity), hMagnitude);
 			}
 		}
 	}
-	//TODO: this should be in the level portion
+	if (IsKeyPressed(KEY_SPACE)) {
+		body->ApplyInstantForce({0, 1.0f, 0}, jumpForce);
+	}
 	body->Update(GetFrameTime());
 
 	angleX -= (mouse.CurrentX - mouse.PrevX) * mouseSensitivity * GetFrameTime();
@@ -180,10 +183,9 @@ void character::Player::SetCurrentWeapon(character::Player::WeaponType weapon) {
 }
 
 glm::vec3 character::Player::GetPosition() {
-	Vector3 pos = camera->position;
-	return {pos.x, pos.y, pos.z};
+	return body->Position();
 }
 
-physics::Body* character::Player::GetBody() {
+physics::CapsuleBody* character::Player::GetBody() {
 	return body.get();
 }

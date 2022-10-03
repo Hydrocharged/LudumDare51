@@ -27,7 +27,7 @@ namespace character {
 		void SetCurrentWeapon(WeaponType weapon);
 
 		glm::vec3 GetPosition();
-		physics::Body* GetBody();
+		physics::CapsuleBody* GetBody();
 
 		operator ::Camera();
 		operator ::Camera*();
