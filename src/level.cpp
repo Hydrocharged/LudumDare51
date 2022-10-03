@@ -50,8 +50,10 @@ void level::Level::Update() {
 		enemy->Update(playerPos);
 	}
 
+	// The counter that determines death for 10 seconds
 	deathTimer -= GetFrameTime();
 	if (deathTimer <= 0.f) {
+		deathTimer = DEATH_TIME;
 		for (auto enemy: enemies) {
 			if (enemy->GetHealth() < 0.f) {
 				enemy->Die();
