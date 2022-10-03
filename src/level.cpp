@@ -6,7 +6,6 @@
 
 #include <raylib.h>
 #include <level.h>
-#include <render/render.h>
 #include <random.h>
 #include <physics/body.h>
 #include <character/skull.h>
@@ -45,7 +44,14 @@ void level::Level::Draw() {
 	}
 }
 
+static physics::AABBBody ground = physics::AABBBody({0, -5.5f, 0}, {1000.0f, 10.0f, 1000.0f});
+
 void level::Level::Update() {
+	auto playerBody = player->GetBody();
+	if (playerBody->CollidesWith(&ground)) {
+		auto movement = physics::MoveCapsuleFromAABB(*playerBody, ground);
+		playerBody->StopMomentum(movement);
+	}
 	glm::vec3 playerPos = player->GetPosition();
 	for (auto enemy: enemies) {
 		enemy->Update(playerPos);

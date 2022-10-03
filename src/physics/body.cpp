@@ -6,7 +6,7 @@
 
 #include <physics/body.h>
 
-const float gravity = 9.8f;
+const float gravity = 30.0f;
 
 void physics::Body::SetParent(physics::Body* p) {
 	parent = p;
@@ -22,37 +22,55 @@ glm::vec3 physics::Body::Position() {
 void physics::Body::Update(float deltaTime) {
 	if (stationary || parent != nullptr) {
 		return;
+	} else if (hasGravity) {
+		ApplyFrameForce({0, -1.0f, 0}, gravity);
 	}
-	//TODO: disable movement if colliding with something
-	if (hasGravity) {
-		ApplyForce({0, -1.0f, 0}, gravity, deltaTime);
+
+	glm::vec3 hComp{velocity.x, 0, velocity.z};
+	float hMag = glm::length(hComp);
+	glm::vec3 vComp{0, velocity.y, 0};
+	float vMag = velocity.y;
+	if (hMag > FLT_EPSILON) {
+		frameAcceleration -= (hMag * hDrag) * (glm::normalize(hComp));
 	}
-	glm::vec3 horizontalComponents{velocity.x, 0, velocity.z};
-	float horizontalMagnitude = glm::length(horizontalComponents);
-	glm::vec3 verticalComponent{0, velocity.y, 0};
-	float verticalMagnitude = velocity.y;
-	if (horizontalMagnitude > FLT_EPSILON) {
-		glm::vec3 newHComp = -(horizontalMagnitude * 4.0f * glm::log(horizontalMagnitude)) * (glm::normalize(horizontalComponents)) * deltaTime * hDrag;
-		horizontalComponents += newHComp;
+	if (vMag > FLT_EPSILON) {
+		frameAcceleration -= (vMag * vDrag) * (glm::normalize(vComp));
 	}
-	if (verticalMagnitude > FLT_EPSILON) {
-		verticalComponent += -(verticalMagnitude * verticalMagnitude) * (glm::normalize(verticalComponent)) * deltaTime * vDrag;
-	}
-	velocity = horizontalComponents + verticalComponent;
-	position += deltaTime * velocity;
+	position += (velocity * deltaTime) + (frameAcceleration * deltaTime * deltaTime * 0.5f);
+	velocity += frameAcceleration * deltaTime;
+	frameAcceleration = {};
 }
 
-void physics::Body::ApplyForce(glm::vec3 direction, float magnitude, float deltaTime) {
+void physics::Body::StopMomentum(glm::vec3 offsetAndDirection) {
+	position += offsetAndDirection;
+	float velocityMagnitude = glm::length(velocity);
+	if (velocityMagnitude <= FLT_EPSILON) {
+		return;
+	}
+	glm::vec3 normalizedVelocity = glm::normalize(velocity);
+	glm::vec3 normalizedFlippedDirection = glm::normalize(-offsetAndDirection);
+	glm::vec3 counteractVelocity = glm::vec3{
+		abs(velocity.x) * normalizedFlippedDirection.x,
+		abs(velocity.y) * normalizedFlippedDirection.y,
+		abs(velocity.z) * normalizedFlippedDirection.z,
+	};
+	velocity -= counteractVelocity;
+}
+
+void physics::Body::ApplyFrameForce(glm::vec3 direction, float magnitude) {
 	// Can't apply forces on children, only the parent, and also the direction may not be zero
 	if (stationary || parent != nullptr || glm::length(direction) < FLT_EPSILON) {
 		return;
 	}
-	glm::vec3 acceleration = glm::normalize(direction) * magnitude;
-	velocity += deltaTime * acceleration;
+	frameAcceleration += glm::normalize(direction) * magnitude;
 }
 
 void physics::Body::ApplyInstantForce(glm::vec3 direction, float magnitude) {
-	ApplyForce(direction, magnitude, 1.0f);
+	// Can't apply forces on children, only the parent, and also the direction may not be zero
+	if (stationary || parent != nullptr || glm::length(direction) < FLT_EPSILON) {
+		return;
+	}
+	velocity += glm::normalize(direction) * magnitude;
 }
 
 void physics::Body::StopVelocity() {
@@ -68,10 +86,7 @@ bool handleSphereCapsule(physics::SphereBody* aSphere, physics::CapsuleBody* bCa
 }
 
 bool handleSphereAABB(physics::SphereBody* aSphere, physics::AABBBody* bAABB) {
-	physics::Sphere sphere = aSphere->GetSphere();
-	physics::Point closestPoint = {};
-	physics::ClosestPtPointAABB(sphere.c, *bAABB, closestPoint);
-	return physics::TestSpherePoint(sphere, closestPoint);
+	return physics::TestSphereAABB(*aSphere, *bAABB);
 }
 
 bool handleCapsuleCapsule(physics::CapsuleBody* aCapsule, physics::CapsuleBody* bCapsule) {
@@ -79,33 +94,7 @@ bool handleCapsuleCapsule(physics::CapsuleBody* aCapsule, physics::CapsuleBody* 
 }
 
 bool handleCapsuleAABB(physics::CapsuleBody* aCapsule, physics::AABBBody* bAABB) {
-	// We can do a quick comparison of the AABB's spherical bounds to see if we need to do a more in-depth check
-	physics::Capsule capsule = aCapsule->GetCapsule();
-	auto aabbSphere = physics::Sphere{bAABB->Position(), bAABB->SphereRadius()};
-	if (!physics::TestSphereCapsule(aabbSphere, capsule)) {
-		return false;
-	}
-	// We're doing 3 tests here on spheres to approximate a proper test of the entire capsule. This is definitely not
-	// the best way to do this, but it works for now.
-	physics::AABB aabb = bAABB->GetAABB();
-	physics::Point closestPoint = {};
-	// Check the first end cap
-	physics::ClosestPtPointAABB(capsule.a, aabb, closestPoint);
-	if (physics::TestSpherePoint(physics::Sphere{capsule.a, capsule.r}, closestPoint)) {
-		return true;
-	}
-	// Check the other end cap
-	physics::ClosestPtPointAABB(capsule.b, aabb, closestPoint);
-	if (physics::TestSpherePoint(physics::Sphere{capsule.b, capsule.r}, closestPoint)) {
-		return true;
-	}
-	// Check the middle
-	physics::ClosestPtPointAABB(aCapsule->Position(), aabb, closestPoint);
-	if (physics::TestSpherePoint(physics::Sphere{aCapsule->Position(), capsule.r}, closestPoint)) {
-		return true;
-	}
-	// No collisions detected
-	return false;
+	return physics::TestCapsuleAABB(*aCapsule, *bAABB);
 }
 
 bool handleAABBAABB(physics::AABBBody* aAABB, physics::AABBBody* bAABB) {
