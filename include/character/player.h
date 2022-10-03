@@ -17,6 +17,15 @@ namespace character {
 		~Player() = default;
 
 		void UpdatePosition(mouse::Info& mouse);
+		void Draw();
+		enum WeaponType {
+			PISTOL,
+			SHOTGUN,
+			SNIPER,
+			MELEE,
+		};
+		void SetCurrentWeapon(WeaponType weapon);
+
 		glm::vec3 GetPosition();
 		physics::Body* GetBody();
 
@@ -28,6 +37,8 @@ namespace character {
 		float angleX = 0.0f;
 		float angleY = 0.0f;
 		std::unique_ptr<Camera> camera;
+		std::unique_ptr<Model> pistol, shotgun, sniper;
+		WeaponType currentWeapon = MELEE;
 	};
 }
 

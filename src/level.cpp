@@ -39,6 +39,7 @@ level::Level::Level() {
 
 void level::Level::Draw() {
 	DrawModel(*levelModel, (Vector3){0, 0, 0}, 10.0f, WHITE);
+	player->Draw();
 	for (std::shared_ptr<character::Enemy> enemy: enemies) {
 		enemy->Draw();
 	}
