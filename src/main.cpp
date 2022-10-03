@@ -37,8 +37,7 @@ int main(void) {
 	auto menu = std::unique_ptr<gui::Component>(
 		gui::NewVerticalPanel({})
 	);
-
-	// TODO: move into level definition
+	
 	// initialize level
 	level::Level level = level::Level();
 	level.SetDimensions({64, 64, 64});

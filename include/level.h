@@ -36,6 +36,9 @@ namespace level {
 		void Update();
 
 	private:
+		const float DEATH_TIME = 10.f;
+		float deathTimer = DEATH_TIME;
+
 		std::shared_ptr<Model> skullModel, turretModel, vampireModel;
 		std::shared_ptr<Model> levelModel;
 		std::shared_ptr<character::Player> player;

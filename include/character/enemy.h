@@ -24,9 +24,12 @@ namespace character {
 
 		virtual void Update(glm::vec3 playerPos) {};
 		virtual void Draw() {};
+
+		virtual float GetHealth() { return health; }
 		virtual void Attack() {};
+
+		virtual void TakeDamage(float dmg) { health -= dmg; }
 		virtual void Die() {};
-		virtual void TakeDamage(float dmg) {};
 
 	protected:
 		std::shared_ptr<Model> modelObj;

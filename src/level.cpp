@@ -49,6 +49,15 @@ void level::Level::Update() {
 	for (auto enemy: enemies) {
 		enemy->Update(playerPos);
 	}
+
+	deathTimer -= GetFrameTime();
+	if (deathTimer <= 0.f) {
+		for (auto enemy: enemies) {
+			if (enemy->GetHealth() < 0.f) {
+				enemy->Die();
+			}
+		}
+	}
 }
 
 void level::Level::AddBody(std::shared_ptr<physics::Body> b) {
