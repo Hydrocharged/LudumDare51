@@ -7,6 +7,7 @@
 #ifndef CHARACTER_SKULL_H
 #define CHARACTER_SKULL_H
 #include <character/enemy.h>
+#include <rlgl.h>
 
 namespace character {
 	class Skull : public Enemy {

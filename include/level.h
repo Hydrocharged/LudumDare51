@@ -8,14 +8,8 @@
 #define LEVEL_H
 
 #include <vector>
-
-#include <random.h>
-#include <physics/body.h>
 #include <character/player.h>
 #include <character/enemy.h>
-#include <character/skull.h>
-#include <character/turret.h>
-#include <character/vampire.h>
 
 namespace level {
 	class Level {

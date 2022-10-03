@@ -6,6 +6,12 @@
 
 #include <raylib.h>
 #include <level.h>
+#include <render/render.h>
+#include <random.h>
+#include <physics/body.h>
+#include <character/skull.h>
+#include <character/turret.h>
+#include <character/vampire.h>
 
 level::Level::Level() {
 	// Load enemy models
@@ -28,6 +34,11 @@ level::Level::Level() {
 void level::Level::Draw() {
 	for (std::shared_ptr<character::Enemy> enemy: enemies) {
 		enemy->Draw();
+	}
+
+	for (auto body: bodies) {
+		render::Body(body.get(), GREEN);
+		render::BodyWireframe(body.get(), BLACK);
 	}
 }
 
