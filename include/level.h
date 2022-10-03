@@ -37,6 +37,7 @@ namespace level {
 
 	private:
 		std::shared_ptr<Model> skullModel, turretModel, vampireModel;
+		std::shared_ptr<Model> levelModel;
 		std::shared_ptr<character::Player> player;
 
 		glm::vec3 dimensions;
