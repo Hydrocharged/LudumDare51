@@ -20,8 +20,8 @@ namespace character {
 		glm::vec3 GetPosition();
 		physics::Body* GetBody();
 
-		operator Camera();
-		operator Camera*();
+		operator ::Camera();
+		operator ::Camera*();
 
 	private:
 		std::unique_ptr<physics::CapsuleBody> body;

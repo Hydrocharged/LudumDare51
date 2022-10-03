@@ -6,6 +6,8 @@
 
 #include <physics/body.h>
 
+const float gravity = 9.8f;
+
 void physics::Body::SetParent(physics::Body* p) {
 	parent = p;
 }
@@ -17,13 +19,44 @@ glm::vec3 physics::Body::Position() {
 	return position + parent->Position();
 }
 
-void physics::Body::ApplyForce(glm::vec3 direction, float magnitude) {
-	// Can't apply forces on children, only the parent
+void physics::Body::Update(float deltaTime) {
 	if (stationary || parent != nullptr) {
 		return;
 	}
-	//TODO: should have the deltaTime somewhere in here
-	position = position + (glm::normalize(direction) * magnitude);
+	//TODO: disable movement if colliding with something
+	if (hasGravity) {
+		ApplyForce({0, -1.0f, 0}, gravity, deltaTime);
+	}
+	glm::vec3 horizontalComponents{velocity.x, 0, velocity.z};
+	float horizontalMagnitude = glm::length(horizontalComponents);
+	glm::vec3 verticalComponent{0, velocity.y, 0};
+	float verticalMagnitude = velocity.y;
+	if (horizontalMagnitude > FLT_EPSILON) {
+		glm::vec3 newHComp = -(horizontalMagnitude * 4.0f * glm::log(horizontalMagnitude)) * (glm::normalize(horizontalComponents)) * deltaTime * hDrag;
+		horizontalComponents += newHComp;
+	}
+	if (verticalMagnitude > FLT_EPSILON) {
+		verticalComponent += -(verticalMagnitude * verticalMagnitude) * (glm::normalize(verticalComponent)) * deltaTime * vDrag;
+	}
+	velocity = horizontalComponents + verticalComponent;
+	position += deltaTime * velocity;
+}
+
+void physics::Body::ApplyForce(glm::vec3 direction, float magnitude, float deltaTime) {
+	// Can't apply forces on children, only the parent, and also the direction may not be zero
+	if (stationary || parent != nullptr || glm::length(direction) < FLT_EPSILON) {
+		return;
+	}
+	glm::vec3 acceleration = glm::normalize(direction) * magnitude;
+	velocity += deltaTime * acceleration;
+}
+
+void physics::Body::ApplyInstantForce(glm::vec3 direction, float magnitude) {
+	ApplyForce(direction, magnitude, 1.0f);
+}
+
+void physics::Body::StopVelocity() {
+	velocity = glm::vec3(0);
 }
 
 bool handleSphereSphere(physics::SphereBody* aSphere, physics::SphereBody* bSphere) {
