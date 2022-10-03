@@ -36,6 +36,8 @@ namespace level {
 		};
 		void SpawnEnemy(EnemyType enemyType, unsigned int numSpawns);
 
+		void AddBody(std::shared_ptr<physics::Body> b);
+
 		void Draw();
 		void Update();
 
@@ -49,7 +51,7 @@ namespace level {
 		std::vector<glm::vec3> enemySpawns;
 		std::vector<std::shared_ptr<character::Enemy>> enemies;
 
-		std::vector<std::unique_ptr<physics::Body>> bodies;
+		std::vector<std::shared_ptr<physics::Body>> bodies;
 	};
 }
 

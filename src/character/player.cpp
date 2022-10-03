@@ -52,6 +52,8 @@ void character::Player::UpdatePosition(mouse::Info& mouse) {
 	auto backPressed = (float)IsKeyDown(KEY_S);
 	auto leftPressed = (float)IsKeyDown(KEY_A);
 	auto rightPressed = (float)IsKeyDown(KEY_D);
+	auto spacePressed = (float)IsKeyDown(KEY_SPACE);
+	auto ctrlPressed = (float)IsKeyDown(KEY_LEFT_CONTROL);
 
 	glm::vec3 direction = {};
 	direction.x += (sinf(angleX) * backPressed -
@@ -62,6 +64,8 @@ void character::Player::UpdatePosition(mouse::Info& mouse) {
 					cosf(angleX) * forwardPressed +
 					sinf(angleX) * leftPressed -
 					sinf(angleX) * rightPressed);
+	direction.y += spacePressed * moveSpeed * GetFrameTime();
+	direction.y -= ctrlPressed * moveSpeed * GetFrameTime();
 	if (direction.x != 0.0f && direction.z != 0.0f) {
 		direction = glm::normalize(direction);
 		body->ApplyForce(direction, moveSpeed * GetFrameTime());

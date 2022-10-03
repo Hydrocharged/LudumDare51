@@ -38,6 +38,10 @@ void level::Level::Update() {
 	}
 }
 
+void level::Level::AddBody(std::shared_ptr<physics::Body> b) {
+	bodies.push_back(b);
+}
+
 std::shared_ptr<character::Player> level::Level::GetPlayer() {
 	return player;
 }

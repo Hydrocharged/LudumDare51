@@ -48,6 +48,28 @@ int main(void) {
 	enemySpawns.push_back(glm::vec3(0, 0, 0));
 	level.SetEnemySpawns(enemySpawns);
 
+	level.AddBody(std::make_shared<physics::AABBBody>(glm::vec3{0, -0.5, 0}, glm::vec3{32, 1, 32}));
+
+	level.AddBody(std::make_shared<physics::AABBBody>(glm::vec3{0, 0.5, 20}, glm::vec3{32, 1, 8}));
+	level.AddBody(std::make_shared<physics::AABBBody>(glm::vec3{0, 0.5, -20}, glm::vec3{32, 1, 8}));
+	level.AddBody(std::make_shared<physics::AABBBody>(glm::vec3{20, 0.5, 0}, glm::vec3{8, 1, 32}));
+	level.AddBody(std::make_shared<physics::AABBBody>(glm::vec3{-20, 0.5, 0}, glm::vec3{8, 1, 32}));
+
+	level.AddBody(std::make_shared<physics::AABBBody>(glm::vec3{0, 1.5, 28}, glm::vec3{48, 1, 8}));
+	level.AddBody(std::make_shared<physics::AABBBody>(glm::vec3{0, 1.5, -28}, glm::vec3{48, 1, 8}));
+	level.AddBody(std::make_shared<physics::AABBBody>(glm::vec3{28, 1.5, 0}, glm::vec3{8, 1, 48}));
+	level.AddBody(std::make_shared<physics::AABBBody>(glm::vec3{-28, 1.5, 0}, glm::vec3{8, 1, 48}));
+
+	level.AddBody(std::make_shared<physics::AABBBody>(glm::vec3{20, 1.5, 20}, glm::vec3{8, 1, 8}));
+	level.AddBody(std::make_shared<physics::AABBBody>(glm::vec3{20, 1.5, -20}, glm::vec3{8, 1, 8}));
+	level.AddBody(std::make_shared<physics::AABBBody>(glm::vec3{-20, 1.5, 20}, glm::vec3{8, 1, 8}));
+	level.AddBody(std::make_shared<physics::AABBBody>(glm::vec3{-20, 1.5, -20}, glm::vec3{8, 1, 8}));
+
+	level.AddBody(std::make_shared<physics::AABBBody>(glm::vec3{28, 2.5, 28}, glm::vec3{8, 1, 8}));
+	level.AddBody(std::make_shared<physics::AABBBody>(glm::vec3{28, 2.5, -28}, glm::vec3{8, 1, 8}));
+	level.AddBody(std::make_shared<physics::AABBBody>(glm::vec3{-28, 2.5, 28}, glm::vec3{8, 1, 8}));
+	level.AddBody(std::make_shared<physics::AABBBody>(glm::vec3{-28, 2.5, -28}, glm::vec3{8, 1, 8}));
+
 #if defined(PLATFORM_WEB)
 	emscripten_set_main_loop(UpdateDrawFrame, 0, 1);
 #else
@@ -69,7 +91,29 @@ int main(void) {
 		BeginDrawing();
 		ClearBackground({255, 255, 255, 255});
 		BeginMode3D(*level.GetPlayer());
-		DrawGrid(10, 1.0f);
+		DrawGrid(128, 1.0f);
+
+		DrawCube({0, -0.5, 0}, 32, 1, 32, RED);
+
+		DrawCube({0, 0.5, 20}, 32, 1, 8, BLUE);
+		DrawCube({0, 0.5, -20}, 32, 1, 8, BLUE);
+		DrawCube({20, 0.5, 0}, 8, 1, 32, BLUE);
+		DrawCube({-20, 0.5, 0}, 8, 1, 32, BLUE);
+
+		DrawCube({0, 1.5, 28}, 48, 1, 8, GREEN);
+		DrawCube({0, 1.5, -28}, 48, 1, 8, GREEN);
+		DrawCube({28, 1.5, 0}, 8, 1, 48, GREEN);
+		DrawCube({-28, 1.5, 0}, 8, 1, 48, GREEN);
+
+		DrawCube({20, 1.5, 20}, 8, 1, 8, BROWN);
+		DrawCube({20, 1.5, -20}, 8, 1, 8, BROWN);
+		DrawCube({-20, 1.5, 20}, 8, 1, 8, BROWN);
+		DrawCube({-20, 1.5, -20}, 8, 1, 8, BROWN);
+
+		DrawCube({28, 2.5, 28}, 8, 1, 8, BLACK);
+		DrawCube({28, 2.5, -28}, 8, 1, 8, BLACK);
+		DrawCube({-28, 2.5, 28}, 8, 1, 8, BLACK);
+		DrawCube({-28, 2.5, -28}, 8, 1, 8, BLACK);
 
 		// Update level
 		level.Update();
