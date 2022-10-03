@@ -38,7 +38,7 @@ int main(void) {
 		gui::NewVerticalPanel({})
 	);
 
-	// TODO: move into level 1 constructor
+	// TODO: move into level definition
 	// initialize level
 	level::Level level = level::Level();
 	level.SetDimensions({64, 64, 64});
