@@ -25,6 +25,23 @@ level::Level::Level() {
 
 }
 
+void level::Level::Draw() {
+	for (std::shared_ptr<character::Enemy> enemy: enemies) {
+		enemy->Draw();
+	}
+}
+
+void level::Level::Update() {
+	// TODO: figure out how pointers work
+	//glm::vec3 playerPos = player->GetPosition();
+
+	for (auto enemy: enemies) {
+		enemy->Update(playerPos);
+	}
+
+	// TODO: update other stuff
+}
+
 void level::Level::SetEnemySpawns(std::vector<glm::vec3>& enemySpawns) {
 	this->enemySpawns = std::vector<glm::vec3>(enemySpawns);
 }

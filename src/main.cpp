@@ -4,13 +4,11 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-#include <raylib.h>
 #include <vector>
-#include <character/player.h>
-#include <character/skull.h>
-#include <character/turret.h>
-#include <character/vampire.h>
+
+#include <raylib.h>
 #include <gui/gui.h>
+#include <level.h>
 
 #if defined(PLATFORM_WEB)
 #include <emscripten/emscripten.h>
@@ -35,9 +33,7 @@ int main(void) {
 
 	gui::fontmanager::Load();
 	auto mouse = mouse::Info{};
-	character::Player player(4.0f, 2.0f, 4.0f);
-	Vector3 cubePosition = {0.0f, 0.0f, 0.0f};
-	Vector3 cubeSize = {2.0f, 2.0f, 2.0f};
+	std::shared_ptr<character::Player> player = std::make_shared<character::Player>(4.0f, 2.0f, 4.0f);
 	Ray ray = {0};
 	RayCollision collision = {0};
 
@@ -45,16 +41,13 @@ int main(void) {
 		gui::NewVerticalPanel({})
 	);
 
-	// initialize enemies
-	std::vector<std::unique_ptr<character::Enemy>> enemies;
-	for (int i = 0; i < 5; i++) {
-	}
-	for (int i = 0; i < 3; i++) {
-		enemies.push_back(std::make_unique<character::Turret>(glm::vec3{2.0f * i, 0.0f, 2.0f * i}, &turretModel));
-	}
-	for (int i = 0; i < 1; i++) {
-		enemies.push_back(std::make_unique<character::Vampire>(glm::vec3{2.0f * i, 0.0f, 2.0f * i}, &vampireModel));
-	}
+	// TODO: move into level 1 constructor
+	// initialize level
+	level::Level level = level::Level();
+	//level.SetPlayerSpawn({0, 0, 0});
+	std::vector<glm::vec3> enemySpawns;
+	enemySpawns.push_back(glm::vec3(0, 0, 0));
+	level.SetEnemySpawns(enemySpawns);
 
 #if defined(PLATFORM_WEB)
 	emscripten_set_main_loop(UpdateDrawFrame, 0, 1);
@@ -67,37 +60,31 @@ int main(void) {
 		if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
 			if (!collision.hit) {
 				ray = GetMouseRay({screenRect.ContainerWidth / 2.0f, screenRect.ContainerHeight / 2.0f}, player);
-				collision = GetRayCollisionBox(ray,
-					BoundingBox{
-						Vector3{cubePosition.x - cubeSize.x / 2, cubePosition.y - cubeSize.y / 2, cubePosition.z - cubeSize.z / 2},
-						Vector3{cubePosition.x + cubeSize.x / 2, cubePosition.y + cubeSize.y / 2, cubePosition.z + cubeSize.z / 2},
-					}
-				);
 			} else {
 				collision.hit = false;
 			}
 		}
 
+		if (IsKeyPressed(KEY_I)) {
+			level.SpawnEnemy(level::Level::EnemyType::SKULL, 1);
+		}
+		if (IsKeyPressed(KEY_O)) {
+			level.SpawnEnemy(level::Level::EnemyType::TURRET, 1);
+		}
+		if (IsKeyPressed(KEY_P)) {
+			level.SpawnEnemy(level::Level::EnemyType::VAMPIRE, 1);
+		}
+
 		BeginDrawing();
 		ClearBackground({255, 255, 255, 255});
-		// TODO: add some of this logic to enemies
 		BeginMode3D(player);
-
-		if (collision.hit) {
-			DrawCube(cubePosition, cubeSize.x, cubeSize.y, cubeSize.z, RED);
-			DrawCubeWires(cubePosition, cubeSize.x, cubeSize.y, cubeSize.z, DARKGRAY);
-		} else {
-			DrawCube(cubePosition, cubeSize.x, cubeSize.y, cubeSize.z, GRAY);
-			DrawCubeWires(cubePosition, cubeSize.x, cubeSize.y, cubeSize.z, DARKGRAY);
-		}
 		DrawRay(ray, BLUE);
 		DrawGrid(10, 1.0f);
 
-		// Update enemies
-		for (auto& enemy: enemies) {
-			enemy->Update(player.GetPosition());
-			enemy->Draw();
-		}
+		// Update level
+		level.SetPlayerPos(player.GetPosition()); // TODO: something else
+		level.Update();
+		level.Draw();
 
 		EndMode3D();
 		menu->Draw(screenRect.PosX, screenRect.PosY, screenRect.ContainerWidth, screenRect.ContainerHeight);
