@@ -41,7 +41,7 @@ int main(void) {
 	// TODO: move into level 1 constructor
 	// initialize level
 	level::Level level = level::Level();
-	level.SetDimensions({100, 100, 100});
+	level.SetDimensions({64, 64, 64});
 	level.SetPlayerSpawn({0, 2, 0});
 	level.SpawnPlayer();
 	std::vector<glm::vec3> enemySpawns;

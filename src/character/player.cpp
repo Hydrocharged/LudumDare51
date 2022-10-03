@@ -11,12 +11,15 @@
 
 //TODO: speed should be physics-based, also add jumping and dodging mechanics
 
-const float moveSpeedConstant = 2.0f;
-const float sprintModifier = 4.0f;
+const float moveSpeedConstant = 40.0f;
+const float sprintModifier = 3.0f;
+const float dashModifier = 2.5f;
 const float mouseSensitivity = 0.5f;
 
 character::Player::Player(glm::vec3 position) {
 	body = std::make_unique<physics::CapsuleBody>(position, glm::vec3{0, 1.84f, 0}, glm::vec3{0, 0, 0}, 0.5f);
+	body->SetGravity(false);
+
 	camera = std::make_unique<Camera>(Camera{0});
 	camera->position = Vector3{position.x, position.y, position.z};
 	camera->target = Vector3{0.0f, 0.0f, 0.0f};
@@ -46,14 +49,10 @@ character::Player::operator ::Camera*() {
 }
 
 void character::Player::UpdatePosition(mouse::Info& mouse) {
-	float moveSpeed = moveSpeedConstant + (IsKeyDown(KEY_LEFT_SHIFT) ? sprintModifier : 1.0f);
-
 	auto forwardPressed = (float)IsKeyDown(KEY_W);
 	auto backPressed = (float)IsKeyDown(KEY_S);
 	auto leftPressed = (float)IsKeyDown(KEY_A);
 	auto rightPressed = (float)IsKeyDown(KEY_D);
-	auto spacePressed = (float)IsKeyDown(KEY_SPACE);
-	auto ctrlPressed = (float)IsKeyDown(KEY_LEFT_CONTROL);
 
 	glm::vec3 direction = {};
 	direction.x += (sinf(angleX) * backPressed -
@@ -64,12 +63,25 @@ void character::Player::UpdatePosition(mouse::Info& mouse) {
 					cosf(angleX) * forwardPressed +
 					sinf(angleX) * leftPressed -
 					sinf(angleX) * rightPressed);
-	direction.y += spacePressed * moveSpeed * GetFrameTime();
-	direction.y -= ctrlPressed * moveSpeed * GetFrameTime();
-	if (direction.x != 0.0f && direction.z != 0.0f) {
-		direction = glm::normalize(direction);
-		body->ApplyForce(direction, moveSpeed * GetFrameTime());
+	if (glm::length(direction) > FLT_EPSILON) {
+		if (IsKeyPressed(KEY_F)) {
+			body->ApplyInstantForce(direction, dashModifier * moveSpeedConstant);
+		} else {
+			body->ApplyForce(direction, moveSpeedConstant * (IsKeyDown(KEY_LEFT_SHIFT) ? sprintModifier : 1.0f), GetFrameTime());
+		}
+	} else {
+		glm::vec3 hVelocity = body->GetHorizontalVelocity();
+		float hMagnitude = glm::length(hVelocity);
+		if (hMagnitude > FLT_EPSILON) {
+			if (hMagnitude > 0.25f) {
+				body->ApplyForce(-glm::normalize(hVelocity), 20.0f, GetFrameTime());
+			} else {
+				body->ApplyInstantForce(-glm::normalize(hVelocity), hMagnitude);
+			}
+		}
 	}
+	//TODO: this should be in the level portion
+	body->Update(GetFrameTime());
 
 	angleX -= (mouse.CurrentX - mouse.PrevX) * mouseSensitivity * GetFrameTime();
 	angleY -= (mouse.CurrentY - mouse.PrevY) * mouseSensitivity * GetFrameTime();
@@ -79,7 +91,7 @@ void character::Player::UpdatePosition(mouse::Info& mouse) {
 
 	Matrix matTranslation = {1.0f, 0.0f, 0.0f, 0.0f,
 							 0.0f, 1.0f, 0.0f, 0.0f,
-							 0.0f, 0.0f, 1.0f, 1.0f,
+							 0.0f, 0.0f, 1.0f, 10.0f,
 							 0.0f, 0.0f, 0.0f, 1.0f};
 
 	Matrix matRotation = {1.0f, 0.0f, 0.0f, 0.0f,

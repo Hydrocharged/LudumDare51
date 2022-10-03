@@ -14,12 +14,21 @@ namespace physics {
 	public:
 		explicit Body(glm::vec3 position) : position(position) {}
 		virtual ~Body() = default;
+		glm::vec3 GetVelocity() { return velocity; }
+		glm::vec3 GetHorizontalVelocity() { return glm::vec3{velocity.x, 0, velocity.z}; }
+		glm::vec3 GetVerticalVelocity() { return glm::vec3{0, velocity.y, 0}; }
 		void SetPosition(glm::vec3 pos) { this->position = pos; }
 		void SetStationary(bool val) { stationary = val; }
+		void SetGravity(bool enabled) { hasGravity = enabled; }
+		void SetHorizontalDrag(float drag) { hDrag = drag; }
+		void SetVerticalDrag(float drag) { vDrag = drag; }
 
 		glm::vec3 Position();
 		void SetParent(Body* p);
-		void ApplyForce(glm::vec3 direction, float magnitude);
+		void Update(float deltaTime);
+		void ApplyForce(glm::vec3 direction, float magnitude, float deltaTime);
+		void ApplyInstantForce(glm::vec3 direction, float magnitude);
+		void StopVelocity();
 		bool CollidesWith(Body* otherBody);
 
 		virtual ColliderType ColliderType() = 0;
@@ -27,10 +36,11 @@ namespace physics {
 	protected:
 		Body* parent = nullptr;
 		bool stationary = false;
+		bool hasGravity = true;
 		glm::vec3 position;
 		glm::vec3 velocity = {};
-		float maxHorizontalMagnitude = 1.0f;
-		float maxVerticalMagnitude = 1.0f;
+		float hDrag = 1.0f;
+		float vDrag = 1.0f;
 	};
 
 	class SphereBody : public Body {
