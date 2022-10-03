@@ -29,7 +29,7 @@ namespace character {
 		virtual void Attack() {};
 
 		virtual void TakeDamage(float dmg) { health -= dmg; }
-		virtual void Die() {};
+		virtual void Die() { isDead = true; }
 
 	protected:
 		std::shared_ptr<Model> modelObj;
@@ -39,6 +39,7 @@ namespace character {
 
 		float health;
 		float damage;
+		bool isDead = false;
 
 		// TODO: add more enemy properties
 		// damage, fire rate, health

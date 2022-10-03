@@ -17,6 +17,22 @@ const float dashModifier = 2.5f;
 const float mouseSensitivity = 0.5f;
 
 character::Player::Player(glm::vec3 position) {
+	// load weapons
+	Model pistol = LoadModel("../assets/models/pistol/pistol.obj");
+	Texture2D pistolTexture = LoadTexture("../assets/models/pistol/pistol.png");
+	SetMaterialTexture(&pistol.materials[0], MATERIAL_MAP_DIFFUSE, pistolTexture);
+	this->pistol = std::make_unique<Model>(pistol);
+
+	Model shotgun = LoadModel("../assets/models/shotgun/shotgun.obj");
+	Texture2D shotgunTexture = LoadTexture("../assets/models/shotgun/shotgun.png");
+	SetMaterialTexture(&shotgun.materials[0], MATERIAL_MAP_DIFFUSE, shotgunTexture);
+	this->shotgun = std::make_unique<Model>(shotgun);
+
+	Model sniper = LoadModel("../assets/models/sniper/sniper.obj");
+	Texture2D sniperTexture = LoadTexture("../assets/models/sniper/sniper.png");
+	SetMaterialTexture(&sniper.materials[0], MATERIAL_MAP_DIFFUSE, sniperTexture);
+	this->sniper = std::make_unique<Model>(sniper);
+
 	body = std::make_unique<physics::CapsuleBody>(position, glm::vec3{0, 1.84f, 0}, glm::vec3{0, 0, 0}, 0.5f);
 	body->SetGravity(false);
 
@@ -46,6 +62,26 @@ character::Player::operator ::Camera*() {
 	glm::vec3 bodyPosition = body->Position();
 	camera->position = {bodyPosition.x, bodyPosition.y, bodyPosition.z};
 	return camera.get();
+}
+
+void character::Player::Draw() {
+	Vector3 pos = camera->position;
+	pos.x += 1.0f;
+	pos.y += -0.5f;
+	pos.z += 1.0f;
+	switch (currentWeapon) {
+		case PISTOL:
+			DrawModel(*pistol.get(), pos, 0.5f, WHITE);
+			break;
+		case SHOTGUN:
+			DrawModel(*shotgun.get(), pos, 1.0f, WHITE);
+			break;
+		case SNIPER:
+			DrawModel(*sniper.get(), pos, 1.0f, WHITE);
+			break;
+		case MELEE:
+			break;
+	}
 }
 
 void character::Player::UpdatePosition(mouse::Info& mouse) {
@@ -137,6 +173,10 @@ void character::Player::UpdatePosition(mouse::Info& mouse) {
 	camera->target.x = camera->position.x - matTransform.m12;
 	camera->target.y = camera->position.y - matTransform.m13;
 	camera->target.z = camera->position.z - matTransform.m14;
+}
+
+void character::Player::SetCurrentWeapon(character::Player::WeaponType weapon) {
+	currentWeapon = weapon;
 }
 
 glm::vec3 character::Player::GetPosition() {

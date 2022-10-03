@@ -37,7 +37,7 @@ int main(void) {
 	auto menu = std::unique_ptr<gui::Component>(
 		gui::NewVerticalPanel({})
 	);
-	
+
 	// initialize level
 	level::Level level = level::Level();
 	level.SetDimensions({64, 64, 64});
@@ -85,6 +85,20 @@ int main(void) {
 		}
 		if (IsKeyPressed(KEY_P)) {
 			level.SpawnEnemy(level::Level::EnemyType::VAMPIRE, 1);
+		}
+
+		// switching weapons
+		if (IsKeyPressed(KEY_ONE)) {
+			level.GetPlayer()->SetCurrentWeapon(character::Player::WeaponType::PISTOL);
+		}
+		if (IsKeyPressed(KEY_TWO)) {
+			level.GetPlayer()->SetCurrentWeapon(character::Player::WeaponType::SHOTGUN);
+		}
+		if (IsKeyPressed(KEY_THREE)) {
+			level.GetPlayer()->SetCurrentWeapon(character::Player::WeaponType::SNIPER);
+		}
+		if (IsKeyPressed(KEY_FOUR)) {
+			level.GetPlayer()->SetCurrentWeapon(character::Player::WeaponType::MELEE);
 		}
 
 		BeginDrawing();

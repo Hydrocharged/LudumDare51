@@ -38,7 +38,8 @@ level::Level::Level() {
 }
 
 void level::Level::Draw() {
-	DrawModel(*levelModel, (Vector3){0, 0, 0}, 10.0f, WHITE);
+	DrawModel(*levelModel, (Vector3){0, -1, 0}, 10.0f, WHITE);
+	player->Draw();
 	for (std::shared_ptr<character::Enemy> enemy: enemies) {
 		enemy->Draw();
 	}
@@ -50,8 +51,10 @@ void level::Level::Update() {
 		enemy->Update(playerPos);
 	}
 
+	// The counter that determines death for 10 seconds
 	deathTimer -= GetFrameTime();
 	if (deathTimer <= 0.f) {
+		deathTimer = DEATH_TIME;
 		for (auto enemy: enemies) {
 			if (enemy->GetHealth() < 0.f) {
 				enemy->Die();
