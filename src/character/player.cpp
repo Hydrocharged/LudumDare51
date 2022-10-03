@@ -4,6 +4,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+#include <raylib.h>
 #include <character/player.h>
 #include <memory>
 #include <cmath>
@@ -14,9 +15,10 @@ const float moveSpeedConstant = 2.0f;
 const float sprintModifier = 4.0f;
 const float mouseSensitivity = 0.5f;
 
-character::Player::Player(float x, float y, float z) {
+character::Player::Player(glm::vec3 position) {
+	body = std::make_unique<physics::CapsuleBody>(position, glm::vec3{0, 1.84f, 0}, glm::vec3{0, 0, 0}, 0.5f);
 	camera = std::make_unique<Camera>(Camera{0});
-	camera->position = Vector3{x, y, z};
+	camera->position = Vector3{position.x, position.y, position.z};
 	camera->target = Vector3{0.0f, 0.0f, 0.0f};
 	camera->up = Vector3{0.0f, 1.0f, 0.0f};
 	camera->fovy = 90.0f;
@@ -31,11 +33,15 @@ character::Player::Player(float x, float y, float z) {
 	DisableCursor();
 }
 
-character::Player::operator Camera() {
+character::Player::operator ::Camera() {
+	glm::vec3 bodyPosition = body->Position();
+	camera->position = {bodyPosition.x, bodyPosition.y, bodyPosition.z};
 	return *camera.get();
 }
 
-character::Player::operator Camera*() {
+character::Player::operator ::Camera*() {
+	glm::vec3 bodyPosition = body->Position();
+	camera->position = {bodyPosition.x, bodyPosition.y, bodyPosition.z};
 	return camera.get();
 }
 
@@ -46,21 +52,20 @@ void character::Player::UpdatePosition(mouse::Info& mouse) {
 	auto backPressed = (float)IsKeyDown(KEY_S);
 	auto leftPressed = (float)IsKeyDown(KEY_A);
 	auto rightPressed = (float)IsKeyDown(KEY_D);
-	auto spacePressed = (float)IsKeyDown(KEY_SPACE);
-	auto ctrlPressed = (float)IsKeyDown(KEY_LEFT_CONTROL);
 
-	camera->position.x += (sinf(angleX) * backPressed -
-						   sinf(angleX) * forwardPressed -
-						   cosf(angleX) * leftPressed +
-						   cosf(angleX) * rightPressed) * moveSpeed * GetFrameTime();
-
-	camera->position.z += (cosf(angleX) * backPressed -
-						   cosf(angleX) * forwardPressed +
-						   sinf(angleX) * leftPressed -
-						   sinf(angleX) * rightPressed) * moveSpeed * GetFrameTime();
-
-	camera->position.y += spacePressed * moveSpeed * GetFrameTime();
-	camera->position.y -= ctrlPressed * moveSpeed * GetFrameTime();
+	glm::vec3 direction = {};
+	direction.x += (sinf(angleX) * backPressed -
+					sinf(angleX) * forwardPressed -
+					cosf(angleX) * leftPressed +
+					cosf(angleX) * rightPressed);
+	direction.z += (cosf(angleX) * backPressed -
+					cosf(angleX) * forwardPressed +
+					sinf(angleX) * leftPressed -
+					sinf(angleX) * rightPressed);
+	if (direction.x != 0.0f && direction.z != 0.0f) {
+		direction = glm::normalize(direction);
+		body->ApplyForce(direction, moveSpeed * GetFrameTime());
+	}
 
 	angleX -= (mouse.CurrentX - mouse.PrevX) * mouseSensitivity * GetFrameTime();
 	angleY -= (mouse.CurrentY - mouse.PrevY) * mouseSensitivity * GetFrameTime();
@@ -121,4 +126,8 @@ void character::Player::UpdatePosition(mouse::Info& mouse) {
 glm::vec3 character::Player::GetPosition() {
 	Vector3 pos = camera->position;
 	return {pos.x, pos.y, pos.z};
+}
+
+physics::Body* character::Player::GetBody() {
+	return body.get();
 }

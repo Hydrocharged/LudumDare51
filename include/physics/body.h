@@ -39,6 +39,7 @@ namespace physics {
 		~SphereBody() override = default;
 		enum ColliderType ColliderType() override { return ColliderType::Sphere; }
 		operator Sphere() { return Sphere{Position(), radius}; }
+		Sphere GetSphere() { return *this; }
 
 	protected:
 		float radius;
@@ -50,6 +51,7 @@ namespace physics {
 		~CapsuleBody() override = default;
 		enum ColliderType ColliderType() override { return ColliderType::Capsule; }
 		operator Capsule() { return Capsule{a + Position(), b + Position(), radius}; }
+		Capsule GetCapsule() { return *this; }
 
 	protected:
 		glm::vec3 a;
@@ -63,6 +65,10 @@ namespace physics {
 		~AABBBody() override = default;
 		enum ColliderType ColliderType() override { return ColliderType::AABB; }
 		operator AABB() { return AABB{Position() - halfWHL, Position() + halfWHL}; }
+		AABB GetAABB() { return *this; }
+		[[nodiscard]] float Width() const { return halfWHL.x * 2.0f; }
+		[[nodiscard]] float Height() const { return halfWHL.y * 2.0f; }
+		[[nodiscard]] float Length() const { return halfWHL.z * 2.0f; }
 		[[nodiscard]] float SphereRadius() const { return sphereRadius; }
 
 	protected:

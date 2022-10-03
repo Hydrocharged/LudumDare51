@@ -6,7 +6,6 @@
 
 #ifndef CHARACTER_SKULL_H
 #define CHARACTER_SKULL_H
-
 #include <character/enemy.h>
 
 namespace character {
@@ -19,7 +18,6 @@ namespace character {
 
 		void Draw();
 		void Update(glm::vec3 playerPos);
-
 		void SetTarget(glm::vec3 playerPos);
 
 	private:

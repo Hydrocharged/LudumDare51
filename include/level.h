@@ -23,9 +23,12 @@ namespace level {
 		Level();
 		~Level() = default;
 
+		std::shared_ptr<character::Player> GetPlayer();
+
 		void SetDimensions(glm::vec3 dimensions) { this->dimensions = dimensions; }
-		void SetPlayerPos(glm::vec3 playerPos) { this->playerPos = playerPos; }
+		void SpawnPlayer();
 		void SetPlayerSpawn(glm::vec3 playerSpawn) { this->playerSpawn = playerSpawn; }
+
 		void SetEnemySpawns(std::vector<glm::vec3>& enemySpawns);
 
 		enum EnemyType {
@@ -38,11 +41,11 @@ namespace level {
 
 	private:
 		std::shared_ptr<Model> skullModel, turretModel, vampireModel;
+		std::shared_ptr<character::Player> player;
 
 		glm::vec3 dimensions;
 		glm::vec3 playerSpawn;
-		std::shared_ptr<character::Player> player;
-		glm::vec3 playerPos;
+
 		std::vector<glm::vec3> enemySpawns;
 		std::vector<std::shared_ptr<character::Enemy>> enemies;
 

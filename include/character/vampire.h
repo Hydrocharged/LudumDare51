@@ -6,7 +6,6 @@
 
 #ifndef CHARACTER_VAMPIRE_H
 #define CHARACTER_VAMPIRE_H
-
 #include <character/enemy.h>
 
 namespace character {

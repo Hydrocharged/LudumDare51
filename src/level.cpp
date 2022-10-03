@@ -4,6 +4,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+#include <raylib.h>
 #include <level.h>
 
 level::Level::Level() {
@@ -22,7 +23,6 @@ level::Level::Level() {
 	Texture2D vampireTexture = LoadTexture("../assets/models/vampire/vampire.png");
 	SetMaterialTexture(&vampireModel.materials[0], MATERIAL_MAP_DIFFUSE, vampireTexture);
 	this->vampireModel = std::make_unique<Model>(vampireModel);
-
 }
 
 void level::Level::Draw() {
@@ -32,14 +32,19 @@ void level::Level::Draw() {
 }
 
 void level::Level::Update() {
-	// TODO: figure out how pointers work
-	//glm::vec3 playerPos = player->GetPosition();
-
+	glm::vec3 playerPos = player->GetPosition();
 	for (auto enemy: enemies) {
 		enemy->Update(playerPos);
 	}
+}
 
-	// TODO: update other stuff
+std::shared_ptr<character::Player> level::Level::GetPlayer() {
+	return player;
+}
+
+void level::Level::SpawnPlayer() {
+	// Create player
+	player = std::make_shared<character::Player>(playerSpawn);
 }
 
 void level::Level::SetEnemySpawns(std::vector<glm::vec3>& enemySpawns) {

@@ -9,6 +9,7 @@
 #include <mouse.h>
 #include <memory>
 #include <functional>
+#include <gui/color.h>
 
 namespace gui {
 	struct DrawRect {
@@ -55,13 +56,6 @@ namespace gui {
 			bool MouseUpWasHandled = false;
 		};
 		void update(mouse::Info& mouse, DrawRect& rect, Events& events);
-	};
-
-	struct Color {
-		unsigned char r; // Red
-		unsigned char g; // Green
-		unsigned char b; // Blue
-		unsigned char a; // Alpha
 	};
 }
 

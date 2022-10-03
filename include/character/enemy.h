@@ -37,7 +37,6 @@ namespace character {
 		float health;
 		float damage;
 
-
 		// TODO: add more enemy properties
 		// damage, fire rate, health
 	};

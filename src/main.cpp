@@ -9,6 +9,7 @@
 #include <raylib.h>
 #include <gui/gui.h>
 #include <level.h>
+#include <render/render.h>
 
 #if defined(PLATFORM_WEB)
 #include <emscripten/emscripten.h>
@@ -33,10 +34,6 @@ int main(void) {
 
 	gui::fontmanager::Load();
 	auto mouse = mouse::Info{};
-	std::shared_ptr<character::Player> player = std::make_shared<character::Player>(4.0f, 2.0f, 4.0f);
-	Ray ray = {0};
-	RayCollision collision = {0};
-
 	auto menu = std::unique_ptr<gui::Component>(
 		gui::NewVerticalPanel({})
 	);
@@ -44,7 +41,9 @@ int main(void) {
 	// TODO: move into level 1 constructor
 	// initialize level
 	level::Level level = level::Level();
-	//level.SetPlayerSpawn({0, 0, 0});
+	level.SetDimensions({100, 100, 100});
+	level.SetPlayerSpawn({0, 2, 0});
+	level.SpawnPlayer();
 	std::vector<glm::vec3> enemySpawns;
 	enemySpawns.push_back(glm::vec3(0, 0, 0));
 	level.SetEnemySpawns(enemySpawns);
@@ -54,16 +53,8 @@ int main(void) {
 #else
 	while (!WindowShouldClose()) {
 		mouse.Update();
-		player.UpdatePosition(mouse);
+		level.GetPlayer()->UpdatePosition(mouse);
 		menu->Update(mouse, screenRect);
-
-		if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-			if (!collision.hit) {
-				ray = GetMouseRay({screenRect.ContainerWidth / 2.0f, screenRect.ContainerHeight / 2.0f}, player);
-			} else {
-				collision.hit = false;
-			}
-		}
 
 		if (IsKeyPressed(KEY_I)) {
 			level.SpawnEnemy(level::Level::EnemyType::SKULL, 1);
@@ -77,12 +68,10 @@ int main(void) {
 
 		BeginDrawing();
 		ClearBackground({255, 255, 255, 255});
-		BeginMode3D(player);
-		DrawRay(ray, BLUE);
+		BeginMode3D(*level.GetPlayer());
 		DrawGrid(10, 1.0f);
 
 		// Update level
-		level.SetPlayerPos(player.GetPosition()); // TODO: something else
 		level.Update();
 		level.Draw();
 
