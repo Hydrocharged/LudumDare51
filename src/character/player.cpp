@@ -36,13 +36,13 @@ character::Player::Player(glm::vec3 position) {
 	DisableCursor();
 }
 
-character::Player::operator Camera() {
+character::Player::operator ::Camera() {
 	glm::vec3 bodyPosition = body->Position();
 	camera->position = {bodyPosition.x, bodyPosition.y, bodyPosition.z};
 	return *camera.get();
 }
 
-character::Player::operator Camera*() {
+character::Player::operator ::Camera*() {
 	glm::vec3 bodyPosition = body->Position();
 	camera->position = {bodyPosition.x, bodyPosition.y, bodyPosition.z};
 	return camera.get();

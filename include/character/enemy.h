@@ -6,6 +6,10 @@
 
 #ifndef CHARACTER_ENEMY_H
 #define CHARACTER_ENEMY_H
+
+#include <memory>
+#include <utility>
+
 #include <raylib.h>
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
@@ -15,19 +19,23 @@
 namespace character {
 	class Enemy {
 	public:
-		Enemy(glm::vec3 pos, Model* model);
+		Enemy(glm::vec3 pos, std::shared_ptr<Model> model);
 		virtual ~Enemy() = default;
 
 		virtual void Update(glm::vec3 playerPos) {};
 		virtual void Draw() {};
+
+		virtual float GetHealth() { return health; }
 		virtual void Attack() {};
+
+		virtual void TakeDamage(float dmg) { health -= dmg; }
 		virtual void Die() {};
-		virtual void TakeDamage(float dmg) {};
 
 	protected:
+		std::shared_ptr<Model> modelObj;
+
 		glm::mat4 model;
 		float speed;
-		Model* modelObj;
 
 		float health;
 		float damage;

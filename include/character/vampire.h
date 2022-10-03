@@ -8,15 +8,10 @@
 #define CHARACTER_VAMPIRE_H
 #include <character/enemy.h>
 
-const float VAMPIRE_MOVETIME = 10.0f;
-const float VAMPIRE_STOPTIME = 0.5f;
-const float VAMPIRE_DASH_SPEED = 20.0f;
-const float VAMPIRE_WALK_SPEED = 1.0f;
-
 namespace character {
 	class Vampire : public Enemy {
 	public:
-		Vampire(glm::vec3 pos, Model* modelObj) : Enemy(pos, modelObj) {};
+		Vampire(glm::vec3 pos, std::shared_ptr<Model> modelObj) : Enemy(pos, modelObj) {};
 		~Vampire() = default;
 
 		void Draw();
@@ -24,10 +19,15 @@ namespace character {
 		void SetTarget(glm::vec3 playerPos);
 
 	private:
+		const float VAMPIRE_MOVETIME = 10.f;
+		const float VAMPIRE_STOPTIME = 0.5f;
+		const float VAMPIRE_DASH_SPEED = 20.f;
+		const float VAMPIRE_WALK_SPEED = 1.f;
+
 		glm::vec3 target;
 		float moveTime = VAMPIRE_MOVETIME;
 		float stopTime = VAMPIRE_STOPTIME;
-		bool isDashing = false;
+
 		int moveState = 0;
 	};
 }

@@ -6,7 +6,7 @@
 
 #include <character/enemy.h>
 
-character::Enemy::Enemy(glm::vec3 pos, Model* modelObj) {
+character::Enemy::Enemy(glm::vec3 pos, std::shared_ptr<Model> modelObj) {
 	model = glm::translate(glm::mat4(1.0f), pos);
-	this->modelObj = modelObj;
+	this->modelObj = std::move(modelObj);
 }

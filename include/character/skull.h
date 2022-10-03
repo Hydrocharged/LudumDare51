@@ -7,13 +7,12 @@
 #ifndef CHARACTER_SKULL_H
 #define CHARACTER_SKULL_H
 #include <character/enemy.h>
-
-const float SKULL_MOVETIME = 1.5f;
+#include <rlgl.h>
 
 namespace character {
 	class Skull : public Enemy {
 	public:
-		Skull(glm::vec3 pos, Model* modelObj) : Enemy(pos, modelObj) {
+		Skull(glm::vec3 pos, std::shared_ptr<Model> modelObj) : Enemy(pos, modelObj) {
 			speed = 2.5f;
 		};
 		~Skull() = default;
@@ -24,6 +23,7 @@ namespace character {
 
 	private:
 		// number of seconds before it changes direction
+		const float SKULL_MOVETIME = 1.5f;
 		float moveTime = SKULL_MOVETIME;
 
 		// will try to stay within this donut around the player
