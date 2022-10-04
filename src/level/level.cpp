@@ -130,6 +130,8 @@ void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
 		auto crateBody = crate->GetBody();
 		if (crateBody->CollidesWith(playerBody)) {
 			toDeleteCrates.push_back(crate);
+			player->AddAmmo(crate->GetAmmo());
+			player->AddHealth(crate->GetHealth());
 		}
 	}
 	for (auto crate: toDeleteCrates) {
