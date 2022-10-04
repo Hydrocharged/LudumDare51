@@ -24,7 +24,9 @@ character::Player::Player(glm::vec3 position) {
 	camera->fovy = 90.0f;
 	camera->projection = CAMERA_PERSPECTIVE;
 
-	physics::GetAngleXY(position + cameraHeight, glm::vec3(0), angleX, angleY);
+	glm::vec2 angles = body->GetLookAngles();
+	physics::GetAngleXY(position + cameraHeight, glm::vec3(0), angles);
+	body->SetLookAngles(angles);
 	DisableCursor();
 
 	pistol = model::manager::Get(model::manager::Name::Pistol);
@@ -69,6 +71,8 @@ void character::Player::UpdatePosition(mouse::Info& mouse, float deltaTime) {
 	auto backPressed = (float)IsKeyDown(KEY_S);
 	auto leftPressed = (float)IsKeyDown(KEY_A);
 	auto rightPressed = (float)IsKeyDown(KEY_D);
+	float angleX = body->GetLookAngleX();
+	float angleY = body->GetLookAngleY();
 
 	glm::vec3 direction = {};
 	direction.x += (sinf(angleX) * backPressed -
@@ -104,11 +108,12 @@ void character::Player::UpdatePosition(mouse::Info& mouse, float deltaTime) {
 	angleX -= (mouse.CurrentX - mouse.PrevX) * mouseSensitivity * deltaTime;
 	angleY -= (mouse.CurrentY - mouse.PrevY) * mouseSensitivity * deltaTime;
 
+	physics::SanitizeAngles(angleX, angleY);
 	auto targetVec = physics::GetTargetVector(body->GetPosition() + cameraHeight, angleX, angleY);
-	physics::GetAngleXY(body->GetPosition() + cameraHeight, targetVec, angleX, angleY);
 	camera->target.x = targetVec.x;
 	camera->target.y = targetVec.y;
 	camera->target.z = targetVec.z;
+	body->SetLookAngles({angleX, angleY});
 }
 
 void character::Player::SetCurrentWeapon(character::Player::WeaponType weapon) {

@@ -6,15 +6,17 @@
 
 #include <character/skull.h>
 #include <random.h>
+#include <render/model.h>
 
 character::Skull::Skull(glm::vec3 pos) : Enemy(new physics::CapsuleBody(pos, {0, 0.505f, 0}, {0, 0.5f, 0}, 0.9f)) {
 	model = model::manager::Get(model::manager::Name::Skull);
+	body->SetLookAngleOffsets({PI / 2.0f, 0});
 	body->SetGravity(false);
 };
 
 void character::Skull::Draw(float deltaTime) {
 	glm::vec3 pos = body->GetPosition();
-	DrawModel(model, (Vector3){pos.x, pos.y, pos.z}, 1.0f, WHITE);
+	render::Model(model, body, glm::vec3(1.0f));
 }
 
 void character::Skull::SetTarget(glm::vec3 playerPos) {
@@ -37,6 +39,7 @@ void character::Skull::SetTarget(glm::vec3 playerPos) {
 
 	glm::vec3 fuzz = {x, y, z};
 	target = playerPos + fuzz;
+	body->LookAt(target);
 }
 
 void character::Skull::Update(glm::vec3 playerPos, float deltaTime) {
