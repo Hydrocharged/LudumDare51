@@ -32,6 +32,8 @@ namespace character {
 		physics::CapsuleBody* GetBody();
 		float GetHealth() { return health; }
 
+		void AddHealth(float health) { this->health += health; }
+		void AddAmmo(float ammo) { this->ammo += ammo; }
 		void TakeDamage(float dmg) { health -= dmg; }
 
 		std::vector<Projectile*> Shoot();
@@ -49,6 +51,7 @@ namespace character {
 		float jumpForce = 15.0f;
 		float mouseSensitivity = 0.5f;
 		float health = 100.0f;
+		float ammo = 100.0f;
 		std::unique_ptr<Camera> camera;
 		Model pistol, shotgun, sniper;
 		WeaponType currentWeapon = MELEE;

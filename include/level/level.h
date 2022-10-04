@@ -12,6 +12,7 @@
 #include <character/player.h>
 #include <character/enemy.h>
 #include <character/projectile.h>
+#include <character/crate.h>
 
 namespace level {
 	class Level {
@@ -42,10 +43,11 @@ namespace level {
 		glm::vec3 dimensions;
 		glm::vec3 playerSpawn;
 
+		std::vector<physics::AABBBody*> bodies;
 		std::vector<glm::vec3> enemySpawns;
 		std::set<character::Enemy*> enemies;
-		std::vector<physics::AABBBody*> bodies;
 		std::set<character::Projectile*> projectiles;
+		std::set<character::Crate*> crates;
 
 		void gameOver() {}
 	};
