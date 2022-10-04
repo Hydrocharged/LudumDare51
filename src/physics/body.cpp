@@ -5,6 +5,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include <physics/body.h>
+#include <physics/target.h>
 
 const float gravity = 30.0f;
 
@@ -12,11 +13,20 @@ void physics::Body::SetParent(physics::Body* p) {
 	parent = p;
 }
 
+void physics::Body::SetLookAngles(glm::vec2 angles) {
+	lookAngles = angles + lookAngleOffsets;
+	physics::SanitizeAngles(lookAngles);
+}
+
 glm::vec3 physics::Body::GetPosition() {
 	if (parent == nullptr) {
 		return position;
 	}
 	return position + parent->GetPosition();
+}
+
+glm::mat4 physics::Body::GetRotationMatrix() {
+	return physics::GetRotationMatrix(lookAngles.x, lookAngles.y);
 }
 
 void physics::Body::Update(float deltaTime) {
@@ -144,4 +154,10 @@ bool physics::Body::CollidesWith(physics::Body* otherBody) {
 		}
 	}
 	return false;
+}
+
+void physics::Body::LookAt(glm::vec3 target) {
+	physics::GetAngleXY(GetPosition(), target, lookAngles.x, lookAngles.y);
+	lookAngles += lookAngleOffsets;
+	physics::SanitizeAngles(lookAngles);
 }

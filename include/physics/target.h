@@ -9,8 +9,13 @@
 #include <glm/glm.hpp>
 
 namespace physics {
-	glm::vec3 GetTargetVector(glm::vec3 position, float& angleX, float& angleY);
+	glm::vec3 GetTargetVector(glm::vec3 position, float angleX, float angleY);
 	void GetAngleXY(glm::vec3 position, glm::vec3 target, float& angleX, float& angleY);
+	void GetAngleXY(glm::vec3 position, glm::vec3 target, glm::vec2& angles);
+	glm::mat4 GetRotationMatrix(float angleX, float angleY);
+	glm::mat4 GetRotationMatrix(glm::vec2 angles);
+	void SanitizeAngles(glm::vec2& angles);
+	void SanitizeAngles(float& angleX, float& angleY);
 }
 
 #endif //PHYSICS_TARGET_H
