@@ -91,13 +91,13 @@ void level::Level::SpawnEnemy(character::EnemyType enemyType, unsigned int numSp
 	for (unsigned int i = 0; i < numSpawns; i++) {
 		switch (enemyType) {
 			case character::EnemyType::Skull:
-				enemies.push_back(new character::Skull(enemySpawns[spawnIdx]));
+				enemies.emplace(new character::Skull(enemySpawns[spawnIdx]));
 				break;
 			case character::EnemyType::Turret:
-				enemies.push_back(new character::Turret(enemySpawns[spawnIdx]));
+				enemies.emplace(new character::Turret(enemySpawns[spawnIdx]));
 				break;
 			case character::EnemyType::Vampire:
-				enemies.push_back(new character::Vampire(enemySpawns[spawnIdx]));
+				enemies.emplace(new character::Vampire(enemySpawns[spawnIdx]));
 				break;
 		}
 	}

@@ -7,6 +7,7 @@
 #ifndef LEVEL_H
 #define LEVEL_H
 #include <vector>
+#include <set>
 #include <mouse.h>
 #include <character/player.h>
 #include <character/enemy.h>
@@ -41,7 +42,7 @@ namespace level {
 		glm::vec3 playerSpawn;
 
 		std::vector<glm::vec3> enemySpawns;
-		std::vector<character::Enemy*> enemies;
+		std::set<character::Enemy*> enemies;
 		std::vector<physics::AABBBody*> bodies;
 	};
 
