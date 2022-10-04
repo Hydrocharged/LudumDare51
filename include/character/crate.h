@@ -20,14 +20,15 @@ namespace character {
 
 		float GetHealth() { return health; }
 		float GetAmmo() { return ammo; }
-		physics::AABBBody* GetBody() { return body.get(); }
+		physics::SphereBody* GetBody() { return body.get(); }
 
 	private:
 		Model model;
-		std::unique_ptr<physics::AABBBody> body;
+		std::unique_ptr<physics::SphereBody> body;
 
 		float health;
 		float ammo;
+		float spin = 0.0f;
 	};
 }
 

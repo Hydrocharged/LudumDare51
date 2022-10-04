@@ -67,6 +67,7 @@ void model::manager::Unload() {
 	UnloadModel(models[Name::Turret]);
 	UnloadModel(models[Name::Vampire]);
 	UnloadModel(models[Name::Level1]);
+	UnloadModel(models[Name::Crate]);
 }
 
 Model model::manager::Get(Name name) {

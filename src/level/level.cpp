@@ -133,11 +133,16 @@ void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
 			player->AddAmmo(crate->GetAmmo());
 			player->AddHealth(crate->GetHealth());
 		}
+		for (auto levelBody: bodies) {
+			if (crateBody->CollidesWith(levelBody)) {
+				auto movement = physics::MoveSphereFromAABB(*crateBody, *levelBody);
+				crateBody->StopMomentum(movement);
+			}
+		}
 	}
 	for (auto crate: toDeleteCrates) {
 		crates.erase(crate);
 	}
-
 
 	// The counter that determines death for 10 seconds
 	deathTimer -= deltaTime;
@@ -156,9 +161,8 @@ void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
 			delete enemy;
 		}
 
-
 		// Kill player
-		if (player->GetHealth() < 0.f) {
+		if (player->GetHealth() <= 0.f) {
 			gameOver();
 		}
 	}
