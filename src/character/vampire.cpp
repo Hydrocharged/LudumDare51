@@ -5,9 +5,11 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include <character/vampire.h>
+#include <render/model.h>
 
 character::Vampire::Vampire(glm::vec3 pos) : Enemy(new physics::CapsuleBody(pos, {0, 1.3f, 0}, {0, 1.0f, 0}, 1.0f)) {
 	model = model::manager::Get(model::manager::Name::Vampire);
+	body->SetLookAngleOffsets({-PI / 2.0f, 0});
 }
 
 void character::Vampire::Draw(float deltaTime) {
@@ -16,7 +18,7 @@ void character::Vampire::Draw(float deltaTime) {
 		c = YELLOW;
 	}
 	glm::vec3 pos = body->GetPosition();
-	DrawModel(model, (Vector3){pos.x, pos.y, pos.z}, 1.0f, c);
+	render::Model(model, body, glm::vec3(1.0f));
 }
 
 void character::Vampire::SetTarget(glm::vec3 playerPos) {
@@ -24,6 +26,7 @@ void character::Vampire::SetTarget(glm::vec3 playerPos) {
 	glm::vec3 dir = glm::normalize(playerPos - pos);
 	target = playerPos + 2.f * dir;
 	target.y = 0.0f;
+	body->LookAt(target);
 }
 
 void character::Vampire::Update(glm::vec3 playerPos, float deltaTime) {

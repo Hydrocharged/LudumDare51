@@ -41,8 +41,6 @@ namespace character {
 
 	private:
 		std::unique_ptr<physics::CapsuleBody> body;
-		float angleX = 0.0f;
-		float angleY = 0.0f;
 		float moveSpeedConstant = 40.0f;
 		float sprintModifier = 3.0f;
 		float dashModifier = 1.2f;

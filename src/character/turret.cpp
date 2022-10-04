@@ -6,14 +6,16 @@
 
 #include <character/turret.h>
 #include <random.h>
+#include <render/model.h>
 
 character::Turret::Turret(glm::vec3 pos) : Enemy(new physics::CapsuleBody(pos, {0, 1.005f, 0}, {0, 1.0f, 0}, 1.0f)) {
 	model = model::manager::Get(model::manager::Name::Turret);
+	body->SetLookAngleOffsets({PI / 2.0f, 0});
 }
 
 void character::Turret::Draw(float deltaTime) {
 	glm::vec3 pos = body->GetPosition();
-	DrawModel(model, (Vector3){pos.x, pos.y, pos.z}, 1.0f, WHITE);
+	render::Model(model, body, glm::vec3(1.0f));
 }
 
 glm::vec3 character::Turret::FindTarget(glm::vec3 playerPos) {
@@ -35,13 +37,15 @@ glm::vec3 character::Turret::FindTarget(glm::vec3 playerPos) {
 void character::Turret::Update(glm::vec3 playerPos, float deltaTime) {
 	// After some amount of time, reset the target
 	moveTime -= deltaTime;
+	auto bodyPos = body->GetPosition();
 	if (moveTime <= 0.0f) {
 		moveTime = TURRET_MOVETIME;
-		glm::vec3 pos = body->GetPosition();
 		glm::vec3 target = FindTarget(playerPos);
-		glm::vec3 delta = target - pos;
-		delta.y = 1.f;
-		body->SetPosition(pos + delta);
+		glm::vec3 delta = target - bodyPos;
+		delta.y = target.y + 3.0f;
+		body->SetPosition(bodyPos + delta);
 	}
+	playerPos.y = bodyPos.y;
+	body->LookAt(playerPos);
 	body->Update(deltaTime);
 }
