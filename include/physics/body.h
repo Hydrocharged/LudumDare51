@@ -24,7 +24,7 @@ namespace physics {
 		void SetHorizontalDrag(float drag) { hDrag = drag; }
 		void SetVerticalDrag(float drag) { vDrag = drag; }
 
-		glm::vec3 Position();
+		glm::vec3 GetPosition();
 		void SetParent(Body* p);
 		void Update(float deltaTime);
 		void StopMomentum(glm::vec3 offsetAndDirection);
@@ -34,6 +34,7 @@ namespace physics {
 		bool CollidesWith(Body* otherBody);
 
 		virtual ColliderType ColliderType() = 0;
+		virtual Sphere GetSphere() = 0;
 
 	protected:
 		Body* parent = nullptr;
@@ -51,8 +52,8 @@ namespace physics {
 		SphereBody(glm::vec3 position, float radius) : Body(position), radius(radius) {}
 		~SphereBody() override = default;
 		enum ColliderType ColliderType() override { return ColliderType::Sphere; }
-		operator Sphere() { return Sphere{Position(), radius}; }
-		Sphere GetSphere() { return *this; }
+		operator Sphere() { return Sphere{GetPosition(), radius}; }
+		Sphere GetSphere() override { return *this; }
 
 	protected:
 		float radius;
@@ -63,9 +64,9 @@ namespace physics {
 		CapsuleBody(glm::vec3 position, glm::vec3 a, glm::vec3 b, float radius) : Body(position), a(a), b(b), radius(radius), sphereRadius(glm::distance(a, b) + (radius * 2.0f)) {}
 		~CapsuleBody() override = default;
 		enum ColliderType ColliderType() override { return ColliderType::Capsule; }
-		operator Capsule() { return Capsule{a + Position(), b + Position(), radius}; }
+		operator Capsule() { return Capsule{a + GetPosition(), b + GetPosition(), radius}; }
 		Capsule GetCapsule() { return *this; }
-		Sphere GetSphere() { return Sphere{this->Position(), sphereRadius}; }
+		Sphere GetSphere() override { return Sphere{this->GetPosition(), sphereRadius}; }
 
 	protected:
 		glm::vec3 a;
@@ -79,9 +80,9 @@ namespace physics {
 		AABBBody(glm::vec3 position, glm::vec3 whl) : Body(position), halfWHL(whl / 2.0f), sphereRadius(glm::length(halfWHL)) {}
 		~AABBBody() override = default;
 		enum ColliderType ColliderType() override { return ColliderType::AABB; }
-		operator AABB() { return AABB{Position() - halfWHL, Position() + halfWHL}; }
+		operator AABB() { return AABB{GetPosition() - halfWHL, GetPosition() + halfWHL}; }
 		AABB GetAABB() { return *this; }
-		Sphere GetSphere() { return Sphere{this->Position(), sphereRadius}; }
+		Sphere GetSphere() override { return Sphere{this->GetPosition(), sphereRadius}; }
 		[[nodiscard]] float Width() const { return halfWHL.x * 2.0f; }
 		[[nodiscard]] float Height() const { return halfWHL.y * 2.0f; }
 		[[nodiscard]] float Length() const { return halfWHL.z * 2.0f; }

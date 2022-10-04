@@ -224,10 +224,11 @@ glm::vec3 physics::MoveSphereFromAABB(physics::Sphere sphere, physics::AABB aabb
 }
 
 glm::vec3 physics::MoveCapsuleFromAABB(physics::Capsule capsule, physics::AABB aabb) {
+	glm::vec3 lastMove(-1000.0f);
 	glm::vec3 totalMove(0);
 	physics::Sphere sphere{capsule.a, capsule.r};
 	bool hadCollision = true;
-	while (hadCollision) {
+	for (int i = 0; i < 3 && hadCollision; i++) {
 		hadCollision = false;
 		// Check the "bottom" end cap
 		sphere.c = capsule.b;
@@ -256,6 +257,10 @@ glm::vec3 physics::MoveCapsuleFromAABB(physics::Capsule capsule, physics::AABB a
 			capsule.a += moveAmount;
 			capsule.b += moveAmount;
 		}
+		if (glm::length(totalMove - lastMove) < FLT_EPSILON) {
+			break;
+		}
+		lastMove = totalMove;
 	}
 	return totalMove;
 }
