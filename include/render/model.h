@@ -11,6 +11,7 @@
 
 namespace render {
 	void Model(::Model model, physics::Body* body, glm::vec3 scale);
+	void Model(::Model model, physics::Body* body, glm::vec3 renderPosition, glm::vec3 scale);
 }
 
 #endif //RENDER_RAYLIB_H

@@ -9,13 +9,17 @@
 #include <raymath.h>
 
 void render::Model(::Model model, physics::Body* body, glm::vec3 scale) {
+	Model(model, body, glm::vec3(0.0f), scale);
+}
+
+void render::Model(::Model model, physics::Body* body, glm::vec3 renderPosOffset, glm::vec3 scale) {
 	Matrix matScale = MatrixScale(scale.x, scale.y, scale.z);
 	glm::mat4 pMatRot = body->GetRotationMatrix();
 	Matrix matRotation = Matrix{pMatRot[0][0], pMatRot[0][1], pMatRot[0][2], pMatRot[0][3],
 								pMatRot[1][0], pMatRot[1][1], pMatRot[1][2], pMatRot[1][3],
 								pMatRot[2][0], pMatRot[2][1], pMatRot[2][2], pMatRot[2][3],
 								pMatRot[3][0], pMatRot[3][1], pMatRot[3][2], pMatRot[3][3]};
-	glm::vec3 position = body->GetPosition();
+	glm::vec3 position = body->GetPosition() + renderPosOffset;
 	Matrix matTranslation = MatrixTranslate(position.x, position.y, position.z);
 	Matrix matTransform = MatrixMultiply(MatrixMultiply(matScale, matRotation), matTranslation);
 	model.transform = MatrixMultiply(model.transform, matTransform);
