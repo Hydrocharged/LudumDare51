@@ -9,6 +9,7 @@
 #include <mouse.h>
 #include <memory>
 #include <physics/body.h>
+#include <character/projectile.h>
 
 namespace character {
 	class Player {
@@ -27,7 +28,13 @@ namespace character {
 		void SetCurrentWeapon(WeaponType weapon);
 
 		glm::vec3 GetPosition();
+		glm::vec3 GetCameraPosition();
 		physics::CapsuleBody* GetBody();
+		float GetHealth() { return health; }
+
+		void TakeDamage(float dmg) { health -= dmg; }
+
+		std::vector<Projectile*> Shoot();
 
 		operator ::Camera();
 		operator ::Camera*();
@@ -41,6 +48,7 @@ namespace character {
 		float dashModifier = 1.2f;
 		float jumpForce = 15.0f;
 		float mouseSensitivity = 0.5f;
+		float health = 100.0f;
 		std::unique_ptr<Camera> camera;
 		Model pistol, shotgun, sniper;
 		WeaponType currentWeapon = MELEE;

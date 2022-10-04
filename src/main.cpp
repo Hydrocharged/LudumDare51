@@ -16,6 +16,7 @@
 
 #ifdef _WIN32
 #include <hideconsole.h>
+#include <iostream>
 
 #endif //_WIN32
 
@@ -34,8 +35,13 @@ int main(void) {
 	model::manager::Load();
 	gui::fontmanager::Load();
 	auto mouse = mouse::Info{};
+	float static frametime;
 	auto menu = std::unique_ptr<gui::Component>(
-		gui::NewVerticalPanel({})
+		gui::NewVerticalPanel({
+			gui::NewDynamicLabel("", []()->std::string {
+				return "Frametime: " + std::to_string(frametime) + "ms";
+			})
+		})
 	);
 	auto level = level::GetLevel1();
 
@@ -43,9 +49,14 @@ int main(void) {
 	emscripten_set_main_loop(UpdateDrawFrame, 0, 1);
 #else
 	while (!WindowShouldClose()) {
+		float start = GetTime();
 		float deltaTime = GetFrameTime();
 		mouse.Update();
 		menu->Update(mouse, screenRect);
+
+		if (IsMouseButtonPressed(0)) {
+			std::cout << "left click" << std::endl;
+		}
 
 		if (IsKeyPressed(KEY_I)) {
 			level->SpawnEnemy(character::EnemyType::Skull, 1);
@@ -80,6 +91,7 @@ int main(void) {
 		level->Draw(deltaTime);
 		EndMode3D();
 		menu->Draw(screenRect.PosX, screenRect.PosY, screenRect.ContainerWidth, screenRect.ContainerHeight);
+		frametime = (GetTime() - start) * 1000.f;
 		EndDrawing();
 	}
 #endif
