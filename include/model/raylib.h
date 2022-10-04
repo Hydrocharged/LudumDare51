@@ -16,7 +16,8 @@ namespace model::manager {
 		Skull,
 		Turret,
 		Vampire,
-		Level1
+		Level1,
+		Crate
 	};
 	Model Get(Name name);
 }

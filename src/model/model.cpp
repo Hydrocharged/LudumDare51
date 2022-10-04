@@ -52,6 +52,11 @@ void model::manager::Load() {
 	texture = LoadTexture((pathPrefix + "assets/models/level1/level1.png").c_str());
 	SetMaterialTexture(&model.materials[0], MATERIAL_MAP_DIFFUSE, texture);
 	models[Name::Level1] = model;
+
+	model = LoadModel((pathPrefix + "assets/models/crate/crate.obj").c_str());
+	texture = LoadTexture((pathPrefix + "assets/models/crate/crate.png").c_str());
+	SetMaterialTexture(&model.materials[0], MATERIAL_MAP_DIFFUSE, texture);
+	models[Name::Crate] = model;
 }
 
 void model::manager::Unload() {
