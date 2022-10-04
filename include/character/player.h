@@ -16,8 +16,8 @@ namespace character {
 		Player(glm::vec3 position);
 		~Player() = default;
 
-		void UpdatePosition(mouse::Info& mouse);
-		void Draw();
+		void UpdatePosition(mouse::Info& mouse, float deltaTime);
+		void Draw(float deltaTime);
 		enum WeaponType {
 			PISTOL,
 			SHOTGUN,
@@ -36,8 +36,13 @@ namespace character {
 		std::unique_ptr<physics::CapsuleBody> body;
 		float angleX = 0.0f;
 		float angleY = 0.0f;
+		float moveSpeedConstant = 40.0f;
+		float sprintModifier = 3.0f;
+		float dashModifier = 1.2f;
+		float jumpForce = 15.0f;
+		float mouseSensitivity = 0.5f;
 		std::unique_ptr<Camera> camera;
-		std::unique_ptr<Model> pistol, shotgun, sniper;
+		Model pistol, shotgun, sniper;
 		WeaponType currentWeapon = MELEE;
 	};
 }

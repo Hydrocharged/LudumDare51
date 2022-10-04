@@ -12,11 +12,11 @@ void physics::Body::SetParent(physics::Body* p) {
 	parent = p;
 }
 
-glm::vec3 physics::Body::Position() {
+glm::vec3 physics::Body::GetPosition() {
 	if (parent == nullptr) {
 		return position;
 	}
-	return position + parent->Position();
+	return position + parent->GetPosition();
 }
 
 void physics::Body::Update(float deltaTime) {
@@ -102,11 +102,17 @@ bool handleAABBAABB(physics::AABBBody* aAABB, physics::AABBBody* bAABB) {
 }
 
 bool physics::Body::CollidesWith(physics::Body* otherBody) {
+	// Do a quick sphere check. If they do not touch, there's no need to do the more expensive & accurate checks.
+	if (!physics::TestSphereSphere(this->GetSphere(), otherBody->GetSphere())) {
+		return false;
+	}
+
 	enum ColliderType thisCollider = this->ColliderType();
 	enum ColliderType otherCollider = otherBody->ColliderType();
 	switch (thisCollider + otherCollider) {
 		case ColliderType::Sphere + ColliderType::Sphere: {
-			return handleSphereSphere(static_cast<physics::SphereBody*>(this), static_cast<physics::SphereBody*>(otherBody));
+			// This is covered in the quick case before this switch
+			return true;
 		}
 		case ColliderType::Sphere + ColliderType::Capsule: {
 			if (thisCollider == ColliderType::Sphere) {

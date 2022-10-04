@@ -1,4 +1,4 @@
-// Copyright © 2022 James Cor
+// Copyright © 2022 James Cor & Daylon Wilkins
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -7,27 +7,26 @@
 #ifndef CHARACTER_SKULL_H
 #define CHARACTER_SKULL_H
 #include <character/enemy.h>
-#include <rlgl.h>
+#include <model/raylib.h>
 
 namespace character {
 	class Skull : public Enemy {
 	public:
-		Skull(glm::vec3 pos, std::shared_ptr<Model> modelObj) : Enemy(pos, modelObj) {
-			speed = 2.5f;
-		};
-		~Skull() = default;
+		Skull(glm::vec3 pos);
+		~Skull() override = default;
 
-		void Draw();
-		void Update(glm::vec3 playerPos);
+		void Draw(float deltaTime) override;
+		void Update(glm::vec3 playerPos, float deltaTime) override;
 		void SetTarget(glm::vec3 playerPos);
 
 	private:
-		// number of seconds before it changes direction
+		// Number of seconds before it changes direction
 		const float SKULL_MOVETIME = 1.5f;
 		float moveTime = SKULL_MOVETIME;
 
-		// will try to stay within this donut around the player
-		glm::vec3 target;
+		// Will try to stay within this donut around the player
+		glm::vec3 target{0};
+		float speed = 50.0f;
 		float radMin = 3.0f;
 		float radMax = 10.0f;
 	};

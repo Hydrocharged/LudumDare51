@@ -8,7 +8,12 @@
 #include <gui/fontmanager.h>
 #include <cmath>
 
+#if defined(PLATFORM_WEB)
+const char* fontName = "assets/fonts/SourceCodePro-Regular.ttf";
+#else
 const char* fontName = "../assets/fonts/SourceCodePro-Regular.ttf";
+#endif // PLATFORM_WEB
+
 const int glyphCount = 128;
 std::array<int, 21> fontSizes = {
 	3,

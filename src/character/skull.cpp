@@ -1,14 +1,20 @@
-// Copyright © 2022 James Cor
+// Copyright © 2022 James Cor & Daylon Wilkins
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include <character/skull.h>
+#include <random.h>
 
-void character::Skull::Draw() {
-	glm::vec3 pos = model[3];
-	DrawModel(*modelObj, (Vector3){pos.x, pos.y, pos.z}, 1.0f, WHITE);
+character::Skull::Skull(glm::vec3 pos) : Enemy(new physics::CapsuleBody(pos, {0, 0.505f, 0}, {0, 0.5f, 0}, 0.9f)) {
+	model = model::manager::Get(model::manager::Name::Skull);
+	body->SetGravity(false);
+};
+
+void character::Skull::Draw(float deltaTime) {
+	glm::vec3 pos = body->GetPosition();
+	DrawModel(model, (Vector3){pos.x, pos.y, pos.z}, 1.0f, WHITE);
 }
 
 void character::Skull::SetTarget(glm::vec3 playerPos) {
@@ -23,9 +29,9 @@ void character::Skull::SetTarget(glm::vec3 playerPos) {
 	}
 
 	// Determine how to move on Y-axis, must be above player to go down
-	glm::vec3 pos = model[3];
+	glm::vec3 pos = body->GetPosition();
 	float y = random::GetRandomRange(0.f, radMin);
-	if (random::GetRandomRange(0.f, 1.f) >= 0.5 && pos.y > playerPos.y) {
+	if (random::GetRandomRange(0.f, 1.f) >= 0.75 && pos.y > playerPos.y) {
 		y = -y;
 	}
 
@@ -33,22 +39,20 @@ void character::Skull::SetTarget(glm::vec3 playerPos) {
 	target = playerPos + fuzz;
 }
 
-void character::Skull::Update(glm::vec3 playerPos) {
-	// TODO: GetFrameTime should be replaced with some global variable
+void character::Skull::Update(glm::vec3 playerPos, float deltaTime) {
+	//TODO: figure out how to make it look at player later
 
 	// Move towards target
-	glm::vec3 pos = model[3];
-	glm::vec3 dir = glm::normalize(target - pos);
-	model = glm::translate(model, GetFrameTime() * speed * dir);
+	glm::vec3 dir = target - body->GetPosition();
+	if (glm::length(dir) > FLT_EPSILON) {
+		body->ApplyFrameForce(glm::normalize(dir), speed);
+	}
 
 	// After some amount of time, reset the target
-	moveTime -= GetFrameTime();
+	moveTime -= deltaTime;
 	if (moveTime <= 0.0f) {
 		moveTime = SKULL_MOVETIME;
 		SetTarget(playerPos);
 	}
-
-	// TODO: figure out how to make it look at player later
-	//glm::mat4 view = glm::lookAt(pos, playerPos, {0,1,0});
-	//glm::vec3 forward = normalize(glm::vec3(glm::inverse(view)[2]));
+	body->Update(deltaTime);
 }

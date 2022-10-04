@@ -1,4 +1,4 @@
-// Copyright © 2022 James Cor
+// Copyright © 2022 James Cor & Daylon Wilkins
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -6,39 +6,36 @@
 
 #ifndef CHARACTER_ENEMY_H
 #define CHARACTER_ENEMY_H
-
-#include <memory>
-#include <utility>
-
 #include <raylib.h>
-#include <glm/glm.hpp>
-#include <glm/gtx/quaternion.hpp>
-#include <glm/gtx/transform.hpp>
-#include <random.h>
+#include <physics/body.h>
 
 namespace character {
+	enum class EnemyType {
+		Skull,
+		Turret,
+		Vampire
+	};
+
 	class Enemy {
 	public:
-		Enemy(glm::vec3 pos, std::shared_ptr<Model> model);
-		virtual ~Enemy() = default;
+		Enemy(physics::CapsuleBody* body) : body(body) {}
+		virtual ~Enemy() { delete body; }
 
-		virtual void Update(glm::vec3 playerPos) {};
-		virtual void Draw() {};
-
+		virtual void Update(glm::vec3 playerPos, float deltaTime) = 0;
+		virtual void Draw(float deltaTime) = 0;
+		virtual void Attack() {}
 		virtual float GetHealth() { return health; }
-		virtual void Attack() {};
-
 		virtual void TakeDamage(float dmg) { health -= dmg; }
-		virtual void Die() { isDead = true; }
+		virtual bool IsHit(physics::Body* projectile) { return body->CollidesWith(projectile); }
+
+		void Die() { isDead = true; }
+		physics::CapsuleBody* GetBody() { return body; }
 
 	protected:
-		std::shared_ptr<Model> modelObj;
-
-		glm::mat4 model;
-		float speed;
-
-		float health;
-		float damage;
+		Model model;
+		physics::CapsuleBody* body;
+		float health = 100.0f;
+		float damage = 5.0f;
 		bool isDead = false;
 
 		// TODO: add more enemy properties

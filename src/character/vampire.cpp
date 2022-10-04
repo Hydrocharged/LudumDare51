@@ -1,30 +1,33 @@
-// Copyright © 2022 James Cor
+// Copyright © 2022 James Cor & Daylon Wilkins
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-
 #include <character/vampire.h>
 
-void character::Vampire::Draw() {
+character::Vampire::Vampire(glm::vec3 pos) : Enemy(new physics::CapsuleBody(pos, {0, 1.3f, 0}, {0, 1.0f, 0}, 1.0f)) {
+	model = model::manager::Get(model::manager::Name::Vampire);
+}
+
+void character::Vampire::Draw(float deltaTime) {
 	Color c = WHITE;
 	if (moveState == 3) {
 		c = YELLOW;
 	}
-	glm::vec3 pos = model[3];
-	DrawModel(*modelObj, (Vector3){pos.x, pos.y, pos.z}, 1.0f, c);
+	glm::vec3 pos = body->GetPosition();
+	DrawModel(model, (Vector3){pos.x, pos.y, pos.z}, 1.0f, c);
 }
 
 void character::Vampire::SetTarget(glm::vec3 playerPos) {
-	glm::vec3 pos = model[3];
+	glm::vec3 pos = body->GetPosition();
 	glm::vec3 dir = glm::normalize(playerPos - pos);
 	target = playerPos + 2.f * dir;
 	target.y = 0.0f;
 }
 
-void character::Vampire::Update(glm::vec3 playerPos) {
-	glm::vec3 pos = model[3];
+void character::Vampire::Update(glm::vec3 playerPos, float deltaTime) {
+	glm::vec3 pos = body->GetPosition();
 
 	// Adjust speed according to state
 	// FSM might be a small brain solution, but it definitely works
@@ -32,7 +35,7 @@ void character::Vampire::Update(glm::vec3 playerPos) {
 	switch (moveState) {
 		case 0:
 			speed = 0;
-			stopTime -= GetFrameTime();
+			stopTime -= deltaTime;
 			if (stopTime <= 0.f) {
 				moveState++;
 				stopTime = VAMPIRE_STOPTIME;
@@ -40,7 +43,7 @@ void character::Vampire::Update(glm::vec3 playerPos) {
 			break;
 		case 1:
 			speed = VAMPIRE_WALK_SPEED;
-			moveTime -= GetFrameTime();
+			moveTime -= deltaTime;
 			SetTarget(playerPos);
 			if (moveTime <= 0.f) {
 				moveState++;
@@ -49,7 +52,7 @@ void character::Vampire::Update(glm::vec3 playerPos) {
 			break;
 		case 2:
 			speed = 0;
-			stopTime -= GetFrameTime();
+			stopTime -= deltaTime;
 			if (stopTime <= 0.f) {
 				moveState++;
 				stopTime = VAMPIRE_STOPTIME;
@@ -59,7 +62,7 @@ void character::Vampire::Update(glm::vec3 playerPos) {
 		case 3:
 			speed = VAMPIRE_DASH_SPEED;
 			dist = glm::distance(target, pos);
-			if (dist <= 0.1f) {
+			if (dist <= 3.0f) {
 				moveState++;
 			}
 			break;
@@ -70,6 +73,6 @@ void character::Vampire::Update(glm::vec3 playerPos) {
 
 	// go towards target
 	glm::vec3 dir = glm::normalize(target - pos);
-	model = glm::translate(model, GetFrameTime() * speed * dir);
-
+	body->ApplyFrameForce(dir, speed);
+	body->Update(deltaTime);
 }
