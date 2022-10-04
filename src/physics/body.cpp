@@ -103,7 +103,8 @@ bool handleAABBAABB(physics::AABBBody* aAABB, physics::AABBBody* bAABB) {
 
 bool physics::Body::CollidesWith(physics::Body* otherBody) {
 	// Do a quick sphere check. If they do not touch, there's no need to do the more expensive & accurate checks.
-	if (!physics::TestSphereSphere(this->GetSphere(), otherBody->GetSphere())) {
+	auto tmp = this->GetSphere();
+	if (!physics::TestSphereSphere(tmp, otherBody->GetSphere())) {
 		return false;
 	}
 

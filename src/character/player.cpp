@@ -10,6 +10,7 @@
 #include <model/raylib.h>
 #include <memory>
 #include <cmath>
+#include <random.h>
 
 const glm::vec3 cameraHeight = {0, 1.84f, 0};
 
@@ -115,8 +116,39 @@ void character::Player::SetCurrentWeapon(character::Player::WeaponType weapon) {
 	currentWeapon = weapon;
 }
 
+std::vector<character::Projectile*> character::Player::Shoot() {
+	Ray r = GetMouseRay({(float)GetRenderWidth() / 2.f, (float)GetRenderHeight() / 2.f}, *camera.get());
+	glm::vec3 dir = {r.direction.x, r.direction.y, r.direction.z};
+	glm::vec3 offset = 0.25f * dir;
+
+	std::vector<character::Projectile*> projectiles;
+	switch (currentWeapon) {
+		case PISTOL:
+			projectiles.push_back(new character::Projectile(true, 50.0f, 0.5f, 10, 2.0f, this->GetCameraPosition() + offset, dir));
+			break;
+		case SHOTGUN:
+			for (int i = 0; i < 10; i++) {
+				glm::vec3 jitter = {random::GetRandomRange(0.0f, 0.5f), random::GetRandomRange(0.0f, 0.1f), random::GetRandomRange(0.0f, 0.1f)};
+				projectiles.push_back(new character::Projectile(true, 50.0f, 0.5f, 10, 2.0f, this->GetCameraPosition() + offset, dir + jitter));
+			}
+			break;
+		case SNIPER:
+			projectiles.push_back(new character::Projectile(true, 100.0f, 0.2f, 100, 3.0f, this->GetCameraPosition() + offset, dir));
+			break;
+		case MELEE:
+			projectiles.push_back(new character::Projectile(true, 0.0f, 0.2f, 50, 0.1f, this->GetCameraPosition(), dir));
+			break;
+	}
+
+	return projectiles;
+}
+
 glm::vec3 character::Player::GetPosition() {
 	return body->GetPosition();
+}
+
+glm::vec3 character::Player::GetCameraPosition() {
+	return body->GetPosition() + cameraHeight;
 }
 
 physics::CapsuleBody* character::Player::GetBody() {

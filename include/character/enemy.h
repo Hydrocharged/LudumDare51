@@ -28,7 +28,6 @@ namespace character {
 		virtual void TakeDamage(float dmg) { health -= dmg; }
 		virtual bool IsHit(physics::Body* projectile) { return body->CollidesWith(projectile); }
 
-		void Die() { isDead = true; }
 		physics::CapsuleBody* GetBody() { return body; }
 
 	protected:
@@ -36,7 +35,6 @@ namespace character {
 		physics::CapsuleBody* body;
 		float health = 100.0f;
 		float damage = 5.0f;
-		bool isDead = false;
 
 		// TODO: add more enemy properties
 		// damage, fire rate, health

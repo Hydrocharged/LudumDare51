@@ -7,9 +7,11 @@
 #ifndef LEVEL_H
 #define LEVEL_H
 #include <vector>
+#include <set>
 #include <mouse.h>
 #include <character/player.h>
 #include <character/enemy.h>
+#include <character/projectile.h>
 
 namespace level {
 	class Level {
@@ -41,8 +43,11 @@ namespace level {
 		glm::vec3 playerSpawn;
 
 		std::vector<glm::vec3> enemySpawns;
-		std::vector<character::Enemy*> enemies;
+		std::set<character::Enemy*> enemies;
 		std::vector<physics::AABBBody*> bodies;
+		std::set<character::Projectile*> projectiles;
+
+		void gameOver() {}
 	};
 
 	std::unique_ptr<Level> GetLevel1();

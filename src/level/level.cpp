@@ -12,6 +12,7 @@
 #include <character/turret.h>
 #include <character/vampire.h>
 #include <model/raylib.h>
+#include <iostream>
 
 level::Level::Level() {
 	this->levelModel = model::manager::Get(model::manager::Name::Level1);
@@ -33,9 +34,13 @@ void level::Level::Draw(float deltaTime) {
 	for (auto enemy: enemies) {
 		enemy->Draw(deltaTime);
 	}
+	for (auto projectile: projectiles) {
+		projectile->Draw(deltaTime);
+	}
 }
 
 void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
+	// Check player to level collisions
 	player->UpdatePosition(mouseInfo, deltaTime);
 	auto playerBody = player->GetBody();
 	for (auto levelBody: bodies) {
@@ -44,8 +49,9 @@ void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
 			playerBody->StopMomentum(movement);
 		}
 	}
-	glm::vec3 playerPos = player->GetPosition();
 
+	// Check enemy to level collisions
+	glm::vec3 playerPos = player->GetPosition();
 	for (auto enemy: enemies) {
 		enemy->Update(playerPos, deltaTime);
 		auto enemyBody = enemy->GetBody();
@@ -57,14 +63,80 @@ void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
 		}
 	}
 
+	if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+		for (auto projectile: player->Shoot()) {
+			projectiles.insert(projectile);
+		}
+	}
+
+	// Update projectile
+	std::vector<character::Projectile*> toDeleteProjectiles;
+	for (auto projectile: projectiles) {
+		bool wasDeleted = false;
+		projectile->Update(deltaTime);
+		if (projectile->GetLifeSpan() <= 0.0f) {
+			wasDeleted = true;
+			toDeleteProjectiles.push_back(projectile);
+		}
+		if (wasDeleted) {
+			continue;
+		}
+
+		auto projectileBody = projectile->GetBody();
+
+		// check projectile to level collisions
+		for (auto levelBody: bodies) {
+			if (projectileBody->CollidesWith(levelBody)) {
+				wasDeleted = true;
+				toDeleteProjectiles.push_back(projectile);
+			}
+		}
+
+		if (wasDeleted) {
+			continue;
+		}
+
+		// check projectile to enemy collisions
+		for (auto enemy: enemies) {
+			auto enemyBody = enemy->GetBody();
+			if (projectile->IsFromPlayer() && projectileBody->CollidesWith(enemyBody)) {
+				enemy->TakeDamage(projectile->GetDamage());
+				wasDeleted = true;
+				toDeleteProjectiles.push_back(projectile);
+			}
+		}
+
+		if (wasDeleted) {
+			continue;
+		}
+
+		// check projectile to player collision
+		if (!projectile->IsFromPlayer() && projectileBody->CollidesWith(playerBody)) {
+			player->TakeDamage(projectile->GetDamage());
+			toDeleteProjectiles.push_back(projectile);
+		}
+	}
+
+	for (auto projectile: toDeleteProjectiles) {
+		projectiles.erase(projectile);
+	}
+
+
 	// The counter that determines death for 10 seconds
 	deathTimer -= deltaTime;
 	if (deathTimer <= 0.f) {
 		deathTimer = 10.0f;
+		// Kill enemies
 		for (auto enemy: enemies) {
 			if (enemy->GetHealth() < 0.f) {
-				enemy->Die();
+				enemies.erase(enemy);
+				delete enemy;
 			}
+		}
+
+		// Kill player
+		if (player->GetHealth() < 0.f) {
+			gameOver();
 		}
 	}
 }
@@ -91,13 +163,13 @@ void level::Level::SpawnEnemy(character::EnemyType enemyType, unsigned int numSp
 	for (unsigned int i = 0; i < numSpawns; i++) {
 		switch (enemyType) {
 			case character::EnemyType::Skull:
-				enemies.push_back(new character::Skull(enemySpawns[spawnIdx]));
+				enemies.emplace(new character::Skull(enemySpawns[spawnIdx]));
 				break;
 			case character::EnemyType::Turret:
-				enemies.push_back(new character::Turret(enemySpawns[spawnIdx]));
+				enemies.emplace(new character::Turret(enemySpawns[spawnIdx]));
 				break;
 			case character::EnemyType::Vampire:
-				enemies.push_back(new character::Vampire(enemySpawns[spawnIdx]));
+				enemies.emplace(new character::Vampire(enemySpawns[spawnIdx]));
 				break;
 		}
 	}
