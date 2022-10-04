@@ -35,7 +35,8 @@ namespace level {
 		void Update(mouse::Info& mouseInfo, float deltaTime);
 
 	private:
-		float deathTimer = 10.f;
+		const float DEATH_TIME = 10.f;
+		float deathTimer = DEATH_TIME;
 
 		Model levelModel;
 		character::Player* player;

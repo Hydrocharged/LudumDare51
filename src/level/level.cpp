@@ -142,7 +142,7 @@ void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
 	// The counter that determines death for 10 seconds
 	deathTimer -= deltaTime;
 	if (deathTimer <= 0.f) {
-		deathTimer = 10.0f;
+		deathTimer = DEATH_TIME;
 		// Kill enemies
 		std::vector<character::Enemy*> toDeleteEnemies;
 		for (auto enemy: enemies) {
