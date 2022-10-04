@@ -37,6 +37,9 @@ void level::Level::Draw(float deltaTime) {
 	for (auto projectile: projectiles) {
 		projectile->Draw(deltaTime);
 	}
+	for (auto crate: crates) {
+		crate->Draw(deltaTime);
+	}
 }
 
 void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
@@ -116,23 +119,43 @@ void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
 			toDeleteProjectiles.push_back(projectile);
 		}
 	}
-
 	for (auto projectile: toDeleteProjectiles) {
 		projectiles.erase(projectile);
+	}
+
+	// Update crates
+	std::vector<character::Crate*> toDeleteCrates;
+	for (auto crate: crates) {
+		crate->Update(deltaTime);
+		auto crateBody = crate->GetBody();
+		if (crateBody->CollidesWith(playerBody)) {
+			toDeleteCrates.push_back(crate);
+			player->AddAmmo(crate->GetAmmo());
+			player->AddHealth(crate->GetHealth());
+		}
+	}
+	for (auto crate: toDeleteCrates) {
+		crates.erase(crate);
 	}
 
 
 	// The counter that determines death for 10 seconds
 	deathTimer -= deltaTime;
 	if (deathTimer <= 0.f) {
-		deathTimer = 10.0f;
+		deathTimer = DEATH_TIME;
 		// Kill enemies
+		std::vector<character::Enemy*> toDeleteEnemies;
 		for (auto enemy: enemies) {
 			if (enemy->GetHealth() < 0.f) {
-				enemies.erase(enemy);
-				delete enemy;
+				toDeleteEnemies.push_back(enemy);
+				crates.emplace(new character::Crate(10, 10, enemy->GetBody()->GetPosition()));
 			}
 		}
+		for (auto enemy: toDeleteEnemies) {
+			enemies.erase(enemy);
+			delete enemy;
+		}
+
 
 		// Kill player
 		if (player->GetHealth() < 0.f) {
