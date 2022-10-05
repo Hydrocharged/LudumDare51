@@ -30,10 +30,13 @@ namespace character {
 		glm::vec3 GetCameraPosition();
 		physics::CapsuleBody* GetBody();
 		float GetHealth() { return health; }
+		float GetMaxHealth() { return maxHealth; }
+		float GetAmmo() { return ammo; }
+		float GetMaxAmmo() { return maxAmmo; }
 
-		void AddHealth(float health) { this->health += health; }
-		void AddAmmo(float ammo) { this->ammo += ammo; }
-		void TakeDamage(float dmg) { health -= dmg; }
+		void AddHealth(float extra) { health += extra; if(health > maxHealth) { health = maxHealth; } }
+		void AddAmmo(float extra) { ammo += extra; if(ammo > maxAmmo) { ammo = maxAmmo; } }
+		void TakeDamage(float dmg) { health -= dmg; if(health < 0) { health = 0; } }
 		bool CanShoot();
 
 		std::vector<Projectile*> Shoot();
@@ -48,8 +51,10 @@ namespace character {
 		float dashModifier = 1.2f;
 		float jumpForce = 15.0f;
 		float mouseSensitivity = 0.5f;
-		float health = 100.0f;
-		float ammo = 100.0f;
+		float maxHealth = 100.0f;
+		float health = maxHealth;
+		float maxAmmo = 100.0f;
+		float ammo = maxAmmo;
 		std::unique_ptr<Camera> camera;
 		Model pistol, shotgun, sniper;
 		WeaponType currentWeapon = PISTOL;
@@ -58,9 +63,9 @@ namespace character {
 		const float SHOTGUN_AMMO = 10;
 		const float SNIPER_AMMO = 5;
 
-		const float PISTOL_FIRE_RATE = 0.5;
-		const float SHOTGUN_FIRE_RATE = 1;
-		const float SNIPER_FIRE_RATE = 1;
+		const float PISTOL_FIRE_RATE = 0.1;
+		const float SHOTGUN_FIRE_RATE = 0.3;
+		const float SNIPER_FIRE_RATE = 0.5;
 		float pistolCooldown = 0;
 		float shotgunCooldown = 0;
 		float sniperCooldown = 0;

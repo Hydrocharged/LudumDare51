@@ -12,15 +12,15 @@
 namespace gui {
 	class DynamicLabel : public Label {
 	public:
-		explicit DynamicLabel(std::string strTemplate, std::string (* func)()) : Label(std::move(strTemplate)), func(func) {}
+		explicit DynamicLabel(std::string strTemplate, std::function<std::string()> func) : Label(std::move(strTemplate)), func(std::move(func)) {}
 		~DynamicLabel() override = default;
 		void Draw(float posX, float posY, float containerWidth, float containerHeight) override;
 
 	protected:
-		std::string (* func)();
+		std::function<std::string()> func;
 	};
 
-	inline DynamicLabel* NewDynamicLabel(std::string strTemplate, std::string (* func)()) { return new DynamicLabel(std::move(strTemplate), func); }
+	inline DynamicLabel* NewDynamicLabel(std::string strTemplate, std::function<std::string()> func) { return new DynamicLabel(std::move(strTemplate), std::move(func)); }
 }
 
 #endif //GUI_COMPONENTS_DYNAMICLABEL_H

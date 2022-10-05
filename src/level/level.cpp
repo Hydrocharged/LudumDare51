@@ -29,6 +29,9 @@ level::Level::~Level() {
 }
 
 void level::Level::Draw(float deltaTime) {
+	if(isPaused) {
+		deltaTime = 0.0f;
+	}
 	DrawModel(levelModel, (Vector3){0, -1, 0}, 10.0f, WHITE);
 	for (auto enemy: enemies) {
 		enemy->Draw(deltaTime);
@@ -43,6 +46,9 @@ void level::Level::Draw(float deltaTime) {
 }
 
 void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
+	if(isPaused) {
+		return;
+	}
 	// Get frame stats to update
 	auto frameStats = stats::Frame::Current();
 	// Check player to level collisions
@@ -236,6 +242,7 @@ void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
 			gameOver();
 		}
 	}
+	totalTime += deltaTime;
 }
 
 void level::Level::AddBody(physics::AABBBody* b) {

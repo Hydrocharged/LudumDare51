@@ -7,19 +7,20 @@
 #ifndef GUI_COMPONENTS_PROGRESSBAR_H
 #define GUI_COMPONENTS_PROGRESSBAR_H
 #include <gui/components/horizontalpanel.h>
+#include <utility>
 
 namespace gui {
 	class ProgressBar : public HorizontalPanel {
 	public:
-		ProgressBar(float (* func)(), std::initializer_list<Component*> children) : HorizontalPanel(children), func(func) {}
+		ProgressBar(std::function<float()> func, std::initializer_list<Component*> children) : HorizontalPanel(children), func(std::move(func)) {}
 		~ProgressBar() override = default;
 		void Draw(float posX, float posY, float containerWidth, float containerHeight) override;
 
 	protected:
-		float (* func)();
+		std::function<float()> func;
 	};
 
-	inline ProgressBar* NewProgressBar(float (* func)(), std::initializer_list<Component*> children) { return new ProgressBar(func, children); }
+	inline ProgressBar* NewProgressBar(std::function<float()> func, std::initializer_list<Component*> children) { return new ProgressBar(std::move(func), children); }
 }
 
 #endif //GUI_COMPONENTS_PROGRESSBAR_H

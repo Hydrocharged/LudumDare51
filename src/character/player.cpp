@@ -89,7 +89,8 @@ void character::Player::UpdatePosition(mouse::Info& mouse, float deltaTime) {
 					sinf(angleX) * leftPressed -
 					sinf(angleX) * rightPressed);
 	if (glm::length(direction) > FLT_EPSILON) {
-		if (IsKeyPressed(KEY_F)) {
+		if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT) || IsKeyPressed(KEY_F) || IsKeyPressed(KEY_Q) ||
+			IsKeyPressed(KEY_E) || IsKeyPressed(KEY_R) || IsKeyPressed(KEY_LEFT_CONTROL)) {
 			body->ApplyInstantForce(direction, dashModifier * moveSpeedConstant);
 		} else {
 			body->ApplyFrameForce(direction, moveSpeedConstant * (IsKeyDown(KEY_LEFT_SHIFT) ? sprintModifier : 1.0f));
@@ -153,37 +154,67 @@ std::vector<character::Projectile*> character::Player::Shoot() {
 	glm::mat4 rotMatrix = glm::rotate(body->GetRotationMatrix(), -4.76001f, rotAxis);
 
 	std::vector<character::Projectile*> projectiles;
+	bool useBoostedDamage = false;
+	if(ammo > 0) {
+		useBoostedDamage = true;
+	}
 	switch (currentWeapon) {
-		case PISTOL:
-			if (ammo > 0) {
-				ammo -= PISTOL_AMMO;
-			} else {
-				health -= PISTOL_AMMO;
+		case PISTOL: {
+			ammo -= PISTOL_AMMO;
+			if (ammo < 0) {
+				health += ammo;
+				ammo = 0;
+			}
+			if (health < 0) {
+				health = 0;
 			}
 
+			float damage = 4.0f;
+			if (useBoostedDamage) {
+				damage *= ((1.0f - health / maxHealth) * 4.0f) + 1.0f;
+			}
 			pistolCooldown = PISTOL_FIRE_RATE;
-			projectiles.push_back(new character::Projectile(true, 50.0f, 0.2f, 10, 2.0f, this->GetCameraPosition() + offset, dir, rotMatrix));
+			projectiles.push_back(new character::Projectile(true, 50.0f, 0.2f, damage, 2.0f, this->GetCameraPosition() + offset, dir, rotMatrix));
 			break;
-		case SHOTGUN:
-			if (ammo > 0) {
-				ammo -= SHOTGUN_AMMO;
-			} else {
-				health -= SHOTGUN_AMMO;
+		}
+		case SHOTGUN: {
+
+			ammo -= SHOTGUN_AMMO;
+			if (ammo < 0) {
+				health += ammo;
+				ammo = 0;
+			}
+			if (health < 0) {
+				health = 0;
+			}
+
+			float damage = 3.0f;
+			if (useBoostedDamage) {
+				damage *= ((1.0f - health / maxHealth) * 4.0f) + 1.0f;
 			}
 			shotgunCooldown = SHOTGUN_FIRE_RATE;
 			for (int i = 0; i < 10; i++) {
 				glm::vec3 jitter = {random::GetRandomRange(-0.25f, 0.25f), random::GetRandomRange(-0.25f, 0.25f), random::GetRandomRange(-0.25f, 0.25f)};
-				projectiles.push_back(new character::Projectile(true, 25.0f, 0.05f, 10, 2.0f, this->GetCameraPosition() + offset, dir + jitter, rotMatrix));
+				projectiles.push_back(new character::Projectile(true, 25.0f, 0.05f, damage, 2.0f, this->GetCameraPosition() + offset, dir + jitter, rotMatrix));
 			}
 			break;
+		}
 		case SNIPER:
-			if (ammo > 0) {
-				ammo -= SNIPER_AMMO;
-			} else {
-				health -= SNIPER_AMMO;
+			ammo -= SNIPER_AMMO;
+			if(ammo < 0) {
+				health += ammo;
+				ammo = 0;
+			}
+			if(health < 0) {
+				health = 0;
+			}
+
+			float damage = 50.0f;
+			if (useBoostedDamage) {
+				damage *= ((1.0f - health / maxHealth) * 4.0f) + 1.0f;
 			}
 			sniperCooldown = SNIPER_FIRE_RATE;
-			projectiles.push_back(new character::Projectile(true, 100.0f, 0.1f, 100, 3.0f, this->GetCameraPosition() + offset, dir, rotMatrix));
+			projectiles.push_back(new character::Projectile(true, 100.0f, 0.1f, damage, 3.0f, this->GetCameraPosition() + offset, dir, rotMatrix));
 			break;
 	}
 
