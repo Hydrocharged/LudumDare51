@@ -11,6 +11,7 @@
 character::Turret::Turret(glm::vec3 pos) : Enemy(new physics::CapsuleBody(pos, {0, 1.005f, 0}, {0, 1.0f, 0}, 1.0f)) {
 	model = model::manager::Get(model::manager::Name::Turret);
 	body->SetLookAngleOffsets({PI / 2.0f, 0});
+	cooldown = TURRET_FIRE_RATE;
 }
 
 void character::Turret::Draw(float deltaTime) {
@@ -37,6 +38,11 @@ void character::Turret::SetTarget(glm::vec3 playerPos) {
 void character::Turret::Update(glm::vec3 playerPos, float deltaTime) {
 	// After some amount of time, reset the target
 	moveTime -= deltaTime;
+	if (cooldown >= 0) { cooldown -= deltaTime; }
+	if (meleeCooldown >= 0.f) {
+		meleeCooldown -= deltaTime;
+	}
+	playerLoc = playerPos;
 	auto bodyPos = body->GetPosition();
 	if (moveTime <= 0.0f) {
 		moveTime = TURRET_MOVETIME;
@@ -53,6 +59,6 @@ void character::Turret::Update(glm::vec3 playerPos, float deltaTime) {
 character::Projectile* character::Turret::Shoot() {
 	cooldown = TURRET_FIRE_RATE;
 	glm::vec3 pos = body->GetPosition();
-	glm::vec3 dir = glm::normalize(target - pos);
-	return new character::Projectile(false, 10.0f, 0.2f, 100, 30.0f, body->GetPosition(), dir, body->GetRotationMatrix());
+	glm::vec3 dir = glm::normalize(playerLoc - pos);
+	return new character::Projectile(false, 5.0f, 0.2f, 50, 10.0f, body->GetPosition(), dir, body->GetRotationMatrix());
 }

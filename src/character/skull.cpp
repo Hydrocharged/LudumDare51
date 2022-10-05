@@ -59,11 +59,14 @@ void character::Skull::Update(glm::vec3 playerPos, float deltaTime) {
 	body->Update(deltaTime);
 
 	if (cooldown >= 0) { cooldown -= deltaTime; }
+	if (meleeCooldown >= 0.f) {
+		meleeCooldown -= deltaTime;
+	}
 }
 
 character::Projectile* character::Skull::Shoot() {
 	cooldown = SKULL_FIRE_RATE;
 	glm::vec3 pos = body->GetPosition();
 	glm::vec3 dir = glm::normalize(target - pos);
-	return new character::Projectile(false, 10.0f, 1.0f, 100, 30.0f, body->GetPosition(), dir, body->GetRotationMatrix());
+	return new character::Projectile(false, 10.0f, 0.2f, 10, 10.0f, body->GetPosition(), dir, body->GetRotationMatrix());
 }

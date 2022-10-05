@@ -23,13 +23,14 @@ namespace character {
 	private:
 		const float TURRET_MOVETIME = 5.f;
 		float moveTime = TURRET_MOVETIME;
+		glm::vec3 playerLoc;
 
 		// will try to stay within this donut around the player
 		glm::vec3 target{0};
 		float radMin = 2.0f;
 		float radMax = 6.0f;
 
-		const float TURRET_FIRE_RATE = 5.0f;
+		const float TURRET_FIRE_RATE = 4.0f;
 	};
 }
 

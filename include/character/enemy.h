@@ -24,7 +24,6 @@ namespace character {
 
 		virtual void Update(glm::vec3 playerPos, float deltaTime) = 0;
 		virtual void Draw(float deltaTime) = 0;
-		virtual void Attack() {}
 		virtual float GetHealth() { return health; }
 		virtual void TakeDamage(float dmg) { health -= dmg; }
 		virtual bool IsHit(physics::Body* projectile) { return body->CollidesWith(projectile); }
@@ -32,6 +31,9 @@ namespace character {
 
 		physics::CapsuleBody* GetBody() { return body; }
 		bool CanShoot() { return cooldown <= 0.0f; }
+		float GetDamage() { return damage; }
+		bool CanMelee() { return meleeCooldown <= 0; }
+		void Melee() { meleeCooldown = MELEE_RATE; }
 
 	protected:
 		Model model;
@@ -39,6 +41,8 @@ namespace character {
 		float health = 100.0f;
 		float damage = 5.0f;
 		float cooldown = 0.0f;
+		float meleeCooldown = 0.0f;
+		const float MELEE_RATE = 5.0f;
 	};
 }
 
