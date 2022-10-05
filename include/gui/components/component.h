@@ -12,6 +12,14 @@
 #include <gui/color.h>
 
 namespace gui {
+	enum class Alignment {
+		Spread,    // Equal spacing between children and boundaries
+		Justified, // Equal spacing between children, touches boundaries
+		Center,    // All children grouped in the middle
+		Start,     // All children grouped at the beginning
+		End        // All children grouped at the end
+	};
+
 	struct DrawRect {
 		float PosX;
 		float PosY;

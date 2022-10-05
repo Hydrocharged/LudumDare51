@@ -35,6 +35,11 @@ gui::VerticalPanel* gui::VerticalPanel::SetHoverColor(gui::Color color) {
 	return this;
 }
 
+gui::VerticalPanel* gui::VerticalPanel::SetAlignment(gui::Alignment align) {
+	this->alignment = align;
+	return this;
+}
+
 std::vector<gui::DrawRect> gui::VerticalPanel::ChildPositions(float posX, float posY, float containerWidth, float containerHeight) {
 	std::vector<gui::DrawRect> positions(children.size());
 	float width = Width(containerWidth, containerHeight);
@@ -44,8 +49,31 @@ std::vector<gui::DrawRect> gui::VerticalPanel::ChildPositions(float posX, float 
 	for (auto& child: children) {
 		totalChildHeight += child->Height(width, height);
 	}
-	float childSpacing = (height - totalChildHeight) / ((float)(children.size()) + 1.0f);
+	float childSpacing = 0.0f;
 	float nextChildY = posY;
+	switch (alignment) {
+		case Alignment::Spread:
+			childSpacing = (height - totalChildHeight) / ((float)(children.size()) + 1.0f);
+			break;
+		case Alignment::Justified: {
+			auto numOfChildren = (float)children.size();
+			if (numOfChildren > 1.0f) {
+				childSpacing = (height - totalChildHeight) / (numOfChildren - 1.0f);
+				nextChildY -= childSpacing;
+			} else {
+				nextChildY += (height - totalChildHeight) / 2.0f;
+			}
+			break;
+		}
+		case Alignment::Center:
+			nextChildY += (height - totalChildHeight) / 2.0f;
+			break;
+		case Alignment::Start:
+			break;
+		case Alignment::End:
+			nextChildY += height - totalChildHeight;
+			break;
+	}
 	for (int i = 0; i < children.size(); i++) {
 		nextChildY += childSpacing;
 		positions[i] = DrawRect{posX + ((width - children[i]->Width(width, height)) / 2), nextChildY, width, height};

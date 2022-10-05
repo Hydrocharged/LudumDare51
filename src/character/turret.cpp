@@ -15,7 +15,7 @@ character::Turret::Turret(glm::vec3 pos) : Enemy(new physics::CapsuleBody(pos, {
 
 void character::Turret::Draw(float deltaTime) {
 	glm::vec3 pos = body->GetPosition();
-	render::Model(model, body, glm::vec3(1.0f));
+	render::Model(model, body);
 }
 
 glm::vec3 character::Turret::FindTarget(glm::vec3 playerPos) {

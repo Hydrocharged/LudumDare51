@@ -9,6 +9,7 @@
 #include <model/manager.h>
 #include <level/level.h>
 #include <render/render.h>
+#include <stats/frame.h>
 
 #if defined(PLATFORM_WEB)
 #include <emscripten/emscripten.h>
@@ -35,21 +36,28 @@ int main(void) {
 	model::manager::Load();
 	gui::fontmanager::Load();
 	auto mouse = mouse::Info{};
-	float static frametime;
 	auto menu = std::unique_ptr<gui::Component>(
 		gui::NewVerticalPanel({
 			gui::NewDynamicLabel("", []()->std::string {
-				return "Frametime: " + std::to_string(frametime) + "ms";
-			})
-		})
+				return stats::Frame::Current()->TotalFrametimeString();
+			})->SetYScale(0.1f)
+		})->SetAlignment(gui::Alignment::Start)
 	);
+	const float centerDotSize = 0.008f;
+	auto centerDot = std::unique_ptr<gui::Component>(
+		gui::NewVerticalPanel({
+			gui::NewHorizontalPanel({})->SetColor({0, 0, 0, 255})->
+				SetXScale((screenRect.ContainerHeight / screenRect.ContainerWidth) * centerDotSize)->SetYScale(centerDotSize)
+		})->SetAlignment(gui::Alignment::Center)
+	);
+
 	auto level = level::GetLevel1();
 
 #if defined(PLATFORM_WEB)
 	emscripten_set_main_loop(UpdateDrawFrame, 0, 1);
 #else
 	while (!WindowShouldClose()) {
-		float start = GetTime();
+		stats::Frame::StartFrame();
 		float deltaTime = GetFrameTime();
 		mouse.Update();
 		menu->Update(mouse, screenRect);
@@ -90,8 +98,10 @@ int main(void) {
 		level->Update(mouse, deltaTime);
 		level->Draw(deltaTime);
 		EndMode3D();
+		stats::Frame::EndFrame();
 		menu->Draw(screenRect.PosX, screenRect.PosY, screenRect.ContainerWidth, screenRect.ContainerHeight);
-		frametime = (GetTime() - start) * 1000.f;
+		//TODO: only draw the dot if the level is running
+		centerDot->Draw(screenRect.PosX, screenRect.PosY, screenRect.ContainerWidth, screenRect.ContainerHeight);
 		EndDrawing();
 	}
 #endif

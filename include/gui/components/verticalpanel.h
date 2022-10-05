@@ -21,12 +21,14 @@ namespace gui {
 		VerticalPanel* SetYScale(float scale);
 		VerticalPanel* SetColor(Color color);
 		VerticalPanel* SetHoverColor(Color color);
+		VerticalPanel* SetAlignment(Alignment align);
 
 	protected:
 		float xScale = 1.0f;
 		float yScale = 1.0f;
 		Color defaultColor = {0, 0, 0, 0};
 		Color hoverColor = {0, 0, 0, 0};
+		Alignment alignment = Alignment::Spread;
 	};
 
 	inline VerticalPanel* NewVerticalPanel(std::initializer_list<Component*> children) { return new VerticalPanel(children); }

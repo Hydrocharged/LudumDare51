@@ -16,7 +16,7 @@ character::Skull::Skull(glm::vec3 pos) : Enemy(new physics::CapsuleBody(pos, {0,
 
 void character::Skull::Draw(float deltaTime) {
 	glm::vec3 pos = body->GetPosition();
-	render::Model(model, body, glm::vec3(1.0f));
+	render::Model(model, body);
 }
 
 void character::Skull::SetTarget(glm::vec3 playerPos) {

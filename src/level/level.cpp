@@ -12,7 +12,7 @@
 #include <character/turret.h>
 #include <character/vampire.h>
 #include <model/raylib.h>
-#include <render/render.h>
+#include <stats/frame.h>
 
 level::Level::Level() {
 	this->levelModel = model::manager::Get(model::manager::Name::Level1);
@@ -30,7 +30,6 @@ level::Level::~Level() {
 
 void level::Level::Draw(float deltaTime) {
 	DrawModel(levelModel, (Vector3){0, -1, 0}, 10.0f, WHITE);
-	player->Draw(deltaTime);
 	for (auto enemy: enemies) {
 		enemy->Draw(deltaTime);
 	}
@@ -40,14 +39,21 @@ void level::Level::Draw(float deltaTime) {
 	for (auto crate: crates) {
 		crate->Draw(deltaTime);
 	}
+	player->Draw(deltaTime);
 }
 
 void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
+	// Get frame stats to update
+	auto frameStats = stats::Frame::Current();
 	// Check player to level collisions
 	player->UpdatePosition(mouseInfo, deltaTime);
 	auto playerBody = player->GetBody();
 	for (auto levelBody: bodies) {
+		frameStats->PlayerCollisionChecks++;
+		frameStats->LevelCollisionChecks++;
 		if (playerBody->CollidesWith(levelBody)) {
+			frameStats->PlayerCollisions++;
+			frameStats->LevelCollisions++;
 			auto movement = physics::MoveCapsuleFromAABB(*playerBody, *levelBody);
 			playerBody->StopMomentum(movement);
 		}
@@ -59,7 +65,11 @@ void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
 		enemy->Update(playerPos, deltaTime);
 		auto enemyBody = enemy->GetBody();
 		for (auto levelBody: bodies) {
+			frameStats->EnemyCollisionChecks++;
+			frameStats->LevelCollisionChecks++;
 			if (enemyBody->CollidesWith(levelBody)) {
+				frameStats->EnemyCollisions++;
+				frameStats->LevelCollisions++;
 				auto movement = physics::MoveCapsuleFromAABB(*enemyBody, *levelBody);
 				enemyBody->StopMomentum(movement);
 			}
@@ -89,7 +99,11 @@ void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
 
 		// check projectile to level collisions
 		for (auto levelBody: bodies) {
+			frameStats->ProjectileCollisionChecks++;
+			frameStats->LevelCollisionChecks++;
 			if (projectileBody->CollidesWith(levelBody)) {
+				frameStats->ProjectileCollisions++;
+				frameStats->LevelCollisions++;
 				wasDeleted = true;
 				toDeleteProjectiles.push_back(projectile);
 			}
@@ -102,10 +116,16 @@ void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
 		// check projectile to enemy collisions
 		for (auto enemy: enemies) {
 			auto enemyBody = enemy->GetBody();
-			if (projectile->IsFromPlayer() && projectileBody->CollidesWith(enemyBody)) {
-				enemy->TakeDamage(projectile->GetDamage());
-				wasDeleted = true;
-				toDeleteProjectiles.push_back(projectile);
+			if (projectile->IsFromPlayer()) {
+				frameStats->ProjectileCollisionChecks++;
+				frameStats->EnemyCollisionChecks++;
+				if (projectileBody->CollidesWith(enemyBody)) {
+					frameStats->ProjectileCollisions++;
+					frameStats->EnemyCollisions++;
+					enemy->TakeDamage(projectile->GetDamage());
+					wasDeleted = true;
+					toDeleteProjectiles.push_back(projectile);
+				}
 			}
 		}
 
@@ -114,9 +134,15 @@ void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
 		}
 
 		// check projectile to player collision
-		if (!projectile->IsFromPlayer() && projectileBody->CollidesWith(playerBody)) {
-			player->TakeDamage(projectile->GetDamage());
-			toDeleteProjectiles.push_back(projectile);
+		if (!projectile->IsFromPlayer()) {
+			frameStats->ProjectileCollisionChecks++;
+			frameStats->PlayerCollisionChecks++;
+			if (projectileBody->CollidesWith(playerBody)) {
+				frameStats->ProjectileCollisions++;
+				frameStats->PlayerCollisions++;
+				player->TakeDamage(projectile->GetDamage());
+				toDeleteProjectiles.push_back(projectile);
+			}
 		}
 	}
 	for (auto projectile: toDeleteProjectiles) {
@@ -126,15 +152,23 @@ void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
 	// Update crates
 	std::vector<character::Crate*> toDeleteCrates;
 	for (auto crate: crates) {
+		frameStats->ItemCollisionChecks++;
+		frameStats->PlayerCollisionChecks++;
 		crate->Update(deltaTime);
 		auto crateBody = crate->GetBody();
 		if (crateBody->CollidesWith(playerBody)) {
+			frameStats->ItemCollisions++;
+			frameStats->PlayerCollisions++;
 			toDeleteCrates.push_back(crate);
 			player->AddAmmo(crate->GetAmmo());
 			player->AddHealth(crate->GetHealth());
 		}
 		for (auto levelBody: bodies) {
+			frameStats->ItemCollisionChecks++;
+			frameStats->LevelCollisionChecks++;
 			if (crateBody->CollidesWith(levelBody)) {
+				frameStats->ItemCollisions++;
+				frameStats->LevelCollisions++;
 				auto movement = physics::MoveSphereFromAABB(*crateBody, *levelBody);
 				crateBody->StopMomentum(movement);
 			}

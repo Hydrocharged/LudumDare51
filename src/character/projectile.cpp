@@ -5,14 +5,17 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 #include <character/projectile.h>
+#include <render/model.h>
+#include <model/raylib.h>
 
 character::Projectile::Projectile(bool fromPlayer, float speed, float size, float damage, float lifeSpan, glm::vec3 pos, glm::vec3 dir) {
 	this->fromPlayer = fromPlayer;
 	this->damage = damage;
 	this->lifeSpan = lifeSpan;
+	this->model = model::manager::Get(model::manager::Name::Crate);
 
 	// Set up physics body
-	body = std::make_unique<physics::SphereBody>(pos, size);
+	body = new physics::SphereBody(pos, size);
 	body->SetGravity(false);
 	body->SetHorizontalDrag(0);
 	body->SetVerticalDrag(0);
@@ -22,11 +25,8 @@ character::Projectile::Projectile(bool fromPlayer, float speed, float size, floa
 void character::Projectile::Update(float deltaTime) {
 	body->Update(deltaTime);
 	lifeSpan -= deltaTime;
-
 }
 
 void character::Projectile::Draw(float deltaTime) {
-	glm::vec3 pos = body->GetPosition();
-	//DrawSphere((Vector3){0, 5, 0}, 2.0f, RED); // TODO: change color
-	DrawSphere((Vector3){pos.x, pos.y, pos.z}, 0.1f, RED); // TODO: change color
+	render::Model(model, body, glm::vec3(0.1f));
 }
