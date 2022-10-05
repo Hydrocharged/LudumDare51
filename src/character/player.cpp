@@ -56,7 +56,7 @@ void character::Player::Draw(float deltaTime) {
 	glm::vec3 weaponPos = GetCameraPosition() + (weaponOffset * 2.0f);
 
 	glm::vec3 rotAxis = glm::vec3(-glm::normalize(glm::vec4{0.21f, 6.21005f, 0.13f, 0}) * bodyRotMatrix);
-	glm::mat4 rotMatrix = glm::rotate(body->GetRotationMatrix(), -4.76001f, rotAxis);
+	glm::mat4 rotMatrix = glm::rotate(bodyRotMatrix, -4.76001f, rotAxis);
 
 	switch (currentWeapon) {
 		case PISTOL:
@@ -67,8 +67,6 @@ void character::Player::Draw(float deltaTime) {
 			break;
 		case SNIPER:
 			render::Model(sniper, weaponPos, rotMatrix);
-			break;
-		case MELEE:
 			break;
 	}
 }
@@ -121,10 +119,26 @@ void character::Player::UpdatePosition(mouse::Info& mouse, float deltaTime) {
 	camera->target.y = targetVec.y;
 	camera->target.z = targetVec.z;
 	body->SetLookAngles({angleX, angleY});
+
+	if (pistolCooldown >= 0) { pistolCooldown -= deltaTime; }
+	if (shotgunCooldown >= 0) { shotgunCooldown -= deltaTime; }
+	if (sniperCooldown >= 0) { sniperCooldown -= deltaTime; }
 }
 
 void character::Player::SetCurrentWeapon(character::Player::WeaponType weapon) {
 	currentWeapon = weapon;
+}
+
+bool character::Player::CanShoot() {
+	// don't do anything if gun is on "cooldown"
+	switch (currentWeapon) {
+		case PISTOL:
+			return (pistolCooldown < 0.0f);
+		case SHOTGUN:
+			return (shotgunCooldown < 0.0f);
+		case SNIPER:
+			return (sniperCooldown < 0.0f);
+	}
 }
 
 std::vector<character::Projectile*> character::Player::Shoot() {
@@ -132,22 +146,42 @@ std::vector<character::Projectile*> character::Player::Shoot() {
 	glm::vec3 dir = {r.direction.x, r.direction.y, r.direction.z};
 	glm::vec3 offset = 0.25f * dir;
 
+	glm::mat4 bodyRotMatrix = body->GetRotationMatrix();
+	glm::vec3 rotAxis = glm::vec3(-glm::normalize(glm::vec4{0.21f, 6.21005f, 0.13f, 0}) * bodyRotMatrix);
+	glm::mat4 rotMatrix = glm::rotate(body->GetRotationMatrix(), -4.76001f, rotAxis);
+
 	std::vector<character::Projectile*> projectiles;
 	switch (currentWeapon) {
 		case PISTOL:
-			projectiles.push_back(new character::Projectile(true, 50.0f, 0.5f, 10, 2.0f, this->GetCameraPosition() + offset, dir));
+			if (ammo > 0) {
+				ammo -= PISTOL_AMMO;
+			} else {
+				health -= PISTOL_AMMO;
+			}
+
+			pistolCooldown = PISTOL_FIRE_RATE;
+			projectiles.push_back(new character::Projectile(true, 50.0f, 0.5f, 10, 2.0f, this->GetCameraPosition() + offset, dir, rotMatrix));
 			break;
 		case SHOTGUN:
+			if (ammo > 0) {
+				ammo -= SHOTGUN_AMMO;
+			} else {
+				health -= SHOTGUN_AMMO;
+			}
+			shotgunCooldown = SHOTGUN_FIRE_RATE;
 			for (int i = 0; i < 10; i++) {
-				glm::vec3 jitter = {random::GetRandomRange(-0.1f, 0.1f), random::GetRandomRange(-0.1f, 0.1f), random::GetRandomRange(-0.1f, 0.1f)};
-				projectiles.push_back(new character::Projectile(true, 50.0f, 0.5f, 10, 2.0f, this->GetCameraPosition() + offset, dir + jitter));
+				glm::vec3 jitter = {random::GetRandomRange(-0.25f, 0.25f), random::GetRandomRange(-0.25f, 0.25f), random::GetRandomRange(-0.25f, 0.25f)};
+				projectiles.push_back(new character::Projectile(true, 25.0f, 0.5f, 10, 2.0f, this->GetCameraPosition() + offset, dir + jitter, rotMatrix));
 			}
 			break;
 		case SNIPER:
-			projectiles.push_back(new character::Projectile(true, 100.0f, 0.2f, 100, 3.0f, this->GetCameraPosition() + offset, dir));
-			break;
-		case MELEE:
-			projectiles.push_back(new character::Projectile(true, 0.0f, 0.2f, 50, 0.1f, this->GetCameraPosition(), dir));
+			if (ammo > 0) {
+				ammo -= SNIPER_AMMO;
+			} else {
+				health -= SNIPER_AMMO;
+			}
+			sniperCooldown = SNIPER_FIRE_RATE;
+			projectiles.push_back(new character::Projectile(true, 100.0f, 0.2f, 100, 3.0f, this->GetCameraPosition() + offset, dir, rotMatrix));
 			break;
 	}
 

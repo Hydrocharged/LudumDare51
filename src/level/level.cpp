@@ -77,8 +77,10 @@ void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
 	}
 
 	if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-		for (auto projectile: player->Shoot()) {
-			projectiles.insert(projectile);
+		if (player->CanShoot()) {
+			for (auto projectile: player->Shoot()) {
+				projectiles.insert(projectile);
+			}
 		}
 	}
 

@@ -8,11 +8,12 @@
 #include <render/model.h>
 #include <model/raylib.h>
 
-character::Projectile::Projectile(bool fromPlayer, float speed, float size, float damage, float lifeSpan, glm::vec3 pos, glm::vec3 dir) {
+character::Projectile::Projectile(bool fromPlayer, float speed, float size, float damage, float lifeSpan, glm::vec3 pos, glm::vec3 dir, glm::mat4 rotMatrix) {
 	this->fromPlayer = fromPlayer;
 	this->damage = damage;
 	this->lifeSpan = lifeSpan;
-	this->model = model::manager::Get(model::manager::Name::Crate);
+	this->model = model::manager::Get(model::manager::Name::Bullet);
+	this->rotMatrix = rotMatrix;
 
 	// Set up physics body
 	body = new physics::SphereBody(pos, size);
@@ -28,5 +29,5 @@ void character::Projectile::Update(float deltaTime) {
 }
 
 void character::Projectile::Draw(float deltaTime) {
-	render::Model(model, body, glm::vec3(0.1f));
+	render::Model(model, body, rotMatrix, glm::vec3(0.1f));
 }

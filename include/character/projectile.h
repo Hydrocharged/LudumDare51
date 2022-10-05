@@ -13,7 +13,7 @@
 namespace character {
 	class Projectile {
 	public:
-		Projectile(bool fromPlayer, float speed, float size, float damage, float lifeSpan, glm::vec3 pos, glm::vec3 dir);
+		Projectile(bool fromPlayer, float speed, float size, float damage, float lifeSpan, glm::vec3 pos, glm::vec3 dir, glm::mat4 rotMatrix);
 		~Projectile() { delete body; }
 		void Update(float deltaTime);
 		void Draw(float deltaTime);
@@ -26,6 +26,7 @@ namespace character {
 	private:
 		Model model;
 		physics::SphereBody* body;
+		glm::mat4 rotMatrix;
 
 		float damage;
 		float lifeSpan;
