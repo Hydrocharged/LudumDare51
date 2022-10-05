@@ -139,7 +139,7 @@ std::vector<character::Projectile*> character::Player::Shoot() {
 			break;
 		case SHOTGUN:
 			for (int i = 0; i < 10; i++) {
-				glm::vec3 jitter = {random::GetRandomRange(0.0f, 0.5f), random::GetRandomRange(0.0f, 0.1f), random::GetRandomRange(0.0f, 0.1f)};
+				glm::vec3 jitter = {random::GetRandomRange(-0.1f, 0.1f), random::GetRandomRange(-0.1f, 0.1f), random::GetRandomRange(-0.1f, 0.1f)};
 				projectiles.push_back(new character::Projectile(true, 50.0f, 0.5f, 10, 2.0f, this->GetCameraPosition() + offset, dir + jitter));
 			}
 			break;
