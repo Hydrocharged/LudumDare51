@@ -138,6 +138,8 @@ bool character::Player::CanShoot() {
 			return (shotgunCooldown < 0.0f);
 		case SNIPER:
 			return (sniperCooldown < 0.0f);
+		default:
+			return false;
 	}
 }
 
