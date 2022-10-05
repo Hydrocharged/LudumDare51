@@ -84,6 +84,9 @@ void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
 		}
 	}
 
+	// Make enemies shoot
+
+
 	// Update projectile
 	std::vector<character::Projectile*> toDeleteProjectiles;
 	for (auto projectile: projectiles) {

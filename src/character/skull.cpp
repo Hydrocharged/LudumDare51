@@ -43,8 +43,6 @@ void character::Skull::SetTarget(glm::vec3 playerPos) {
 }
 
 void character::Skull::Update(glm::vec3 playerPos, float deltaTime) {
-	//TODO: figure out how to make it look at player later
-
 	// Move towards target
 	glm::vec3 dir = target - body->GetPosition();
 	if (glm::length(dir) > FLT_EPSILON) {
@@ -58,4 +56,17 @@ void character::Skull::Update(glm::vec3 playerPos, float deltaTime) {
 		SetTarget(playerPos);
 	}
 	body->Update(deltaTime);
+
+	if (fireCoolDown >= 0) { fireCoolDown -= deltaTime; }
+}
+
+bool character::Skull::CanShoot() {
+	return fireCoolDown <= 0;
+}
+
+character::Projectile* character::Skull::Shoot() {
+	fireCoolDown = SKULL_FIRE_RATE;
+	glm::vec3 pos = body->GetPosition();
+	glm::vec3 dir = glm::normalize(target - pos);
+	return new character::Projectile(true, 100.0f, 0.2f, 100, 3.0f, body->GetPosition(), dir, body->GetRotationMatrix());
 }
