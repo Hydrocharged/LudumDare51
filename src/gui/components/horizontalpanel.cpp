@@ -35,6 +35,11 @@ gui::HorizontalPanel* gui::HorizontalPanel::SetHoverColor(gui::Color color) {
 	return this;
 }
 
+gui::HorizontalPanel* gui::HorizontalPanel::SetAlignment(gui::Alignment align) {
+	this->alignment = align;
+	return this;
+}
+
 std::vector<gui::DrawRect> gui::HorizontalPanel::ChildPositions(float posX, float posY, float containerWidth, float containerHeight) {
 	std::vector<gui::DrawRect> positions(children.size());
 	float width = Width(containerWidth, containerHeight);
@@ -44,8 +49,31 @@ std::vector<gui::DrawRect> gui::HorizontalPanel::ChildPositions(float posX, floa
 	for (auto& child: children) {
 		totalChildWidth += child->Width(width, height);
 	}
-	float childSpacing = (width - totalChildWidth) / ((float)(children.size()) + 1.0f);
+	float childSpacing = 0.0f;
 	float nextChildX = posX;
+	switch (alignment) {
+		case Alignment::Spread:
+			childSpacing = (width - totalChildWidth) / ((float)(children.size()) + 1.0f);
+			break;
+		case Alignment::Justified: {
+			auto numOfChildren = (float)children.size();
+			if (numOfChildren > 1.0f) {
+				childSpacing = (width - totalChildWidth) / (numOfChildren - 1.0f);
+				nextChildX -= childSpacing;
+			} else {
+				nextChildX += (width - totalChildWidth) / 2.0f;
+			}
+			break;
+		}
+		case Alignment::Center:
+			nextChildX += (width - totalChildWidth) / 2.0f;
+			break;
+		case Alignment::Start:
+			break;
+		case Alignment::End:
+			nextChildX += width - totalChildWidth;
+			break;
+	}
 	for (int i = 0; i < children.size(); i++) {
 		nextChildX += childSpacing;
 		positions[i] = DrawRect{nextChildX, posY + ((height - children[i]->Height(width, height)) / 2), width, height};

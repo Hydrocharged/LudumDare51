@@ -14,18 +14,18 @@ namespace character {
 	class Projectile {
 	public:
 		Projectile(bool fromPlayer, float speed, float size, float damage, float lifeSpan, glm::vec3 pos, glm::vec3 dir);
+		~Projectile() { delete body; }
 		void Update(float deltaTime);
 		void Draw(float deltaTime);
 
 		bool IsFromPlayer() { return fromPlayer; }
-		physics::SphereBody* GetBody() { return body.get(); }
+		physics::SphereBody* GetBody() { return body; }
 		float GetDamage() { return damage; }
 		float GetLifeSpan() { return lifeSpan; }
 
 	private:
 		Model model;
-
-		std::unique_ptr<physics::SphereBody> body;
+		physics::SphereBody* body;
 
 		float damage;
 		float lifeSpan;
