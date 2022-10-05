@@ -10,6 +10,9 @@
 #include <level/level.h>
 #include <render/render.h>
 #include <stats/frame.h>
+#include <iomanip>
+#include <sstream>
+
 #define RLIGHTS_IMPLEMENTATION
 #include <rlights.h>
 
@@ -46,16 +49,10 @@ int main(void) {
 	InitWindow((int)screenRect.ContainerWidth, (int)screenRect.ContainerHeight, "10 Seconds Till Death");
 	SetTargetFPS(GetMonitorRefreshRate(GetCurrentMonitor()));
 
+	SetExitKey(0);
 	model::manager::Load();
 	gui::fontmanager::Load();
 	auto mouse = mouse::Info{};
-	auto menu = std::unique_ptr<gui::Component>(
-		gui::NewVerticalPanel({
-			gui::NewDynamicLabel("", []()->std::string {
-				return stats::Frame::Current()->TotalFrametimeString();
-			})->SetYScale(0.1f)->SetColor(RED)
-		})->SetAlignment(gui::Alignment::Start)
-	);
 	const float centerDotSize = 0.008f;
 	auto centerDot = std::unique_ptr<gui::Component>(
 		gui::NewVerticalPanel({
@@ -65,6 +62,55 @@ int main(void) {
 	);
 
 	auto level = level::GetLevel1();
+	auto menu = std::unique_ptr<gui::Component>(
+		gui::NewVerticalPanel({
+			gui::NewHorizontalPanel({
+				gui::NewDynamicLabel("Total: ##:##:##.###", [&]()->std::string {
+					double totalTime = level->GetTotalTime();
+					int hours = (int)(totalTime / (3600.0));
+					int minutes = (int)(totalTime / 60.0) % 60;
+					int seconds = (int)totalTime % 60;
+					int ms = (int)((long long)(totalTime * 1000.0) % 1000);
+					std::ostringstream os;
+					os << " Total: ";
+					os << std::setfill('0') << std::setw(2) << hours << ":";
+					os << std::setfill('0') << std::setw(2) << minutes << ":";
+					os << std::setfill('0') << std::setw(2) << seconds << ".";
+					os << std::setfill('0') << std::setw(3) << ms;
+					return os.str();
+				})->SetColor({0, 0, 0, 255})->SetXScale(0.3f),
+				gui::NewDynamicLabel("", [&]()->std::string {
+					return "Score: " + std::to_string(level->GetScore());
+				})->SetColor({0, 0, 0, 255})->SetXScale(0.3f),
+				gui::NewDynamicLabel("Next Check: #.###", [&]()->std::string {
+					float timer = level->GetDeathTimer();
+					int seconds = (int)timer % 60;
+					int ms = (int)(timer * 1000.0) % 1000;
+					std::ostringstream os;
+					os << "Next Check: ";
+					os << std::setfill('0') << std::setw(1) << seconds << ".";
+					os << std::setfill('0') << std::setw(3) << ms;
+					return os.str();
+				})->SetColor({0, 0, 0, 255})->SetXScale(0.3f)
+			})->SetYScale(0.05f)->SetAlignment(gui::Alignment::Justified),
+			gui::NewHorizontalPanel({
+				gui::NewProgressBar([&]()->float {
+					return level->GetPlayer()->GetHealth() / level->GetPlayer()->GetMaxHealth();
+				}, {
+					gui::NewDynamicLabel("", [&]()->std::string {
+						return std::to_string((int)level->GetPlayer()->GetHealth()) + "/" + std::to_string((int)level->GetPlayer()->GetMaxHealth());
+					})->SetColor({255, 255, 255, 255}),
+				})->SetXScale(0.48f)->SetYScale(0.8f)->SetColor({220, 40, 40, 255}),
+				gui::NewProgressBar([&]()->float {
+					return level->GetPlayer()->GetAmmo() / level->GetPlayer()->GetMaxAmmo();
+				}, {
+					gui::NewDynamicLabel("", [&]()->std::string {
+						return std::to_string((int)level->GetPlayer()->GetAmmo()) + "/" + std::to_string((int)level->GetPlayer()->GetMaxAmmo());
+					})->SetColor({255, 255, 255, 255}),
+				})->SetXScale(0.48f)->SetYScale(0.8f)->SetColor({190, 190, 40, 255})
+			})->SetYScale(0.1f)->SetColor({0, 0, 0, 200}),
+		})->SetAlignment(gui::Alignment::Justified)
+	);
 
 	// Load shader and set up some uniforms
 	Shader shader = LoadShader(TextFormat((assetPrefix + "assets/shaders/glsl%i/lighting.vs").c_str(), GLSL_VERSION),
@@ -72,7 +118,7 @@ int main(void) {
 	shader.locs[SHADER_LOC_MATRIX_MODEL] = GetShaderLocation(shader, "matModel");
 	shader.locs[SHADER_LOC_VECTOR_VIEW] = GetShaderLocation(shader, "viewPos");
 	int ambientLoc = GetShaderLocation(shader, "ambient");
-	float ambientColor[4] = { 0.7f, 0.7f, 0.7f, 1.0f };
+	float ambientColor[4] = {0.7f, 0.7f, 0.7f, 1.0f};
 	SetShaderValue(shader, ambientLoc, ambientColor, SHADER_UNIFORM_VEC4);
 	float fogDensity = 0.00f;
 	SetShaderValue(shader, GetShaderLocation(shader, "fogDensity"), &fogDensity, SHADER_UNIFORM_FLOAT);
@@ -83,6 +129,13 @@ int main(void) {
 	emscripten_set_main_loop(UpdateDrawFrame, 0, 1);
 #else
 	while (!WindowShouldClose()) {
+		if (IsKeyPressed(KEY_ESCAPE)) {
+			if (level->IsPaused()) {
+				level->Unpause();
+			} else {
+				level->Pause();
+			}
+		}
 		stats::Frame::StartFrame();
 		float deltaTime = GetFrameTime();
 		mouse.Update();
@@ -118,9 +171,12 @@ int main(void) {
 		level->Draw(deltaTime);
 		EndMode3D();
 		stats::Frame::EndFrame();
-		menu->Draw(screenRect.PosX, screenRect.PosY, screenRect.ContainerWidth, screenRect.ContainerHeight);
-		//TODO: only draw the dot if the level is running
-		centerDot->Draw(screenRect.PosX, screenRect.PosY, screenRect.ContainerWidth, screenRect.ContainerHeight);
+		if (!level->IsPaused()) {
+			menu->Draw(screenRect.PosX, screenRect.PosY, screenRect.ContainerWidth, screenRect.ContainerHeight);
+			centerDot->Draw(screenRect.PosX, screenRect.PosY, screenRect.ContainerWidth, screenRect.ContainerHeight);
+		} else {
+
+		}
 		EndDrawing();
 	}
 #endif

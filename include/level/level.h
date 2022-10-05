@@ -33,11 +33,20 @@ namespace level {
 
 		void Draw(float deltaTime);
 		void Update(mouse::Info& mouseInfo, float deltaTime);
+		bool IsPaused() { return isPaused; }
+		void Pause() { isPaused = true; EnableCursor(); }
+		void Unpause() { isPaused = false; DisableCursor(); }
+		double GetTotalTime() { return totalTime; }
+		float GetDeathTimer() { return deathTimer; }
+		uint64_t GetScore() { return score; }
 
 	private:
 		const float DEATH_TIME = 10.f;
 		float deathTimer = DEATH_TIME;
+		double totalTime = 0.0;
+		uint64_t score = 0;
 
+		bool isPaused = false;
 		Model levelModel;
 		character::Player* player;
 
