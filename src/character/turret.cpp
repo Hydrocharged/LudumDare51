@@ -8,15 +8,17 @@
 #include <random.h>
 #include <render/model.h>
 
-character::Turret::Turret(glm::vec3 pos) : Enemy(new physics::CapsuleBody(pos, {0, 1.005f, 0}, {0, 1.0f, 0}, 1.0f)) {
-	model = model::manager::Get(model::manager::Name::Turret);
+character::Turret::Turret(glm::vec3 pos) : Enemy(new physics::CapsuleBody(pos,
+	{0, 1.005f, 0}, {0, 1.0f, 0}, 1.0f), model::manager::Get(model::manager::Name::Turret)) {
 	body->SetLookAngleOffsets({PI / 2.0f, 0});
 	cooldown = TURRET_FIRE_RATE;
 }
 
 void character::Turret::Draw(float deltaTime) {
 	glm::vec3 pos = body->GetPosition();
+	TintModel();
 	render::Model(model, body);
+	UntintModel();
 }
 
 void character::Turret::SetTarget(glm::vec3 playerPos) {

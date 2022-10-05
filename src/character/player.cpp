@@ -72,6 +72,23 @@ void character::Player::Draw(float deltaTime) {
 }
 
 void character::Player::UpdatePosition(mouse::Info& mouse, float deltaTime) {
+	dashReserves += deltaTime;
+	if(dashReserves > 1.2f) {
+		dashReserves = 1.2f;
+	}
+	invincibilityTimer -= deltaTime;
+	if(invincibilityTimer < 0.0f) {
+		invincibilityTimer = 0.0f;
+	}
+	if(IsKeyPressed(KEY_UP)) {
+		mouseSensitivity += 0.04f;
+	} else if(IsKeyPressed(KEY_DOWN)) {
+		mouseSensitivity -= 0.04f;
+		if(mouseSensitivity <= 0) {
+			mouseSensitivity = 0.04f;
+		}
+	}
+
 	auto forwardPressed = (float)IsKeyDown(KEY_W);
 	auto backPressed = (float)IsKeyDown(KEY_S);
 	auto leftPressed = (float)IsKeyDown(KEY_A);
@@ -89,8 +106,9 @@ void character::Player::UpdatePosition(mouse::Info& mouse, float deltaTime) {
 					sinf(angleX) * leftPressed -
 					sinf(angleX) * rightPressed);
 	if (glm::length(direction) > FLT_EPSILON) {
-		if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT) || IsKeyPressed(KEY_F) || IsKeyPressed(KEY_Q) ||
-			IsKeyPressed(KEY_E) || IsKeyPressed(KEY_R) || IsKeyPressed(KEY_LEFT_CONTROL)) {
+		if (dashReserves >= 0.6f && (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT) || IsKeyPressed(KEY_F) || IsKeyPressed(KEY_R) || IsKeyPressed(KEY_LEFT_CONTROL))) {
+			dashReserves -= 0.6f;
+			invincibilityTimer += 0.25;
 			body->ApplyInstantForce(direction, dashModifier * moveSpeedConstant);
 		} else {
 			body->ApplyFrameForce(direction, moveSpeedConstant * (IsKeyDown(KEY_LEFT_SHIFT) ? sprintModifier : 1.0f));
@@ -107,7 +125,13 @@ void character::Player::UpdatePosition(mouse::Info& mouse, float deltaTime) {
 		}
 	}
 	if (IsKeyPressed(KEY_SPACE)) {
-		body->ApplyInstantForce({0, 1.0f, 0}, jumpForce);
+		if(glm::abs(body->GetVelocity().y) < 0.1f) {
+			body->ApplyInstantForce({0, 1.0f, 0}, jumpForce);
+			jumpReserves = 1;
+		} else if(jumpReserves > 0) {
+			body->ApplyInstantForce({0, 1.0f, 0}, jumpForce);
+			jumpReserves -= 1;
+		}
 	}
 	body->Update(deltaTime);
 
@@ -169,9 +193,11 @@ std::vector<character::Projectile*> character::Player::Shoot() {
 				health = 0;
 			}
 
-			float damage = 4.0f;
+			float damage = 6.0f;
 			if (useBoostedDamage) {
 				damage *= ((1.0f - health / maxHealth) * 4.0f) + 1.0f;
+			} else if(health <= 0) {
+				damage *= 0.66f;
 			}
 			pistolCooldown = PISTOL_FIRE_RATE;
 			projectiles.push_back(new character::Projectile(true, 50.0f, 0.2f, damage, 2.0f, this->GetCameraPosition() + offset, dir, rotMatrix));
@@ -188,9 +214,11 @@ std::vector<character::Projectile*> character::Player::Shoot() {
 				health = 0;
 			}
 
-			float damage = 3.0f;
+			float damage = 12.0f;
 			if (useBoostedDamage) {
 				damage *= ((1.0f - health / maxHealth) * 4.0f) + 1.0f;
+			} else if(health <= 0) {
+				damage *= 0.66f;
 			}
 			shotgunCooldown = SHOTGUN_FIRE_RATE;
 			for (int i = 0; i < 10; i++) {
@@ -212,6 +240,8 @@ std::vector<character::Projectile*> character::Player::Shoot() {
 			float damage = 50.0f;
 			if (useBoostedDamage) {
 				damage *= ((1.0f - health / maxHealth) * 4.0f) + 1.0f;
+			} else if(health <= 0) {
+				damage *= 0.66f;
 			}
 			sniperCooldown = SNIPER_FIRE_RATE;
 			projectiles.push_back(new character::Projectile(true, 100.0f, 0.1f, damage, 3.0f, this->GetCameraPosition() + offset, dir, rotMatrix));

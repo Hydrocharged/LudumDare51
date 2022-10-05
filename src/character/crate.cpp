@@ -7,9 +7,8 @@
 #include <character/crate.h>
 #include <render/model.h>
 
-character::Crate::Crate(float health, float ammo, glm::vec3 pos) {
-	this->health = health;
-	this->ammo = ammo;
+character::Crate::Crate(float strength, glm::vec3 pos) {
+	this->strength = strength;
 	model = model::manager::Get(model::manager::Name::Crate);
 	body = std::make_unique<physics::SphereBody>(pos, 0.7f);
 }

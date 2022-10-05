@@ -111,6 +111,33 @@ int main(void) {
 			})->SetYScale(0.1f)->SetColor({0, 0, 0, 200}),
 		})->SetAlignment(gui::Alignment::Justified)
 	);
+	auto paused = std::unique_ptr<gui::Component>(
+		gui::NewVerticalPanel({
+			gui::NewLabel("PAUSED")->SetYScale(0.3f),
+			gui::NewLabel("Press Escape to resume")->SetYScale(0.14f)
+		})->SetAlignment(gui::Alignment::Center)
+	);
+	auto gameOverScreen = std::unique_ptr<gui::Component>(
+		gui::NewVerticalPanel({
+			gui::NewLabel("GAME OVER")->SetYScale(0.3f)->SetColor({255, 255, 255, 255}),
+			gui::NewDynamicLabel("", [&]()->std::string {
+				double totalTime = level->GetTotalTime();
+				int hours = (int)(totalTime / (3600.0));
+				int minutes = (int)(totalTime / 60.0) % 60;
+				int seconds = (int)totalTime % 60;
+				std::ostringstream os;
+				os << "Play Time: ";
+				os << std::setfill('0') << std::setw(2) << hours << ":";
+				os << std::setfill('0') << std::setw(2) << minutes << ":";
+				os << std::setfill('0') << std::setw(2) << seconds;
+				return os.str();
+			})->SetColor({255, 255, 255, 255})->SetYScale(0.14f),
+			gui::NewDynamicLabel("", [&]()->std::string {
+				return "Score: " + std::to_string(level->GetScore());
+			})->SetColor({255, 255, 255, 255})->SetYScale(0.14f),
+			gui::NewLabel("Refresh the page to play again")->SetColor({255, 255, 255, 255})->SetYScale(0.14f)
+		})->SetAlignment(gui::Alignment::Center)->SetColor({0, 0, 0, 210})
+	);
 
 	// Load shader and set up some uniforms
 	Shader shader = LoadShader(TextFormat((assetPrefix + "assets/shaders/glsl%i/lighting.vs").c_str(), GLSL_VERSION),
@@ -129,7 +156,7 @@ int main(void) {
 	emscripten_set_main_loop(UpdateDrawFrame, 0, 1);
 #else
 	while (!WindowShouldClose()) {
-		if (IsKeyPressed(KEY_ESCAPE)) {
+		if (IsKeyPressed(KEY_ESCAPE) && !level->IsGameOver()) {
 			if (level->IsPaused()) {
 				level->Unpause();
 			} else {
@@ -141,15 +168,15 @@ int main(void) {
 		mouse.Update();
 		menu->Update(mouse, screenRect);
 
-		if (IsKeyPressed(KEY_I)) {
-			level->SpawnEnemy(character::EnemyType::Skull, 1);
-		}
-		if (IsKeyPressed(KEY_O)) {
-			level->SpawnEnemy(character::EnemyType::Turret, 1);
-		}
-		if (IsKeyPressed(KEY_P)) {
-			level->SpawnEnemy(character::EnemyType::Vampire, 1);
-		}
+		//if (IsKeyPressed(KEY_I)) {
+		//	level->SpawnEnemy(character::EnemyType::Skull, 1);
+		//}
+		//if (IsKeyPressed(KEY_O)) {
+		//	level->SpawnEnemy(character::EnemyType::Turret, 1);
+		//}
+		//if (IsKeyPressed(KEY_P)) {
+		//	level->SpawnEnemy(character::EnemyType::Vampire, 1);
+		//}
 
 		// switching weapons
 		if (IsKeyPressed(KEY_ONE)) {
@@ -171,11 +198,15 @@ int main(void) {
 		level->Draw(deltaTime);
 		EndMode3D();
 		stats::Frame::EndFrame();
-		if (!level->IsPaused()) {
-			menu->Draw(screenRect.PosX, screenRect.PosY, screenRect.ContainerWidth, screenRect.ContainerHeight);
-			centerDot->Draw(screenRect.PosX, screenRect.PosY, screenRect.ContainerWidth, screenRect.ContainerHeight);
+		if(!level->IsGameOver()) {
+			if (!level->IsPaused()) {
+				menu->Draw(screenRect.PosX, screenRect.PosY, screenRect.ContainerWidth, screenRect.ContainerHeight);
+				centerDot->Draw(screenRect.PosX, screenRect.PosY, screenRect.ContainerWidth, screenRect.ContainerHeight);
+			} else {
+				paused->Draw(screenRect.PosX, screenRect.PosY, screenRect.ContainerWidth, screenRect.ContainerHeight);
+			}
 		} else {
-
+			gameOverScreen->Draw(screenRect.PosX, screenRect.PosY, screenRect.ContainerWidth, screenRect.ContainerHeight);
 		}
 		EndDrawing();
 	}

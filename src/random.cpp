@@ -1089,34 +1089,6 @@ size_t random::GetRandomRange(size_t min, size_t max) {
 	return (size_t)round((double)(max - min) * amount) + min;
 }
 
-template<size_t S>
-std::array<double, S> random::GetRandomDistribution(double amountToDistribute) {
-	std::array<double, S> arr;
-	double total = 0;
-	for (int i = 0; i < S; i++) {
-		arr[i] = random::GetRandomValue();
-		total += arr[i];
-	}
-	for (int i = 0; i < S; i++) {
-		arr[i] = (arr[i] / total) * amountToDistribute;
-	}
-	return arr;
-}
-
-template<size_t S>
-std::array<float, S> random::GetRandomDistribution(float amountToDistribute) {
-	std::array<float, S> arr;
-	float total = 0;
-	for (int i = 0; i < S; i++) {
-		arr[i] = (float)random::GetRandomValue();
-		total += arr[i];
-	}
-	for (int i = 0; i < S; i++) {
-		arr[i] = (arr[i] / total) * amountToDistribute;
-	}
-	return arr;
-}
-
 std::string random::GetPreString() {
 	return preStrs[(int)(94.0 * random::GetRandomValue())];
 }

@@ -8,8 +8,8 @@
 #include <random.h>
 #include <render/model.h>
 
-character::Skull::Skull(glm::vec3 pos) : Enemy(new physics::CapsuleBody(pos, {0, 0.505f, 0}, {0, 0.5f, 0}, 0.9f)) {
-	model = model::manager::Get(model::manager::Name::Skull);
+character::Skull::Skull(glm::vec3 pos) : Enemy(new physics::CapsuleBody(pos, {0, 0.505f, 0}, {0, 0.5f, 0}, 0.9f),
+	model::manager::Get(model::manager::Name::Skull)) {
 	body->SetLookAngleOffsets({PI / 2.0f, 0});
 	body->SetGravity(false);
 	cooldown = SKULL_FIRE_RATE;
@@ -17,7 +17,9 @@ character::Skull::Skull(glm::vec3 pos) : Enemy(new physics::CapsuleBody(pos, {0,
 
 void character::Skull::Draw(float deltaTime) {
 	glm::vec3 pos = body->GetPosition();
+	TintModel();
 	render::Model(model, body);
+	UntintModel();
 }
 
 void character::Skull::SetTarget(glm::vec3 playerPos) {

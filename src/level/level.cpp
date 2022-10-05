@@ -29,7 +29,7 @@ level::Level::~Level() {
 }
 
 void level::Level::Draw(float deltaTime) {
-	if(isPaused) {
+	if(isPaused || isGameOver) {
 		deltaTime = 0.0f;
 	}
 	DrawModel(levelModel, (Vector3){0, -1, 0}, 10.0f, WHITE);
@@ -46,7 +46,7 @@ void level::Level::Draw(float deltaTime) {
 }
 
 void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
-	if(isPaused) {
+	if(isPaused || isGameOver) {
 		return;
 	}
 	// Get frame stats to update
@@ -149,6 +149,13 @@ void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
 					enemy->TakeDamage(projectile->GetDamage());
 					wasDeleted = true;
 					toDeleteProjectiles.emplace(projectile);
+					if(enemy->GetHealth() <= 0.0f && enemy->CanSpawnCrate()) {
+						score += 5 + (uint64_t)(10.0f - deathTimer);
+						enemy->DisableCrateSpawn();
+						auto spawnedCrate = new character::Crate(10.0f + (float)floor(totalTime / 10.0) * 3.0f, enemy->GetBody()->GetPosition());
+						crates.emplace(spawnedCrate);
+						spawnedCrate->GetBody()->ApplyInstantForce(glm::normalize(glm::vec3{random::GetRandomRange(-0.4f, 0.4f), 0.5f, random::GetRandomRange(-0.4f, 0.4f)}), 10.0f);
+					}
 				}
 			}
 		}
@@ -199,8 +206,14 @@ void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
 			frameStats->ItemCollisions++;
 			frameStats->PlayerCollisions++;
 			toDeleteCrates.push_back(crate);
-			player->AddAmmo(crate->GetAmmo());
-			player->AddHealth(crate->GetHealth());
+			if(IsKeyDown(KEY_Q)) {
+				player->AddHealth(crate->GetStrength() * 2.5f);
+			} else if(IsKeyDown(KEY_E)) {
+				player->AddAmmo(crate->GetStrength() * 2.5f);
+			} else {
+				player->AddAmmo(crate->GetStrength());
+				player->AddHealth(crate->GetStrength());
+			}
 		}
 		for (auto levelBody: bodies) {
 			frameStats->ItemCollisionChecks++;
@@ -222,14 +235,16 @@ void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
 	if (deathTimer <= 0.f) {
 		deathTimer = DEATH_TIME;
 		// Kill crates
+		for(auto crate: crates) {
+			delete crate;
+		}
 		crates.clear();
 
 		// Kill enemies
 		std::vector<character::Enemy*> toDeleteEnemies;
 		for (auto enemy: enemies) {
-			if (enemy->GetHealth() < 0.f) {
+			if (enemy->GetHealth() <= 0.f) {
 				toDeleteEnemies.push_back(enemy);
-				crates.emplace(new character::Crate(10, 10, enemy->GetBody()->GetPosition()));
 			}
 		}
 		for (auto enemy: toDeleteEnemies) {
@@ -237,9 +252,14 @@ void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
 			delete enemy;
 		}
 
+		auto spawnAmounts = random::GetRandomDistribution<3>(2.0 + floor((totalTime / 10.0)));
+		SpawnEnemy(character::EnemyType::Skull, (unsigned int)round(spawnAmounts[0]));
+		SpawnEnemy(character::EnemyType::Turret, (unsigned int)round(spawnAmounts[1]));
+		SpawnEnemy(character::EnemyType::Vampire, (unsigned int)round(spawnAmounts[2]));
+
 		// Kill player
 		if (player->GetHealth() <= 0.f) {
-			gameOver();
+			GameOver();
 		}
 	}
 	totalTime += deltaTime;

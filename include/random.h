@@ -24,6 +24,34 @@ namespace random {
 	std::string GetPreString();
 	std::string GetMidString();
 	std::string GetPostString();
+
+	template<size_t S>
+	std::array<double, S> random::GetRandomDistribution(double amountToDistribute) {
+		std::array<double, S> arr;
+		double total = 0;
+		for (int i = 0; i < S; i++) {
+			arr[i] = random::GetRandomValue();
+			total += arr[i];
+		}
+		for (int i = 0; i < S; i++) {
+			arr[i] = (arr[i] / total) * amountToDistribute;
+		}
+		return arr;
+	}
+
+	template<size_t S>
+	std::array<float, S> random::GetRandomDistribution(float amountToDistribute) {
+		std::array<float, S> arr;
+		float total = 0;
+		for (int i = 0; i < S; i++) {
+			arr[i] = (float)random::GetRandomValue();
+			total += arr[i];
+		}
+		for (int i = 0; i < S; i++) {
+			arr[i] = (arr[i] / total) * amountToDistribute;
+		}
+		return arr;
+	}
 };
 
 #endif //RANDOM_H
