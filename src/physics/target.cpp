@@ -10,7 +10,7 @@ const float pi = 3.14159265358979323846f;
 const float angleYMin = -89.0f * (pi / 180.0f);
 const float angleYMax = 89.0f * (pi / 180.0f);
 
-glm::vec3 physics::GetTargetVector(glm::vec3 position, float angleX, float angleY) {
+glm::vec3 physics::GetPositionTargetVector(glm::vec3 position, float angleX, float angleY) {
 	glm::mat4 matTranslation(1.0f);
 	glm::mat4 matRotation = GetRotationMatrix(angleX, angleY);
 	matTranslation[2][3] = 10.0f;

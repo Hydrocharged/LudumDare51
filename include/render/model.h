@@ -10,8 +10,13 @@
 #include <physics/body.h>
 
 namespace render {
+	void Model(::Model model, physics::Body* body);
 	void Model(::Model model, physics::Body* body, glm::vec3 scale);
+	void Model(::Model model, physics::Body* body, glm::mat4 rotMatrix);
+	void Model(::Model model, physics::Body* body, glm::mat4 rotMatrix, glm::vec3 scale);
 	void Model(::Model model, physics::Body* body, glm::vec3 renderPosition, glm::vec3 scale);
+	void Model(::Model model, glm::vec3 position, glm::mat4 rotMatrix);
+	void Model(::Model model, glm::vec3 position, glm::mat4 rotMatrix, glm::vec3 scale);
 }
 
 #endif //RENDER_RAYLIB_H

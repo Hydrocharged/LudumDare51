@@ -18,7 +18,7 @@ void character::Vampire::Draw(float deltaTime) {
 		c = YELLOW;
 	}
 	glm::vec3 pos = body->GetPosition();
-	render::Model(model, body, glm::vec3(1.0f));
+	render::Model(model, body);
 }
 
 void character::Vampire::SetTarget(glm::vec3 playerPos) {

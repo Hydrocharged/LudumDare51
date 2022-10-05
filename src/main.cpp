@@ -43,6 +43,14 @@ int main(void) {
 			})->SetYScale(0.1f)
 		})->SetAlignment(gui::Alignment::Start)
 	);
+	const float centerDotSize = 0.008f;
+	auto centerDot = std::unique_ptr<gui::Component>(
+		gui::NewVerticalPanel({
+			gui::NewHorizontalPanel({})->SetColor({0, 0, 0, 255})->
+				SetXScale((screenRect.ContainerHeight / screenRect.ContainerWidth) * centerDotSize)->SetYScale(centerDotSize)
+		})->SetAlignment(gui::Alignment::Center)
+	);
+
 	auto level = level::GetLevel1();
 
 #if defined(PLATFORM_WEB)
@@ -92,6 +100,8 @@ int main(void) {
 		EndMode3D();
 		stats::Frame::EndFrame();
 		menu->Draw(screenRect.PosX, screenRect.PosY, screenRect.ContainerWidth, screenRect.ContainerHeight);
+		//TODO: only draw the dot if the level is running
+		centerDot->Draw(screenRect.PosX, screenRect.PosY, screenRect.ContainerWidth, screenRect.ContainerHeight);
 		EndDrawing();
 	}
 #endif

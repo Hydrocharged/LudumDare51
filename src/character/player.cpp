@@ -11,6 +11,8 @@
 #include <memory>
 #include <cmath>
 #include <random.h>
+#include <render/model.h>
+#include <glm/gtx/quaternion.hpp>
 
 const glm::vec3 cameraHeight = {0, 1.84f, 0};
 
@@ -48,19 +50,23 @@ character::Player::operator Camera*() {
 }
 
 void character::Player::Draw(float deltaTime) {
-	Vector3 pos = camera->position;
-	pos.x += 1.0f;
-	pos.y += -0.5f;
-	pos.z += 1.0f;
+	glm::mat4 bodyRotMatrix = body->GetRotationMatrix();
+
+	glm::vec3 weaponOffset = glm::normalize(glm::vec3(-glm::normalize(glm::vec4{-0.26f, 0.26f, 0.35f, 0.0f}) * bodyRotMatrix));
+	glm::vec3 weaponPos = GetCameraPosition() + (weaponOffset * 2.0f);
+
+	glm::vec3 rotAxis = glm::vec3(-glm::normalize(glm::vec4{0.21f, 6.21005f, 0.13f, 0}) * bodyRotMatrix);
+	glm::mat4 rotMatrix = glm::rotate(body->GetRotationMatrix(), -4.76001f, rotAxis);
+
 	switch (currentWeapon) {
 		case PISTOL:
-			DrawModel(pistol, pos, 0.5f, WHITE);
+			render::Model(pistol, weaponPos, rotMatrix, glm::vec3{0.8f});
 			break;
 		case SHOTGUN:
-			DrawModel(shotgun, pos, 1.0f, WHITE);
+			render::Model(shotgun, weaponPos, rotMatrix);
 			break;
 		case SNIPER:
-			DrawModel(sniper, pos, 1.0f, WHITE);
+			render::Model(sniper, weaponPos, rotMatrix);
 			break;
 		case MELEE:
 			break;
@@ -110,7 +116,7 @@ void character::Player::UpdatePosition(mouse::Info& mouse, float deltaTime) {
 	angleY -= (mouse.CurrentY - mouse.PrevY) * mouseSensitivity * deltaTime;
 
 	physics::SanitizeAngles(angleX, angleY);
-	auto targetVec = physics::GetTargetVector(body->GetPosition() + cameraHeight, angleX, angleY);
+	auto targetVec = physics::GetPositionTargetVector(body->GetPosition() + cameraHeight, angleX, angleY);
 	camera->target.x = targetVec.x;
 	camera->target.y = targetVec.y;
 	camera->target.z = targetVec.z;
