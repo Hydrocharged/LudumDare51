@@ -86,9 +86,6 @@ int main(void) {
 		if (IsKeyPressed(KEY_THREE)) {
 			level->GetPlayer()->SetCurrentWeapon(character::Player::WeaponType::SNIPER);
 		}
-		if (IsKeyPressed(KEY_FOUR)) {
-			level->GetPlayer()->SetCurrentWeapon(character::Player::WeaponType::MELEE);
-		}
 
 		BeginDrawing();
 		ClearBackground({255, 255, 255, 255});
