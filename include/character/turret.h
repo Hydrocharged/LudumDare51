@@ -17,16 +17,20 @@ namespace character {
 
 		void Draw(float deltaTime) override;
 		void Update(glm::vec3 playerPos, float deltaTime) override;
-		glm::vec3 FindTarget(glm::vec3 playerPos);
+		void SetTarget(glm::vec3 playerPos);
+		character::Projectile* Shoot();
 
 	private:
 		const float TURRET_MOVETIME = 5.f;
 		float moveTime = TURRET_MOVETIME;
+		glm::vec3 playerLoc;
 
 		// will try to stay within this donut around the player
-		float speed = 2.5f;
-		float radMin = 1.0f;
-		float radMax = 2.5f;
+		glm::vec3 target{0};
+		float radMin = 2.0f;
+		float radMax = 6.0f;
+
+		const float TURRET_FIRE_RATE = 4.0f;
 	};
 }
 

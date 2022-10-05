@@ -160,7 +160,7 @@ std::vector<character::Projectile*> character::Player::Shoot() {
 			}
 
 			pistolCooldown = PISTOL_FIRE_RATE;
-			projectiles.push_back(new character::Projectile(true, 50.0f, 0.5f, 10, 2.0f, this->GetCameraPosition() + offset, dir, rotMatrix));
+			projectiles.push_back(new character::Projectile(true, 50.0f, 0.2f, 10, 2.0f, this->GetCameraPosition() + offset, dir, rotMatrix));
 			break;
 		case SHOTGUN:
 			if (ammo > 0) {
@@ -171,7 +171,7 @@ std::vector<character::Projectile*> character::Player::Shoot() {
 			shotgunCooldown = SHOTGUN_FIRE_RATE;
 			for (int i = 0; i < 10; i++) {
 				glm::vec3 jitter = {random::GetRandomRange(-0.25f, 0.25f), random::GetRandomRange(-0.25f, 0.25f), random::GetRandomRange(-0.25f, 0.25f)};
-				projectiles.push_back(new character::Projectile(true, 25.0f, 0.5f, 10, 2.0f, this->GetCameraPosition() + offset, dir + jitter, rotMatrix));
+				projectiles.push_back(new character::Projectile(true, 25.0f, 0.05f, 10, 2.0f, this->GetCameraPosition() + offset, dir + jitter, rotMatrix));
 			}
 			break;
 		case SNIPER:
@@ -181,7 +181,7 @@ std::vector<character::Projectile*> character::Player::Shoot() {
 				health -= SNIPER_AMMO;
 			}
 			sniperCooldown = SNIPER_FIRE_RATE;
-			projectiles.push_back(new character::Projectile(true, 100.0f, 0.2f, 100, 3.0f, this->GetCameraPosition() + offset, dir, rotMatrix));
+			projectiles.push_back(new character::Projectile(true, 100.0f, 0.1f, 100, 3.0f, this->GetCameraPosition() + offset, dir, rotMatrix));
 			break;
 	}
 

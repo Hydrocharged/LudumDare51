@@ -18,7 +18,8 @@ namespace model::manager {
 		Vampire,
 		Level1,
 		Crate,
-		Bullet
+		Bullet,
+		EnemyProjectile,
 	};
 	Model Get(Name name);
 	void SetShaders(Shader shader);

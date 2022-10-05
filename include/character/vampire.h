@@ -18,6 +18,7 @@ namespace character {
 		void Draw(float deltaTime) override;
 		void Update(glm::vec3 playerPos, float deltaTime) override;
 		void SetTarget(glm::vec3 playerPos);
+		character::Projectile* Shoot();
 
 	private:
 		const float VAMPIRE_MOVETIME = 10.f;
