@@ -70,6 +70,7 @@ void model::manager::Load() {
 }
 
 void model::manager::Unload() {
+	UnloadShader(models[Name::Pistol].materials[0].shader);
 	UnloadModel(models[Name::Pistol]);
 	UnloadModel(models[Name::Shotgun]);
 	UnloadModel(models[Name::Sniper]);
@@ -83,4 +84,16 @@ void model::manager::Unload() {
 
 Model model::manager::Get(Name name) {
 	return models[name];
+}
+
+void model::manager::SetShaders(Shader shader) {
+	models[Name::Pistol].materials[0].shader = shader;
+	models[Name::Shotgun].materials[0].shader = shader;
+	models[Name::Sniper].materials[0].shader = shader;
+	models[Name::Skull].materials[0].shader = shader;
+	models[Name::Turret].materials[0].shader = shader;
+	models[Name::Vampire].materials[0].shader = shader;
+	models[Name::Level1].materials[0].shader = shader;
+	models[Name::Crate].materials[0].shader = shader;
+	models[Name::Bullet].materials[0].shader = shader;
 }
