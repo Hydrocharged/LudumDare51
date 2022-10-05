@@ -25,7 +25,9 @@ character::Projectile::Projectile(bool fromPlayer, float speed, float size, floa
 	body->SetHorizontalDrag(0);
 	body->SetVerticalDrag(0);
 	body->ApplyInstantForce(dir, speed);
-	body->OffsetPosition({0, 0.7f, 0});
+	if (!fromPlayer) {
+		body->OffsetPosition({0, 0.7f, 0});
+	}
 }
 
 void character::Projectile::Update(float deltaTime) {

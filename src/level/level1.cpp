@@ -34,6 +34,11 @@ std::unique_ptr<level::Level> level::GetLevel1() {
 	level->AddBody(new physics::AABBBody(glm::vec3{-28, 1.5, 28}, glm::vec3{8, 1, 8}));
 	level->AddBody(new physics::AABBBody(glm::vec3{-28, 1.5, -28}, glm::vec3{8, 1, 8}));
 
+	level->AddBody(new physics::AABBBody(glm::vec3{33, 12.5, 0}, glm::vec3{2, 25, 64}));
+	level->AddBody(new physics::AABBBody(glm::vec3{-33, 12.5, 0}, glm::vec3{2, 25, 64}));
+	level->AddBody(new physics::AABBBody(glm::vec3{0, 12.5, 33}, glm::vec3{64, 25, 2}));
+	level->AddBody(new physics::AABBBody(glm::vec3{0, 12.5, -33}, glm::vec3{64, 25, 2}));
+
 	level->SetPlayerSpawn({0, 5, 0});
 	level->SpawnPlayer();
 
