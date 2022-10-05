@@ -78,4 +78,12 @@ void character::Vampire::Update(glm::vec3 playerPos, float deltaTime) {
 	glm::vec3 dir = glm::normalize(target - pos);
 	body->ApplyFrameForce(dir, speed);
 	body->Update(deltaTime);
+
+	if (meleeCooldown >= 0.f) {
+		meleeCooldown -= deltaTime;
+	}
+}
+
+character::Projectile* character::Vampire::Shoot() {
+	return nullptr;
 }

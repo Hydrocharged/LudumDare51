@@ -18,6 +18,7 @@ namespace character {
 		void Draw(float deltaTime) override;
 		void Update(glm::vec3 playerPos, float deltaTime) override;
 		void SetTarget(glm::vec3 playerPos);
+		character::Projectile* Shoot();
 
 	private:
 		// Number of seconds before it changes direction
@@ -29,6 +30,8 @@ namespace character {
 		float speed = 50.0f;
 		float radMin = 3.0f;
 		float radMax = 10.0f;
+
+		const float SKULL_FIRE_RATE = 1.5f;
 	};
 }
 

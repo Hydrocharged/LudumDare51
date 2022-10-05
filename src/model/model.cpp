@@ -62,6 +62,11 @@ void model::manager::Load() {
 	texture = LoadTexture((pathPrefix + "assets/models/bullet/bullet.png").c_str());
 	SetMaterialTexture(&model.materials[0], MATERIAL_MAP_DIFFUSE, texture);
 	models[Name::Bullet] = model;
+
+	model = LoadModel((pathPrefix + "assets/models/enemy_projectile/enemy_projectile.obj").c_str());
+	texture = LoadTexture((pathPrefix + "assets/models/enemy_projectile/enemy_projectile.png").c_str());
+	SetMaterialTexture(&model.materials[0], MATERIAL_MAP_DIFFUSE, texture);
+	models[Name::EnemyProjectile] = model;
 }
 
 void model::manager::Unload() {

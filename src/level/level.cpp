@@ -59,10 +59,17 @@ void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
 		}
 	}
 
-	// Check enemy to level collisions
 	glm::vec3 playerPos = player->GetPosition();
 	for (auto enemy: enemies) {
 		enemy->Update(playerPos, deltaTime);
+
+		// Make enemies shoot
+		if (enemy->CanShoot()) {
+			auto projectile = enemy->Shoot();
+			if (projectile != nullptr) { projectiles.emplace(projectile); }
+		}
+
+		// Check enemy to level collisions
 		auto enemyBody = enemy->GetBody();
 		for (auto levelBody: bodies) {
 			frameStats->EnemyCollisionChecks++;
@@ -72,6 +79,14 @@ void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
 				frameStats->LevelCollisions++;
 				auto movement = physics::MoveCapsuleFromAABB(*enemyBody, *levelBody);
 				enemyBody->StopMomentum(movement);
+			}
+		}
+
+		// check enemy to player collision
+		if (enemyBody->CollidesWith(playerBody)) {
+			if (enemy->CanMelee()) {
+				enemy->Melee();
+				player->TakeDamage(enemy->GetDamage());
 			}
 		}
 	}
@@ -84,14 +99,15 @@ void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
 		}
 	}
 
+
 	// Update projectile
-	std::vector<character::Projectile*> toDeleteProjectiles;
+	std::set<character::Projectile*> toDeleteProjectiles;
 	for (auto projectile: projectiles) {
 		bool wasDeleted = false;
 		projectile->Update(deltaTime);
 		if (projectile->GetLifeSpan() <= 0.0f) {
 			wasDeleted = true;
-			toDeleteProjectiles.push_back(projectile);
+			toDeleteProjectiles.emplace(projectile);
 		}
 		if (wasDeleted) {
 			continue;
@@ -107,7 +123,7 @@ void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
 				frameStats->ProjectileCollisions++;
 				frameStats->LevelCollisions++;
 				wasDeleted = true;
-				toDeleteProjectiles.push_back(projectile);
+				toDeleteProjectiles.emplace(projectile);
 			}
 		}
 
@@ -126,7 +142,7 @@ void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
 					frameStats->EnemyCollisions++;
 					enemy->TakeDamage(projectile->GetDamage());
 					wasDeleted = true;
-					toDeleteProjectiles.push_back(projectile);
+					toDeleteProjectiles.emplace(projectile);
 				}
 			}
 		}
@@ -143,7 +159,22 @@ void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
 				frameStats->ProjectileCollisions++;
 				frameStats->PlayerCollisions++;
 				player->TakeDamage(projectile->GetDamage());
-				toDeleteProjectiles.push_back(projectile);
+				toDeleteProjectiles.emplace(projectile);
+			}
+		}
+
+		// TODO: somewhat expensive, could separate enemy and player projectiles
+		// check projectile to projectile collision
+		for (auto projectile2: projectiles) {
+			if (projectile == projectile2) {
+				continue;
+			}
+
+			if (projectile->IsFromPlayer() != projectile2->IsFromPlayer()) {
+				if (projectileBody->CollidesWith(projectile2->GetBody())) {
+					toDeleteProjectiles.emplace(projectile);
+					toDeleteProjectiles.emplace(projectile2);
+				}
 			}
 		}
 	}

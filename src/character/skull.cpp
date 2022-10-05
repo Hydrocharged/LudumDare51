@@ -12,6 +12,7 @@ character::Skull::Skull(glm::vec3 pos) : Enemy(new physics::CapsuleBody(pos, {0,
 	model = model::manager::Get(model::manager::Name::Skull);
 	body->SetLookAngleOffsets({PI / 2.0f, 0});
 	body->SetGravity(false);
+	cooldown = SKULL_FIRE_RATE;
 };
 
 void character::Skull::Draw(float deltaTime) {
@@ -43,8 +44,6 @@ void character::Skull::SetTarget(glm::vec3 playerPos) {
 }
 
 void character::Skull::Update(glm::vec3 playerPos, float deltaTime) {
-	//TODO: figure out how to make it look at player later
-
 	// Move towards target
 	glm::vec3 dir = target - body->GetPosition();
 	if (glm::length(dir) > FLT_EPSILON) {
@@ -58,4 +57,16 @@ void character::Skull::Update(glm::vec3 playerPos, float deltaTime) {
 		SetTarget(playerPos);
 	}
 	body->Update(deltaTime);
+
+	if (cooldown >= 0) { cooldown -= deltaTime; }
+	if (meleeCooldown >= 0.f) {
+		meleeCooldown -= deltaTime;
+	}
+}
+
+character::Projectile* character::Skull::Shoot() {
+	cooldown = SKULL_FIRE_RATE;
+	glm::vec3 pos = body->GetPosition();
+	glm::vec3 dir = glm::normalize(target - pos);
+	return new character::Projectile(false, 10.0f, 0.2f, 10, 10.0f, body->GetPosition(), dir, body->GetRotationMatrix());
 }
