@@ -68,6 +68,11 @@ void character::Vampire::Update(glm::vec3 playerPos, float deltaTime) {
 			if (dist <= 3.0f) {
 				moveState++;
 			}
+			moveTime -= deltaTime;
+			if (moveTime <= 0.f) {
+				moveState++;
+				moveTime = VAMPIRE_MOVETIME;
+			}
 			break;
 		default:
 			moveState = 0;
