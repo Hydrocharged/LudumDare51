@@ -21,6 +21,7 @@ namespace model::manager {
 		Bullet
 	};
 	Model Get(Name name);
+	void SetShaders(Shader shader);
 }
 
 #endif //MODEL_RAYLIB_H

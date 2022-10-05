@@ -7,9 +7,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 include(FetchContent)
 find_package(raylib 4.2.0 QUIET)
 if (NOT raylib_FOUND)
-    FetchContent_Declare(
-        raylib
-        URL https://github.com/raysan5/raylib/archive/refs/tags/4.2.0.tar.gz
+    FetchContent_Declare(raylib
+        GIT_REPOSITORY https://github.com/raysan5/raylib.git
+        GIT_TAG 2e26cf48e8bf2b60209175fad47dfb030d29e2be
     )
     FetchContent_GetProperties(raylib)
     if (NOT raylib_POPULATED)
