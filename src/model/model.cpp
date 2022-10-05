@@ -57,6 +57,11 @@ void model::manager::Load() {
 	texture = LoadTexture((pathPrefix + "assets/models/crate/crate.png").c_str());
 	SetMaterialTexture(&model.materials[0], MATERIAL_MAP_DIFFUSE, texture);
 	models[Name::Crate] = model;
+
+	model = LoadModel((pathPrefix + "assets/models/bullet/bullet.obj").c_str());
+	texture = LoadTexture((pathPrefix + "assets/models/bullet/bullet.png").c_str());
+	SetMaterialTexture(&model.materials[0], MATERIAL_MAP_DIFFUSE, texture);
+	models[Name::Bullet] = model;
 }
 
 void model::manager::Unload() {
@@ -68,6 +73,7 @@ void model::manager::Unload() {
 	UnloadModel(models[Name::Vampire]);
 	UnloadModel(models[Name::Level1]);
 	UnloadModel(models[Name::Crate]);
+	UnloadModel(models[Name::Bullet]);
 }
 
 Model model::manager::Get(Name name) {

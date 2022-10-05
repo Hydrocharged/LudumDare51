@@ -28,7 +28,7 @@ int main(void) {
 	HideConsole();
 #endif //_WIN32
 
-	SetConfigFlags(FLAG_WINDOW_RESIZABLE);
+	SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_MSAA_4X_HINT);
 	auto screenRect = gui::DrawRect{0, 0, 1280, 720};
 	InitWindow((int)screenRect.ContainerWidth, (int)screenRect.ContainerHeight, "RaylibStarter");
 	SetTargetFPS(GetMonitorRefreshRate(GetCurrentMonitor()));
