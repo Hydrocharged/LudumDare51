@@ -24,19 +24,19 @@ void character::Skull::Draw(float deltaTime) {
 
 void character::Skull::SetTarget(glm::vec3 playerPos) {
 	// Determine how to move on XZ-plane
-	float x = random::GetRandomRange(radMin, radMax);
-	if (random::GetRandomRange(0.f, 1.f) >= 0.5) {
+	float x = rando::GetRandomRange(radMin, radMax);
+	if (rando::GetRandomRange(0.f, 1.f) >= 0.5) {
 		x = -x;
 	}
-	float z = random::GetRandomRange(radMin, radMax);
-	if (random::GetRandomRange(0.f, 1.f) >= 0.5) {
+	float z = rando::GetRandomRange(radMin, radMax);
+	if (rando::GetRandomRange(0.f, 1.f) >= 0.5) {
 		z = -z;
 	}
 
 	// Determine how to move on Y-axis, must be above player to go down
 	glm::vec3 pos = body->GetPosition();
-	float y = random::GetRandomRange(0.f, radMin);
-	if (random::GetRandomRange(0.f, 1.f) >= 0.75 && pos.y > playerPos.y) {
+	float y = rando::GetRandomRange(0.f, radMin);
+	if (rando::GetRandomRange(0.f, 1.f) >= 0.75 && pos.y > playerPos.y) {
 		y = -y;
 	}
 
@@ -70,5 +70,5 @@ character::Projectile* character::Skull::Shoot() {
 	cooldown = SKULL_FIRE_RATE;
 	glm::vec3 pos = body->GetPosition();
 	glm::vec3 dir = glm::normalize(target - pos);
-	return new character::Projectile(false, 10.0f, 0.2f, 10, 10.0f, body->GetPosition(), dir, body->GetRotationMatrix());
+	return new character::Projectile(false, 10.0f, 0.2f, 7, 10.0f, body->GetPosition(), dir, body->GetRotationMatrix());
 }

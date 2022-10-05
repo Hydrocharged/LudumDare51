@@ -10,6 +10,7 @@
 character::Vampire::Vampire(glm::vec3 pos) : Enemy(new physics::CapsuleBody(pos,
 	{0, 1.3f, 0}, {0, 1.0f, 0}, 1.0f), model::manager::Get(model::manager::Name::Vampire)) {
 	body->SetLookAngleOffsets({-PI / 2.0f, 0});
+	damage = 20.0f;
 }
 
 void character::Vampire::Draw(float deltaTime) {

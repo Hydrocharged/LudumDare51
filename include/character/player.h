@@ -50,7 +50,7 @@ namespace character {
 		float sprintModifier = 3.0f;
 		float dashModifier = 1.2f;
 		float jumpForce = 15.0f;
-		float mouseSensitivity = 0.4f;
+		float mouseSensitivity = 0.5f;
 		float maxHealth = 100.0f;
 		float health = maxHealth;
 		float maxAmmo = 100.0f;

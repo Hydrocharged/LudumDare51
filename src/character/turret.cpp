@@ -23,12 +23,12 @@ void character::Turret::Draw(float deltaTime) {
 
 void character::Turret::SetTarget(glm::vec3 playerPos) {
 	// Determine how to move on XZ-plane
-	float x = random::GetRandomRange(radMin, radMax);
-	if (random::GetRandomRange(0.f, 1.f) >= 0.5) {
+	float x = rando::GetRandomRange(radMin, radMax);
+	if (rando::GetRandomRange(0.f, 1.f) >= 0.5) {
 		x = -x;
 	}
-	float z = random::GetRandomRange(radMin, radMax);
-	if (random::GetRandomRange(0.f, 1.f) >= 0.5) {
+	float z = rando::GetRandomRange(radMin, radMax);
+	if (rando::GetRandomRange(0.f, 1.f) >= 0.5) {
 		z = -z;
 	}
 
@@ -62,5 +62,5 @@ character::Projectile* character::Turret::Shoot() {
 	cooldown = TURRET_FIRE_RATE;
 	glm::vec3 pos = body->GetPosition();
 	glm::vec3 dir = glm::normalize(playerLoc - pos);
-	return new character::Projectile(false, 5.0f, 0.2f, 50, 10.0f, body->GetPosition(), dir, body->GetRotationMatrix());
+	return new character::Projectile(false, 5.0f, 0.2f, 10, 10.0f, body->GetPosition(), dir, body->GetRotationMatrix());
 }

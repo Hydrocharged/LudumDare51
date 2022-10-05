@@ -16,6 +16,7 @@
 
 level::Level::Level() {
 	this->levelModel = model::manager::Get(model::manager::Name::Level1);
+	isPaused = true;
 }
 
 level::Level::~Level() {
@@ -154,7 +155,7 @@ void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
 						enemy->DisableCrateSpawn();
 						auto spawnedCrate = new character::Crate(10.0f + (float)floor(totalTime / 10.0) * 3.0f, enemy->GetBody()->GetPosition());
 						crates.emplace(spawnedCrate);
-						spawnedCrate->GetBody()->ApplyInstantForce(glm::normalize(glm::vec3{random::GetRandomRange(-0.4f, 0.4f), 0.5f, random::GetRandomRange(-0.4f, 0.4f)}), 10.0f);
+						spawnedCrate->GetBody()->ApplyInstantForce(glm::normalize(glm::vec3{rando::GetRandomRange(-0.4f, 0.4f), 0.5f, rando::GetRandomRange(-0.4f, 0.4f)}), 10.0f);
 					}
 				}
 			}
@@ -252,7 +253,7 @@ void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
 			delete enemy;
 		}
 
-		auto spawnAmounts = random::GetRandomDistribution<3>(2.0 + floor((totalTime / 10.0)));
+		auto spawnAmounts = rando::GetRandomDistribution<3>(2.0 + floor((totalTime / 10.0)));
 		SpawnEnemy(character::EnemyType::Skull, (unsigned int)round(spawnAmounts[0]));
 		SpawnEnemy(character::EnemyType::Turret, (unsigned int)round(spawnAmounts[1]));
 		SpawnEnemy(character::EnemyType::Vampire, (unsigned int)round(spawnAmounts[2]));
@@ -276,6 +277,7 @@ character::Player* level::Level::GetPlayer() {
 void level::Level::SpawnPlayer() {
 	// Create player
 	player = new character::Player(playerSpawn);
+	player->GetBody()->ApplyInstantForce({0, 1, 0}, 15.0f);
 }
 
 void level::Level::SetEnemySpawn(glm::vec3 spawnLocation) {
@@ -283,7 +285,7 @@ void level::Level::SetEnemySpawn(glm::vec3 spawnLocation) {
 }
 
 void level::Level::SpawnEnemy(character::EnemyType enemyType, unsigned int numSpawns) {
-	int spawnIdx = random::GetRandomRange(0, (int)enemySpawns.size());
+	int spawnIdx = rando::GetRandomRange(0, (int)enemySpawns.size());
 	for (unsigned int i = 0; i < numSpawns; i++) {
 		switch (enemyType) {
 			case character::EnemyType::Skull:

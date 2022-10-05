@@ -9,7 +9,7 @@
 #include <array>
 #include <string>
 
-namespace random {
+namespace rando {
 	double GetRandomValue();
 	float GetRandomRange(float min, float max);
 	double GetRandomRange(double min, double max);
@@ -26,11 +26,11 @@ namespace random {
 	std::string GetPostString();
 
 	template<size_t S>
-	std::array<double, S> random::GetRandomDistribution(double amountToDistribute) {
+	std::array<double, S> rando::GetRandomDistribution(double amountToDistribute) {
 		std::array<double, S> arr;
 		double total = 0;
 		for (int i = 0; i < S; i++) {
-			arr[i] = random::GetRandomValue();
+			arr[i] = rando::GetRandomValue();
 			total += arr[i];
 		}
 		for (int i = 0; i < S; i++) {
@@ -40,11 +40,11 @@ namespace random {
 	}
 
 	template<size_t S>
-	std::array<float, S> random::GetRandomDistribution(float amountToDistribute) {
+	std::array<float, S> rando::GetRandomDistribution(float amountToDistribute) {
 		std::array<float, S> arr;
 		float total = 0;
 		for (int i = 0; i < S; i++) {
-			arr[i] = (float)random::GetRandomValue();
+			arr[i] = (float)rando::GetRandomValue();
 			total += arr[i];
 		}
 		for (int i = 0; i < S; i++) {

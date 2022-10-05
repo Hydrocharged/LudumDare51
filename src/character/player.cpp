@@ -222,7 +222,7 @@ std::vector<character::Projectile*> character::Player::Shoot() {
 			}
 			shotgunCooldown = SHOTGUN_FIRE_RATE;
 			for (int i = 0; i < 10; i++) {
-				glm::vec3 jitter = {random::GetRandomRange(-0.25f, 0.25f), random::GetRandomRange(-0.25f, 0.25f), random::GetRandomRange(-0.25f, 0.25f)};
+				glm::vec3 jitter = {rando::GetRandomRange(-0.25f, 0.25f), rando::GetRandomRange(-0.25f, 0.25f), rando::GetRandomRange(-0.25f, 0.25f)};
 				projectiles.push_back(new character::Projectile(true, 25.0f, 0.05f, damage, 2.0f, this->GetCameraPosition() + offset, dir + jitter, rotMatrix));
 			}
 			break;

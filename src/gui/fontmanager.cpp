@@ -7,6 +7,7 @@
 #include <gui/gui.h>
 #include <gui/fontmanager.h>
 #include <cmath>
+#include <array>
 
 #if defined(PLATFORM_WEB)
 const char* fontName = "assets/fonts/SourceCodePro-Regular.ttf";
