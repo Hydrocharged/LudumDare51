@@ -184,6 +184,9 @@ void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
 	deathTimer -= deltaTime;
 	if (deathTimer <= 0.f) {
 		deathTimer = DEATH_TIME;
+		// Kill crates
+		crates.clear();
+		
 		// Kill enemies
 		std::vector<character::Enemy*> toDeleteEnemies;
 		for (auto enemy: enemies) {
