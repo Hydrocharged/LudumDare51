@@ -79,3 +79,7 @@ void character::Vampire::Update(glm::vec3 playerPos, float deltaTime) {
 	body->ApplyFrameForce(dir, speed);
 	body->Update(deltaTime);
 }
+
+character::Projectile* character::Vampire::Shoot() {
+	return nullptr;
+}

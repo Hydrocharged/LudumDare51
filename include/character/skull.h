@@ -8,7 +8,6 @@
 #define CHARACTER_SKULL_H
 #include <character/enemy.h>
 #include <model/raylib.h>
-#include <character/projectile.h>
 
 namespace character {
 	class Skull : public Enemy {
@@ -20,7 +19,6 @@ namespace character {
 		void Update(glm::vec3 playerPos, float deltaTime) override;
 		void SetTarget(glm::vec3 playerPos);
 		character::Projectile* Shoot();
-		bool CanShoot();
 
 	private:
 		// Number of seconds before it changes direction
@@ -34,7 +32,6 @@ namespace character {
 		float radMax = 10.0f;
 
 		const float SKULL_FIRE_RATE = 1.5f;
-		float fireCoolDown = SKULL_FIRE_RATE;
 	};
 }
 

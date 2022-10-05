@@ -12,7 +12,11 @@ character::Projectile::Projectile(bool fromPlayer, float speed, float size, floa
 	this->fromPlayer = fromPlayer;
 	this->damage = damage;
 	this->lifeSpan = lifeSpan;
-	this->model = model::manager::Get(model::manager::Name::Bullet);
+	if (fromPlayer) {
+		this->model = model::manager::Get(model::manager::Name::Bullet);
+	} else {
+		this->model = model::manager::Get(model::manager::Name::EnemyProjectile);
+	}
 	this->rotMatrix = rotMatrix;
 
 	// Set up physics body
@@ -29,5 +33,10 @@ void character::Projectile::Update(float deltaTime) {
 }
 
 void character::Projectile::Draw(float deltaTime) {
-	render::Model(model, body, rotMatrix, glm::vec3(0.1f));
+	if (fromPlayer) {
+		render::Model(model, body, rotMatrix, glm::vec3(0.1f));
+	} else {
+		render::Model(model, body, rotMatrix, glm::vec3(0.3f));
+	}
+
 }

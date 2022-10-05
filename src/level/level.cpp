@@ -63,6 +63,13 @@ void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
 	glm::vec3 playerPos = player->GetPosition();
 	for (auto enemy: enemies) {
 		enemy->Update(playerPos, deltaTime);
+
+		// Make enemies shoot
+		if (enemy->CanShoot()) {
+			auto projectile = enemy->Shoot();
+			if (projectile != nullptr) { projectiles.emplace(projectile); }
+		}
+
 		auto enemyBody = enemy->GetBody();
 		for (auto levelBody: bodies) {
 			frameStats->EnemyCollisionChecks++;
@@ -83,8 +90,6 @@ void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
 			}
 		}
 	}
-
-	// Make enemies shoot
 
 
 	// Update projectile
