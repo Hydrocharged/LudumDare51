@@ -1,0 +1,1 @@
+py -m http.server 7800 --directory cmake-build-web

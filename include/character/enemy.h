@@ -19,29 +19,37 @@ namespace character {
 
 	class Enemy {
 	public:
-		Enemy(physics::CapsuleBody* body) : body(body) {}
+		Enemy(physics::CapsuleBody* body, Model model);
 		virtual ~Enemy() { delete body; }
 
 		virtual void Update(glm::vec3 playerPos, float deltaTime) = 0;
 		virtual void Draw(float deltaTime) = 0;
-		virtual float GetHealth() { return health; }
-		virtual void TakeDamage(float dmg) { health -= dmg; }
-		virtual bool IsHit(physics::Body* projectile) { return body->CollidesWith(projectile); }
 		virtual character::Projectile* Shoot() = 0;
 
 		physics::CapsuleBody* GetBody() { return body; }
 		bool CanShoot() { return cooldown <= 0.0f; }
 		float GetDamage() { return damage; }
 		bool CanMelee() { return meleeCooldown <= 0; }
+		bool CanSpawnCrate() { return canSpawnCrate; }
+		void DisableCrateSpawn() { canSpawnCrate = false; }
 		void Melee() { meleeCooldown = MELEE_RATE; }
+		float GetHealth() { return health; }
+		float GetMaxHealth() { return maxHealth; }
+		void TakeDamage(float dmg) { health -= dmg; if(health < 0) { health = 0; } }
+		void TintModel();
+		void UntintModel();
 
 	protected:
 		Model model;
+		std::vector<Color> tints;
 		physics::CapsuleBody* body;
-		float health = 100.0f;
+		float maxHealth = 100.0f;
+		float health = maxHealth;
 		float damage = 5.0f;
 		float cooldown = 0.0f;
 		float meleeCooldown = 0.0f;
+		float cratePickupCooldown = 3600.0f;
+		bool canSpawnCrate = true;
 		const float MELEE_RATE = 5.0f;
 	};
 }

@@ -1065,66 +1065,38 @@ std::string postStr[855] = {
 	"zuy",
 };
 
-double random::GetRandomValue() {
+double rando::GetRandomValue() {
 	return dist(mt);
 }
 
-float random::GetRandomRange(float min, float max) {
-	auto amount = (float)random::GetRandomValue();
+float rando::GetRandomRange(float min, float max) {
+	auto amount = (float)rando::GetRandomValue();
 	return ((max - min) * amount) + min;
 }
 
-double random::GetRandomRange(double min, double max) {
-	auto amount = random::GetRandomValue();
+double rando::GetRandomRange(double min, double max) {
+	auto amount = rando::GetRandomValue();
 	return ((max - min) * amount) + min;
 }
 
-int random::GetRandomRange(int min, int max) {
-	auto amount = random::GetRandomValue();
+int rando::GetRandomRange(int min, int max) {
+	auto amount = rando::GetRandomValue();
 	return (int)round((max - min) * amount) + min;
 }
 
-size_t random::GetRandomRange(size_t min, size_t max) {
-	auto amount = random::GetRandomValue();
+size_t rando::GetRandomRange(size_t min, size_t max) {
+	auto amount = rando::GetRandomValue();
 	return (size_t)round((double)(max - min) * amount) + min;
 }
 
-template<size_t S>
-std::array<double, S> random::GetRandomDistribution(double amountToDistribute) {
-	std::array<double, S> arr;
-	double total = 0;
-	for (int i = 0; i < S; i++) {
-		arr[i] = random::GetRandomValue();
-		total += arr[i];
-	}
-	for (int i = 0; i < S; i++) {
-		arr[i] = (arr[i] / total) * amountToDistribute;
-	}
-	return arr;
+std::string rando::GetPreString() {
+	return preStrs[(int)(94.0 * rando::GetRandomValue())];
 }
 
-template<size_t S>
-std::array<float, S> random::GetRandomDistribution(float amountToDistribute) {
-	std::array<float, S> arr;
-	float total = 0;
-	for (int i = 0; i < S; i++) {
-		arr[i] = (float)random::GetRandomValue();
-		total += arr[i];
-	}
-	for (int i = 0; i < S; i++) {
-		arr[i] = (arr[i] / total) * amountToDistribute;
-	}
-	return arr;
+std::string rando::GetMidString() {
+	return midStrs[(int)(94.0 * rando::GetRandomValue())];
 }
 
-std::string random::GetPreString() {
-	return preStrs[(int)(94.0 * random::GetRandomValue())];
-}
-
-std::string random::GetMidString() {
-	return midStrs[(int)(94.0 * random::GetRandomValue())];
-}
-
-std::string random::GetPostString() {
-	return postStr[(int)(854.0 * random::GetRandomValue())];
+std::string rando::GetPostString() {
+	return postStr[(int)(854.0 * rando::GetRandomValue())];
 }

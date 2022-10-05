@@ -9,6 +9,7 @@
 #include <mouse.h>
 #include <memory>
 #include <functional>
+#include <vector>
 #include <gui/color.h>
 
 namespace gui {

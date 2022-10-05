@@ -6,11 +6,59 @@
 
 #include <raylib.h>
 #include <level/level.h>
+#include <random.h>
 
 std::unique_ptr<level::Level> level::GetLevel1() {
 	level::Level* level = new level::Level();
 	level->SetDimensions({64, 64, 64});
-	level->SetEnemySpawn({0, 0, 0});
+	level->SetEnemySpawn({0, 3, 10});
+	level->SetEnemySpawn({0, 3, -10});
+	level->SetEnemySpawn({10, 3, 0});
+	level->SetEnemySpawn({10, 3, 10});
+	level->SetEnemySpawn({10, 3, -10});
+	level->SetEnemySpawn({-10, 3, 0});
+	level->SetEnemySpawn({-10, 3, 10});
+	level->SetEnemySpawn({-10, 3, -10});
+	level->SetEnemySpawn({20, 3, 10});
+	level->SetEnemySpawn({20, 3, -10});
+	level->SetEnemySpawn({10, 3, 20});
+	level->SetEnemySpawn({10, 3, -20});
+	level->SetEnemySpawn({-20, 3, 10});
+	level->SetEnemySpawn({-20, 3, -10});
+	level->SetEnemySpawn({-10, 3, 20});
+	level->SetEnemySpawn({-10, 3, -20});
+	level->SetEnemySpawn({0, 3, 20});
+	level->SetEnemySpawn({0, 3, -20});
+	level->SetEnemySpawn({20, 3, 0});
+	level->SetEnemySpawn({20, 3, 20});
+	level->SetEnemySpawn({20, 3, -20});
+	level->SetEnemySpawn({-20, 3, 0});
+	level->SetEnemySpawn({-20, 3, 20});
+	level->SetEnemySpawn({-20, 3, -20});
+	level->SetEnemySpawn({0, 3, 30});
+	level->SetEnemySpawn({0, 3, -30});
+	level->SetEnemySpawn({30, 3, 0});
+	level->SetEnemySpawn({30, 3, 10});
+	level->SetEnemySpawn({30, 3, -10});
+	level->SetEnemySpawn({10, 3, 30});
+	level->SetEnemySpawn({10, 3, -30});
+	level->SetEnemySpawn({-30, 3, 0});
+	level->SetEnemySpawn({-30, 3, 10});
+	level->SetEnemySpawn({-30, 3, -10});
+	level->SetEnemySpawn({-10, 3, 30});
+	level->SetEnemySpawn({-10, 3, -30});
+	level->SetEnemySpawn({20, 3, 30});
+	level->SetEnemySpawn({20, 3, -30});
+	level->SetEnemySpawn({30, 3, 20});
+	level->SetEnemySpawn({30, 3, -20});
+	level->SetEnemySpawn({-20, 3, 30});
+	level->SetEnemySpawn({-20, 3, -30});
+	level->SetEnemySpawn({-30, 3, 20});
+	level->SetEnemySpawn({-30, 3, -20});
+	level->SetEnemySpawn({30, 3, 30});
+	level->SetEnemySpawn({30, 3, -30});
+	level->SetEnemySpawn({-30, 3, 30});
+	level->SetEnemySpawn({-30, 3, -30});
 
 	level->AddBody(new physics::AABBBody(glm::vec3{0, -0.5, 0}, glm::vec3{32, 1, 32}));
 
@@ -41,6 +89,7 @@ std::unique_ptr<level::Level> level::GetLevel1() {
 
 	level->SetPlayerSpawn({0, 5, 0});
 	level->SpawnPlayer();
+	level->SpawnEnemy(character::EnemyType::Skull, 1);
 
 	return std::unique_ptr<level::Level>(level);
 }

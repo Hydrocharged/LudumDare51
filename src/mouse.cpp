@@ -11,6 +11,9 @@ void mouse::Info::Update() {
 	PrevX = CurrentX;
 	PrevY = CurrentY;
 	CurrentX = (float)GetMouseX();
+#if defined(PLATFORM_WEB)
+	CurrentX -= 2.0f;
+#endif // PLATFORM_WEB
 	CurrentY = (float)GetMouseY();
 	if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
 		if (IsMouseDown) {

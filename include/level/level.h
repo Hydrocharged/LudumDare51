@@ -34,6 +34,7 @@ namespace level {
 		void Draw(float deltaTime);
 		void Update(mouse::Info& mouseInfo, float deltaTime);
 		bool IsPaused() { return isPaused; }
+		bool IsGameOver() { return isGameOver; }
 		void Pause() { isPaused = true; EnableCursor(); }
 		void Unpause() { isPaused = false; DisableCursor(); }
 		double GetTotalTime() { return totalTime; }
@@ -47,6 +48,7 @@ namespace level {
 		uint64_t score = 0;
 
 		bool isPaused = false;
+		bool isGameOver = false;
 		Model levelModel;
 		character::Player* player;
 
@@ -59,7 +61,7 @@ namespace level {
 		std::set<character::Projectile*> projectiles;
 		std::set<character::Crate*> crates;
 
-		void gameOver() {}
+		void GameOver() { isGameOver = true; EnableCursor(); }
 	};
 
 	std::unique_ptr<Level> GetLevel1();

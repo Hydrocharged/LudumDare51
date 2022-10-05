@@ -14,20 +14,18 @@
 namespace character {
 	class Crate {
 	public:
-		Crate(float health, float ammo, glm::vec3 pos);
+		Crate(float strength, glm::vec3 pos);
 		void Update(float deltaTime);
 		void Draw(float deltaTime);
 
-		float GetHealth() { return health; }
-		float GetAmmo() { return ammo; }
+		float GetStrength() { return strength; }
 		physics::SphereBody* GetBody() { return body.get(); }
 
 	private:
 		Model model;
 		std::unique_ptr<physics::SphereBody> body;
 
-		float health;
-		float ammo;
+		float strength;
 		float spin = 0.0f;
 	};
 }
