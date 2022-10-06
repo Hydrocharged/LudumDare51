@@ -215,7 +215,7 @@ std::vector<character::Projectile*> character::Player::Shoot() {
 				damage *= 0.66f;
 			}
 			pistolCooldown = PISTOL_FIRE_RATE;
-			projectiles.push_back(new character::Projectile(true, 50.0f, 0.2f, damage, 2.0f, this->GetCameraPosition() + offset, dir, rotMatrix));
+			projectiles.push_back(new character::PistolProjectile(damage, this->GetCameraPosition() + offset, dir, rotMatrix));
 			break;
 		}
 		case SHOTGUN: {
@@ -231,14 +231,14 @@ std::vector<character::Projectile*> character::Player::Shoot() {
 
 			float damage = 12.0f;
 			if (useBoostedDamage) {
-				damage *= ((1.0f - health / maxHealth) * 4.0f) + 1.0f;
+				damage *= ((1.0f - health / maxHealth) * 2.0f) + 1.0f;
 			} else if (health <= 0) {
 				damage *= 0.66f;
 			}
 			shotgunCooldown = SHOTGUN_FIRE_RATE;
 			for (int i = 0; i < 10; i++) {
 				glm::vec3 jitter = {rando::GetRandomRange(-0.25f, 0.25f), rando::GetRandomRange(-0.25f, 0.25f), rando::GetRandomRange(-0.25f, 0.25f)};
-				projectiles.push_back(new character::Projectile(true, 25.0f, 0.05f, damage, 2.0f, this->GetCameraPosition() + offset, dir + jitter, rotMatrix));
+				projectiles.push_back(new character::ShotgunProjectile(damage, this->GetCameraPosition() + offset, dir + jitter, rotMatrix));
 			}
 			break;
 		}
@@ -253,14 +253,14 @@ std::vector<character::Projectile*> character::Player::Shoot() {
 				health = 0;
 			}
 
-			float damage = 50.0f;
+			float damage = 75.0f;
 			if (useBoostedDamage) {
-				damage *= ((1.0f - health / maxHealth) * 4.0f) + 1.0f;
+				damage *= ((1.0f - health / maxHealth) * 2.0f) + 1.0f;
 			} else if (health <= 0) {
 				damage *= 0.66f;
 			}
 			sniperCooldown = SNIPER_FIRE_RATE;
-			projectiles.push_back(new character::Projectile(true, 100.0f, 0.1f, damage, 3.0f, this->GetCameraPosition() + offset, dir, rotMatrix));
+			projectiles.push_back(new character::SniperProjectile(damage, this->GetCameraPosition() + offset, dir, rotMatrix));
 			break;
 	}
 
