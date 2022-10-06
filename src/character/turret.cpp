@@ -62,5 +62,5 @@ character::Projectile* character::Turret::Shoot() {
 	cooldown = TURRET_FIRE_RATE;
 	glm::vec3 pos = body->GetPosition();
 	glm::vec3 dir = glm::normalize(playerLoc - pos);
-	return new character::Projectile(false, 5.0f, 0.2f, 10, 10.0f, body->GetPosition(), dir, body->GetRotationMatrix());
+	return new character::TurretProjectile(body->GetPosition(), dir, body->GetRotationMatrix());
 }

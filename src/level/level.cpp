@@ -30,7 +30,7 @@ level::Level::~Level() {
 }
 
 void level::Level::Draw(float deltaTime) {
-	if(isPaused || isGameOver) {
+	if (isPaused || isGameOver) {
 		deltaTime = 0.0f;
 	}
 	DrawModel(levelModel, (Vector3){0, -1, 0}, 10.0f, WHITE);
@@ -50,7 +50,7 @@ void level::Level::Draw(float deltaTime) {
 }
 
 void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
-	if(isPaused || isGameOver) {
+	if (isPaused || isGameOver) {
 		return;
 	}
 	// Get frame stats to update
@@ -134,6 +134,7 @@ void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
 				frameStats->LevelCollisions++;
 				wasDeleted = true;
 				toDeleteProjectiles.emplace(playerProjectile);
+				break;
 			}
 		}
 		if (wasDeleted) {
@@ -151,15 +152,16 @@ void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
 				enemy->TakeDamage(playerProjectile->GetDamage());
 				wasDeleted = true;
 				toDeleteProjectiles.emplace(playerProjectile);
-				if(enemy->GetHealth() <= 0.0f && enemy->CanSpawnCrate()) {
+				if (enemy->GetHealth() <= 0.0f && enemy->CanSpawnCrate()) {
 					score += 5 + (uint64_t)(10.0f - deathTimer);
 					enemy->DisableCrateSpawn();
-					if(deathTimer >= 1.0f) {
-						auto spawnedCrate = new character::Crate(10.0f + (float)floor(totalTime / 10.0) * 3.0f, enemy->GetBody()->GetPosition());
+					if (deathTimer >= 1.0f) {
+						auto spawnedCrate = new character::Crate(8.0f, enemy->GetBody()->GetPosition());
 						crates.emplace(spawnedCrate);
 						spawnedCrate->GetBody()->ApplyInstantForce(glm::normalize(glm::vec3{rando::GetRandomRange(-0.4f, 0.4f), 0.5f, rando::GetRandomRange(-0.4f, 0.4f)}), 10.0f);
 					}
 				}
+				break;
 			}
 		}
 		if (wasDeleted) {
@@ -169,14 +171,17 @@ void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
 		// Check player projectile to enemy projectile collision
 		for (auto enemyProjectile: enemyProjectiles) {
 			if (projectileBody->CollidesWith(enemyProjectile->GetBody())) {
-				toDeleteProjectiles.emplace(playerProjectile);
 				toDeleteProjectiles.emplace(enemyProjectile);
+				if (playerProjectile->Type() != character::ProjectileType::Sniper) {
+					toDeleteProjectiles.emplace(playerProjectile);
+					break;
+				}
 			}
 		}
 	}
 
 	for (auto projectile: toDeleteProjectiles) {
-		if(projectile->IsFromPlayer()) {
+		if (projectile->IsFromPlayer()) {
 			playerProjectiles.erase(projectile);
 		} else {
 			enemyProjectiles.erase(projectile);
@@ -187,20 +192,17 @@ void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
 
 	// Update remaining enemy projectiles
 	for (auto enemyProjectile: enemyProjectiles) {
+		enemyProjectile->Update(deltaTime);
 		auto projectileBody = enemyProjectile->GetBody();
-		bool wasDeleted = false;
 		// Check enemy projectile to player
 		frameStats->ProjectileCollisionChecks++;
 		frameStats->PlayerCollisionChecks++;
 		if (projectileBody->CollidesWith(playerBody)) {
-			wasDeleted = true;
 			frameStats->ProjectileCollisions++;
 			frameStats->PlayerCollisions++;
 			player->TakeDamage(enemyProjectile->GetDamage());
 			toDeleteProjectiles.emplace(enemyProjectile);
-		}
-		if(wasDeleted) {
-			continue;
+			break;
 		}
 
 		// Check enemy projectile to level
@@ -211,13 +213,14 @@ void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
 				frameStats->ProjectileCollisions++;
 				frameStats->LevelCollisions++;
 				toDeleteProjectiles.emplace(enemyProjectile);
+				break;
 			}
 		}
 	}
 
 	// Delete the rest of the projectiles from the next check
 	for (auto projectile: toDeleteProjectiles) {
-		if(projectile->IsFromPlayer()) {
+		if (projectile->IsFromPlayer()) {
 			playerProjectiles.erase(projectile);
 		} else {
 			enemyProjectiles.erase(projectile);
@@ -236,14 +239,15 @@ void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
 			frameStats->ItemCollisions++;
 			frameStats->PlayerCollisions++;
 			toDeleteCrates.push_back(crate);
-			if(IsKeyDown(KEY_Q)) {
-				player->AddHealth(crate->GetStrength() * 2.0f);
-			} else if(IsKeyDown(KEY_E)) {
-				player->AddAmmo(crate->GetStrength() * 2.0f);
+			if (IsKeyDown(KEY_Q)) {
+				player->AddHealth(crate->GetStrength() * 2.5f);
+			} else if (IsKeyDown(KEY_E)) {
+				player->AddAmmo(crate->GetStrength() * 2.5f);
 			} else {
 				player->AddAmmo(crate->GetStrength());
 				player->AddHealth(crate->GetStrength());
 			}
+			continue;
 		}
 		for (auto levelBody: bodies) {
 			frameStats->ItemCollisionChecks++;
@@ -258,17 +262,20 @@ void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
 	}
 	for (auto crate: toDeleteCrates) {
 		crates.erase(crate);
+		delete crate;
 	}
 
 	// The counter that determines death for 10 seconds
 	deathTimer -= deltaTime;
-	if (deathTimer <= 0.f) {
-		deathTimer = DEATH_TIME;
+	if (deathTimer <= 1.0f) {
 		// Kill crates
-		for(auto crate: crates) {
+		for (auto crate: crates) {
 			delete crate;
 		}
 		crates.clear();
+	}
+	if (deathTimer <= 0.f) {
+		deathTimer = DEATH_TIME;
 
 		// Kill enemies
 		std::vector<character::Enemy*> toDeleteEnemies;

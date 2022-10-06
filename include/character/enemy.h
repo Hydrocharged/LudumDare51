@@ -35,7 +35,10 @@ namespace character {
 		void Melee() { meleeCooldown = MELEE_RATE; }
 		float GetHealth() { return health; }
 		float GetMaxHealth() { return maxHealth; }
-		void TakeDamage(float dmg) { health -= dmg; if(health < 0) { health = 0; } }
+		void TakeDamage(float dmg) {
+			health -= dmg;
+			if (health < 0) { health = 0; }
+		}
 		void TintModel();
 		void UntintModel();
 

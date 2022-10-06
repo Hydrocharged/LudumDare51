@@ -70,5 +70,5 @@ character::Projectile* character::Skull::Shoot() {
 	cooldown = SKULL_FIRE_RATE;
 	glm::vec3 pos = body->GetPosition();
 	glm::vec3 dir = glm::normalize(target - pos);
-	return new character::Projectile(false, 10.0f, 0.2f, 7, 10.0f, body->GetPosition(), dir, body->GetRotationMatrix());
+	return new character::SkullProjectile(body->GetPosition(), dir, body->GetRotationMatrix());
 }
