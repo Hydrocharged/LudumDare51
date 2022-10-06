@@ -158,7 +158,7 @@ void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
 					if (deathTimer >= 1.0f) {
 						auto spawnedCrate = new character::Crate(8.0f, enemy->GetBody()->GetPosition());
 						crates.emplace(spawnedCrate);
-						spawnedCrate->GetBody()->ApplyInstantForce(glm::normalize(glm::vec3{rando::GetRandomRange(-0.4f, 0.4f), 0.5f, rando::GetRandomRange(-0.4f, 0.4f)}), 10.0f);
+						spawnedCrate->GetBody()->ApplyInstantForce(glm::normalize(glm::vec3{rando::GetRandomRange(-0.5f, 0.5f), 0.25f, rando::GetRandomRange(-0.5f, 0.5f)}), 15.0f);
 					}
 				}
 				break;
