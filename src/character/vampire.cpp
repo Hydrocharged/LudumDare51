@@ -29,7 +29,7 @@ void character::Vampire::SetTarget(glm::vec3 playerPos) {
 	glm::vec3 dir = glm::normalize(playerPos - pos);
 	target = playerPos + 2.f * dir;
 	target.y = 0.0f;
-	body->LookAt(target);
+	body->LookAt(glm::vec3{target.x, pos.y, target.z});
 }
 
 void character::Vampire::Update(glm::vec3 playerPos, float deltaTime) {

@@ -330,8 +330,8 @@ void level::Level::SetEnemySpawn(glm::vec3 spawnLocation) {
 }
 
 void level::Level::SpawnEnemy(character::EnemyType enemyType, unsigned int numSpawns) {
-	int spawnIdx = rando::GetRandomRange(0, (int)enemySpawns.size());
 	for (unsigned int i = 0; i < numSpawns; i++) {
+		int spawnIdx = rando::GetRandomRange(0, (int)enemySpawns.size());
 		switch (enemyType) {
 			case character::EnemyType::Skull:
 				enemies.emplace(new character::Skull(enemySpawns[spawnIdx]));
