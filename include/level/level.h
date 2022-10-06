@@ -58,7 +58,8 @@ namespace level {
 		std::vector<physics::AABBBody*> bodies;
 		std::vector<glm::vec3> enemySpawns;
 		std::set<character::Enemy*> enemies;
-		std::set<character::Projectile*> projectiles;
+		std::set<character::Projectile*> playerProjectiles;
+		std::set<character::Projectile*> enemyProjectiles;
 		std::set<character::Crate*> crates;
 
 		void GameOver() { isGameOver = true; EnableCursor(); }

@@ -35,7 +35,10 @@ namespace character {
 		void Melee() { meleeCooldown = MELEE_RATE; }
 		float GetHealth() { return health; }
 		float GetMaxHealth() { return maxHealth; }
-		void TakeDamage(float dmg) { health -= dmg; if(health < 0) { health = 0; } }
+		void TakeDamage(float dmg) {
+			health -= dmg;
+			if (health < 0) { health = 0; }
+		}
 		void TintModel();
 		void UntintModel();
 
@@ -48,9 +51,8 @@ namespace character {
 		float damage = 5.0f;
 		float cooldown = 0.0f;
 		float meleeCooldown = 0.0f;
-		float cratePickupCooldown = 3600.0f;
 		bool canSpawnCrate = true;
-		const float MELEE_RATE = 5.0f;
+		const float MELEE_RATE = 1.0f;
 	};
 }
 
