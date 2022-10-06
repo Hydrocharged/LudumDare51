@@ -4,12 +4,15 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-#ifndef SOUND_MANAGER_H
-#define SOUND_MANAGER_H
+#ifndef SOUND_RAYLIB_H
+#define SOUND_RAYLIB_H
+#include <raylib.h>
 
 namespace sound::manager {
-	void Load();
-	void Unload();
+	enum class Name {
+		GunShot,
+	};
+	Sound Get(Name name);
 }
 
-#endif //SOUND_MANAGER_H
+#endif //SOUND_RAYLIB_H
