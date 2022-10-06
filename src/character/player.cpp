@@ -146,16 +146,31 @@ void character::Player::UpdatePosition(mouse::Info& mouse, float deltaTime) {
 	camera->target.z = targetVec.z;
 	body->SetLookAngles({angleX, angleY});
 
-	if (pistolCooldown >= 0) { pistolCooldown -= deltaTime; }
-	if (shotgunCooldown >= 0) { shotgunCooldown -= deltaTime; }
-	if (sniperCooldown >= 0) { sniperCooldown -= deltaTime; }
+	if (pistolCooldown >= 0) {
+		pistolCooldown -= deltaTime;
+		if (pistolCooldown < 0) {
+			pistolCooldown = 0.0f;
+		}
+	}
+	if (shotgunCooldown >= 0) {
+		shotgunCooldown -= deltaTime;
+		if (shotgunCooldown < 0) {
+			shotgunCooldown = 0.0f;
+		}
+	}
+	if (sniperCooldown >= 0) {
+		sniperCooldown -= deltaTime;
+		if (sniperCooldown < 0) {
+			sniperCooldown = 0.0f;
+		}
+	}
 }
 
 void character::Player::SetCurrentWeapon(character::Player::WeaponType weapon) {
 	currentWeapon = weapon;
 }
 
-float character::Player::GetCurrentWeaponCoolDown() {
+float character::Player::GetWeaponCooldownPercentage() {
 	switch (currentWeapon) {
 		case PISTOL:
 			return pistolCooldown / PISTOL_FIRE_RATE;
@@ -172,11 +187,11 @@ bool character::Player::CanShoot() {
 	// don't do anything if gun is on "cooldown"
 	switch (currentWeapon) {
 		case PISTOL:
-			return (pistolCooldown < 0.0f);
+			return (pistolCooldown <= 0.0f);
 		case SHOTGUN:
-			return (shotgunCooldown < 0.0f);
+			return (shotgunCooldown <= 0.0f);
 		case SNIPER:
-			return (sniperCooldown < 0.0f);
+			return (sniperCooldown <= 0.0f);
 		default:
 			return false;
 	}

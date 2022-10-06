@@ -44,7 +44,7 @@ namespace character {
 		}
 		void TakeDamage(float dmg);
 		bool CanShoot();
-		float GetCurrentWeaponCoolDown();
+		float GetWeaponCooldownPercentage();
 
 		std::vector<Projectile*> Shoot();
 

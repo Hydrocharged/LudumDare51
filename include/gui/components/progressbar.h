@@ -12,7 +12,7 @@
 namespace gui {
 	class ProgressBar : public HorizontalPanel {
 	public:
-		ProgressBar(std::function<float()> func, std::initializer_list<Component*> children) : HorizontalPanel(children), func(std::move(func)) {}
+		ProgressBar(std::function<float()> func, std::initializer_list<Component*> children) : HorizontalPanel(children), func(std::move(func)) { alignment = Alignment::Start; }
 		~ProgressBar() override = default;
 		void Draw(float posX, float posY, float containerWidth, float containerHeight) override;
 
