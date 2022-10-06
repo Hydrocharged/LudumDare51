@@ -33,6 +33,14 @@ namespace character {
 		float GetMaxHealth() { return maxHealth; }
 		float GetAmmo() { return ammo; }
 		float GetMaxAmmo() { return maxAmmo; }
+		float GetMouseSensitivity() { return mouseSensitivity; }
+		void IncrementMouseSensitivity() { mouseSensitivity += 0.04f; }
+		void DecrementMouseSensitivity() {
+			mouseSensitivity -= 0.04f;
+			if (mouseSensitivity <= 0) {
+				mouseSensitivity = 0.04f;
+			}
+		}
 
 		void AddHealth(float extra) {
 			health += extra;

@@ -81,14 +81,6 @@ void character::Player::UpdatePosition(mouse::Info& mouse, float deltaTime) {
 	if (invincibilityTimer < 0.0f) {
 		invincibilityTimer = 0.0f;
 	}
-	if (IsKeyPressed(KEY_UP)) {
-		mouseSensitivity += 0.04f;
-	} else if (IsKeyPressed(KEY_DOWN)) {
-		mouseSensitivity -= 0.04f;
-		if (mouseSensitivity <= 0) {
-			mouseSensitivity = 0.04f;
-		}
-	}
 
 	auto forwardPressed = (float)IsKeyDown(KEY_W);
 	auto backPressed = (float)IsKeyDown(KEY_S);

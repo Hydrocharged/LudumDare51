@@ -127,9 +127,42 @@ int main(void) {
 	);
 	paused = std::unique_ptr<gui::Component>(
 		gui::NewVerticalPanel({
-			gui::NewLabel("PAUSED")->SetYScale(0.3f),
-			gui::NewLabel("Press 'P' to resume")->SetYScale(0.14f)
-		})->SetAlignment(gui::Alignment::Center)
+			gui::NewVerticalPanel({
+				gui::NewLabel("PAUSED")->SetYScale(0.3f),
+				gui::NewLabel("Press 'P' to resume")->SetYScale(0.14f)
+			})->SetAlignment(gui::Alignment::Center)->SetYScale(0.7f),
+			gui::NewVerticalPanel({
+				gui::NewLabel("Controls")->SetYScale(0.2f),
+				gui::NewHorizontalPanel({
+					gui::NewVerticalPanel({
+						gui::NewLabel("Left Click: Shoot")->SetYScale(0.165f),
+						gui::NewLabel("Right Click: Dash")->SetYScale(0.165f),
+						gui::NewLabel("Left Shift: Sprint")->SetYScale(0.165f),
+						gui::NewLabel("R: Dash")->SetYScale(0.165f),
+						gui::NewLabel("F: Dash")->SetYScale(0.165f),
+						gui::NewLabel("Left Control: Dash")->SetYScale(0.165f),
+					})->SetXScale(0.33f),
+					gui::NewVerticalPanel({
+						gui::NewLabel("1: Pistol")->SetYScale(0.165f),
+						gui::NewLabel("2: Shotgun")->SetYScale(0.165f),
+						gui::NewLabel("3: Sniper")->SetYScale(0.165f),
+						gui::NewLabel("Hold Q: Pickup Only Health")->SetYScale(0.165f),
+						gui::NewLabel("Hold E: Pickup Only Ammo")->SetYScale(0.165f),
+						gui::NewLabel("Spacebar: Jump")->SetYScale(0.165f),
+					})->SetXScale(0.33f),
+					gui::NewVerticalPanel({
+						gui::NewLabel("Up: Increase Mouse Sensitivity")->SetYScale(0.165f),
+						gui::NewLabel("Down: Decrease Mouse Sensitivity")->SetYScale(0.165f),
+						gui::NewLabel("")->SetYScale(0.165f),
+						gui::NewLabel("")->SetYScale(0.165f),
+						gui::NewLabel("Current Mouse Sensitivity")->SetYScale(0.165f),
+						gui::NewDynamicLabel("", [&]()->std::string {
+							return std::to_string((int)(playableLevel->GetPlayer()->GetMouseSensitivity() * 100.0f));
+						})->SetYScale(0.165f),
+					})->SetXScale(0.33f),
+				})->SetYScale(0.8f)
+			})->SetYScale(0.3f),
+		})
 	);
 	gameOverScreen = std::unique_ptr<gui::Component>(
 		gui::NewVerticalPanel({
@@ -189,6 +222,11 @@ void UpdateDrawFrame(void) {
 		} else {
 			playableLevel->Pause();
 		}
+	}
+	if (IsKeyPressed(KEY_UP)) {
+		playableLevel->GetPlayer()->IncrementMouseSensitivity();
+	} else if (IsKeyPressed(KEY_DOWN)) {
+		playableLevel->GetPlayer()->DecrementMouseSensitivity();
 	}
 	stats::Frame::StartFrame();
 	float deltaTime = GetFrameTime();
