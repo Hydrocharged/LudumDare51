@@ -280,7 +280,7 @@ void character::Player::TakeDamage(float dmg, glm::vec3 direction) {
 	if (invincibilityTimer > 0) {
 		return;
 	}
-	if (health > 0.0f && glm::length(direction) > FLT_EPSILON) {
+	if (glm::length(direction) > FLT_EPSILON) {
 		body->StopVelocity();
 		body->ApplyInstantForce(direction, 12.0f);
 	}
