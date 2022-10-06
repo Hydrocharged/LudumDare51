@@ -155,6 +155,19 @@ void character::Player::SetCurrentWeapon(character::Player::WeaponType weapon) {
 	currentWeapon = weapon;
 }
 
+float character::Player::GetCurrentWeaponCoolDown() {
+	switch (currentWeapon) {
+		case PISTOL:
+			return pistolCooldown / PISTOL_FIRE_RATE;
+		case SHOTGUN:
+			return shotgunCooldown / SHOTGUN_FIRE_RATE;
+		case SNIPER:
+			return sniperCooldown / SNIPER_FIRE_RATE;
+		default:
+			return 0.0f;
+	}
+}
+
 bool character::Player::CanShoot() {
 	// don't do anything if gun is on "cooldown"
 	switch (currentWeapon) {

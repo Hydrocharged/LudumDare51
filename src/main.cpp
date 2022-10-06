@@ -66,14 +66,15 @@ int main(void) {
 	gui::fontmanager::Load();
 	mouseInfo = mouse::Info{};
 	const float centerDotSize = 0.008f;
-	centerDot = std::unique_ptr<gui::Component>(
-		gui::NewVerticalPanel({
-			gui::NewHorizontalPanel({})->SetColor({0, 0, 0, 255})->
-				SetXScale((screenRect.ContainerHeight / screenRect.ContainerWidth) * centerDotSize)->SetYScale(centerDotSize)
-		})->SetAlignment(gui::Alignment::Center)
-	);
 
 	playableLevel = level::GetLevel1();
+	centerDot = std::unique_ptr<gui::Component>(
+		gui::NewVerticalPanel({
+			gui::NewProgressBar([&]()->float {
+				return (playableLevel->GetPlayer()->GetCurrentWeaponCoolDown() * 10.0f) + 1.5f;
+			}, {})->SetXScale(0.01)->SetYScale(0.01)->SetColor({0, 0, 0, 255})
+		})->SetAlignment(gui::Alignment::Center)
+	);
 	menu = std::unique_ptr<gui::Component>(
 		gui::NewVerticalPanel({
 			gui::NewHorizontalPanel({
