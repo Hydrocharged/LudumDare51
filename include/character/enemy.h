@@ -48,9 +48,8 @@ namespace character {
 		float damage = 5.0f;
 		float cooldown = 0.0f;
 		float meleeCooldown = 0.0f;
-		float cratePickupCooldown = 3600.0f;
 		bool canSpawnCrate = true;
-		const float MELEE_RATE = 5.0f;
+		const float MELEE_RATE = 1.0f;
 	};
 }
 

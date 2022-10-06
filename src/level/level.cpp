@@ -37,7 +37,10 @@ void level::Level::Draw(float deltaTime) {
 	for (auto enemy: enemies) {
 		enemy->Draw(deltaTime);
 	}
-	for (auto projectile: projectiles) {
+	for (auto projectile: enemyProjectiles) {
+		projectile->Draw(deltaTime);
+	}
+	for (auto projectile: playerProjectiles) {
 		projectile->Draw(deltaTime);
 	}
 	for (auto crate: crates) {
@@ -73,7 +76,9 @@ void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
 		// Make enemies shoot
 		if (enemy->CanShoot()) {
 			auto projectile = enemy->Shoot();
-			if (projectile != nullptr) { projectiles.emplace(projectile); }
+			if (projectile != nullptr) {
+				enemyProjectiles.emplace(projectile);
+			}
 		}
 
 		// Check enemy to level collisions
@@ -89,7 +94,7 @@ void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
 			}
 		}
 
-		// check enemy to player collision
+		// Check enemy to player collision
 		if (enemyBody->CollidesWith(playerBody)) {
 			if (enemy->CanMelee()) {
 				enemy->Melee();
@@ -101,28 +106,26 @@ void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
 	if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
 		if (player->CanShoot()) {
 			for (auto projectile: player->Shoot()) {
-				projectiles.insert(projectile);
+				playerProjectiles.emplace(projectile);
 			}
 		}
 	}
 
-
 	// Update projectile
 	std::set<character::Projectile*> toDeleteProjectiles;
-	for (auto projectile: projectiles) {
+	for (auto playerProjectile: playerProjectiles) {
 		bool wasDeleted = false;
-		projectile->Update(deltaTime);
-		if (projectile->GetLifeSpan() <= 0.0f) {
+		playerProjectile->Update(deltaTime);
+		if (playerProjectile->GetLifeSpan() <= 0.0f) {
 			wasDeleted = true;
-			toDeleteProjectiles.emplace(projectile);
+			toDeleteProjectiles.emplace(playerProjectile);
 		}
 		if (wasDeleted) {
 			continue;
 		}
 
-		auto projectileBody = projectile->GetBody();
-
-		// check projectile to level collisions
+		auto projectileBody = playerProjectile->GetBody();
+		// Check projectile to level collisions
 		for (auto levelBody: bodies) {
 			frameStats->ProjectileCollisionChecks++;
 			frameStats->LevelCollisionChecks++;
@@ -130,29 +133,28 @@ void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
 				frameStats->ProjectileCollisions++;
 				frameStats->LevelCollisions++;
 				wasDeleted = true;
-				toDeleteProjectiles.emplace(projectile);
+				toDeleteProjectiles.emplace(playerProjectile);
 			}
 		}
-
 		if (wasDeleted) {
 			continue;
 		}
 
-		// check projectile to enemy collisions
+		// Check projectile to enemy collisions
 		for (auto enemy: enemies) {
 			auto enemyBody = enemy->GetBody();
-			if (projectile->IsFromPlayer()) {
-				frameStats->ProjectileCollisionChecks++;
-				frameStats->EnemyCollisionChecks++;
-				if (projectileBody->CollidesWith(enemyBody)) {
-					frameStats->ProjectileCollisions++;
-					frameStats->EnemyCollisions++;
-					enemy->TakeDamage(projectile->GetDamage());
-					wasDeleted = true;
-					toDeleteProjectiles.emplace(projectile);
-					if(enemy->GetHealth() <= 0.0f && enemy->CanSpawnCrate()) {
-						score += 5 + (uint64_t)(10.0f - deathTimer);
-						enemy->DisableCrateSpawn();
+			frameStats->ProjectileCollisionChecks++;
+			frameStats->EnemyCollisionChecks++;
+			if (projectileBody->CollidesWith(enemyBody)) {
+				frameStats->ProjectileCollisions++;
+				frameStats->EnemyCollisions++;
+				enemy->TakeDamage(playerProjectile->GetDamage());
+				wasDeleted = true;
+				toDeleteProjectiles.emplace(playerProjectile);
+				if(enemy->GetHealth() <= 0.0f && enemy->CanSpawnCrate()) {
+					score += 5 + (uint64_t)(10.0f - deathTimer);
+					enemy->DisableCrateSpawn();
+					if(deathTimer >= 1.0f) {
 						auto spawnedCrate = new character::Crate(10.0f + (float)floor(totalTime / 10.0) * 3.0f, enemy->GetBody()->GetPosition());
 						crates.emplace(spawnedCrate);
 						spawnedCrate->GetBody()->ApplyInstantForce(glm::normalize(glm::vec3{rando::GetRandomRange(-0.4f, 0.4f), 0.5f, rando::GetRandomRange(-0.4f, 0.4f)}), 10.0f);
@@ -160,40 +162,67 @@ void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
 				}
 			}
 		}
-
 		if (wasDeleted) {
 			continue;
 		}
 
-		// check projectile to player collision
-		if (!projectile->IsFromPlayer()) {
-			frameStats->ProjectileCollisionChecks++;
-			frameStats->PlayerCollisionChecks++;
-			if (projectileBody->CollidesWith(playerBody)) {
-				frameStats->ProjectileCollisions++;
-				frameStats->PlayerCollisions++;
-				player->TakeDamage(projectile->GetDamage());
-				toDeleteProjectiles.emplace(projectile);
-			}
-		}
-
-		// TODO: somewhat expensive, could separate enemy and player projectiles
-		// check projectile to projectile collision
-		for (auto projectile2: projectiles) {
-			if (projectile == projectile2) {
-				continue;
-			}
-
-			if (projectile->IsFromPlayer() != projectile2->IsFromPlayer()) {
-				if (projectileBody->CollidesWith(projectile2->GetBody())) {
-					toDeleteProjectiles.emplace(projectile);
-					toDeleteProjectiles.emplace(projectile2);
-				}
+		// Check player projectile to enemy projectile collision
+		for (auto enemyProjectile: enemyProjectiles) {
+			if (projectileBody->CollidesWith(enemyProjectile->GetBody())) {
+				toDeleteProjectiles.emplace(playerProjectile);
+				toDeleteProjectiles.emplace(enemyProjectile);
 			}
 		}
 	}
+
 	for (auto projectile: toDeleteProjectiles) {
-		projectiles.erase(projectile);
+		if(projectile->IsFromPlayer()) {
+			playerProjectiles.erase(projectile);
+		} else {
+			enemyProjectiles.erase(projectile);
+		}
+		delete projectile;
+	}
+	toDeleteProjectiles.clear();
+
+	// Update remaining enemy projectiles
+	for (auto enemyProjectile: enemyProjectiles) {
+		auto projectileBody = enemyProjectile->GetBody();
+		bool wasDeleted = false;
+		// Check enemy projectile to player
+		frameStats->ProjectileCollisionChecks++;
+		frameStats->PlayerCollisionChecks++;
+		if (projectileBody->CollidesWith(playerBody)) {
+			wasDeleted = true;
+			frameStats->ProjectileCollisions++;
+			frameStats->PlayerCollisions++;
+			player->TakeDamage(enemyProjectile->GetDamage());
+			toDeleteProjectiles.emplace(enemyProjectile);
+		}
+		if(wasDeleted) {
+			continue;
+		}
+
+		// Check enemy projectile to level
+		for (auto levelBody: bodies) {
+			frameStats->ProjectileCollisionChecks++;
+			frameStats->LevelCollisionChecks++;
+			if (projectileBody->CollidesWith(levelBody)) {
+				frameStats->ProjectileCollisions++;
+				frameStats->LevelCollisions++;
+				toDeleteProjectiles.emplace(enemyProjectile);
+			}
+		}
+	}
+
+	// Delete the rest of the projectiles from the next check
+	for (auto projectile: toDeleteProjectiles) {
+		if(projectile->IsFromPlayer()) {
+			playerProjectiles.erase(projectile);
+		} else {
+			enemyProjectiles.erase(projectile);
+		}
+		delete projectile;
 	}
 
 	// Update crates
@@ -208,9 +237,9 @@ void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
 			frameStats->PlayerCollisions++;
 			toDeleteCrates.push_back(crate);
 			if(IsKeyDown(KEY_Q)) {
-				player->AddHealth(crate->GetStrength() * 2.5f);
+				player->AddHealth(crate->GetStrength() * 2.0f);
 			} else if(IsKeyDown(KEY_E)) {
-				player->AddAmmo(crate->GetStrength() * 2.5f);
+				player->AddAmmo(crate->GetStrength() * 2.0f);
 			} else {
 				player->AddAmmo(crate->GetStrength());
 				player->AddHealth(crate->GetStrength());

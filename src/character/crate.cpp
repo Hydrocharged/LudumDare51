@@ -10,7 +10,7 @@
 character::Crate::Crate(float strength, glm::vec3 pos) {
 	this->strength = strength;
 	model = model::manager::Get(model::manager::Name::Crate);
-	body = std::make_unique<physics::SphereBody>(pos, 0.7f);
+	body = std::make_unique<physics::SphereBody>(pos, 1.0f);
 }
 
 void character::Crate::Update(float deltaTime) {
@@ -26,5 +26,3 @@ void character::Crate::Draw(float deltaTime) {
 	glm::vec3 pos = body->GetPosition();
 	render::Model(model, body.get(), {0, (glm::cos(spin) * 0.2f) + 0.1f, 0}, glm::vec3(0.4f));
 }
-
-

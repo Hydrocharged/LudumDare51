@@ -194,16 +194,6 @@ void UpdateDrawFrame(void) {
 	mouseInfo.Update();
 	menu->Update(mouseInfo, screenRect);
 
-	//if (IsKeyPressed(KEY_I)) {
-	//	level->SpawnEnemy(character::EnemyType::Skull, 1);
-	//}
-	//if (IsKeyPressed(KEY_O)) {
-	//	level->SpawnEnemy(character::EnemyType::Turret, 1);
-	//}
-	//if (IsKeyPressed(KEY_P)) {
-	//	level->SpawnEnemy(character::EnemyType::Vampire, 1);
-	//}
-
 	// switching weapons
 	if (IsKeyPressed(KEY_ONE)) {
 		playableLevel->GetPlayer()->SetCurrentWeapon(character::Player::WeaponType::PISTOL);
