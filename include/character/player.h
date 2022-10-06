@@ -42,7 +42,7 @@ namespace character {
 			ammo += extra;
 			if (ammo > maxAmmo) { ammo = maxAmmo; }
 		}
-		void TakeDamage(float dmg);
+		void TakeDamage(float dmg, glm::vec3 direction);
 		bool CanShoot();
 		float GetWeaponCooldownPercentage();
 

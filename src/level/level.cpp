@@ -98,9 +98,7 @@ void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
 		if (enemyBody->CollidesWith(playerBody)) {
 			if (enemy->CanMelee()) {
 				enemy->Melee();
-				player->TakeDamage(enemy->GetDamage());
-				player->GetBody()->StopVelocity();
-				playerBody->ApplyInstantForce(glm::normalize(playerBody->GetPosition() - enemyBody->GetPosition()), 12.0f);
+				player->TakeDamage(enemy->GetDamage(), glm::normalize(playerBody->GetPosition() - enemyBody->GetPosition()));
 			}
 		}
 	}
@@ -202,7 +200,7 @@ void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
 		if (projectileBody->CollidesWith(playerBody)) {
 			frameStats->ProjectileCollisions++;
 			frameStats->PlayerCollisions++;
-			player->TakeDamage(enemyProjectile->GetDamage());
+			player->TakeDamage(enemyProjectile->GetDamage(), glm::vec3(0.0f));
 			toDeleteProjectiles.emplace(enemyProjectile);
 			break;
 		}

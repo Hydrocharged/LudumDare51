@@ -276,9 +276,13 @@ std::vector<character::Projectile*> character::Player::Shoot() {
 	return projectiles;
 }
 
-void character::Player::TakeDamage(float dmg) {
+void character::Player::TakeDamage(float dmg, glm::vec3 direction) {
 	if (invincibilityTimer > 0) {
 		return;
+	}
+	if (health > 0.0f && glm::length(direction) > FLT_EPSILON) {
+		body->StopVelocity();
+		body->ApplyInstantForce(direction, 12.0f);
 	}
 	health -= dmg;
 	if (health < 0) {
