@@ -44,6 +44,7 @@ namespace character {
 
 	protected:
 		Model model;
+		std::vector<Texture2D> textures;
 		std::vector<Color> tints;
 		physics::CapsuleBody* body;
 		float maxHealth = 100.0f;
