@@ -99,6 +99,8 @@ void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
 			if (enemy->CanMelee()) {
 				enemy->Melee();
 				player->TakeDamage(enemy->GetDamage());
+				player->GetBody()->StopVelocity();
+				playerBody->ApplyInstantForce(glm::normalize(playerBody->GetPosition() - enemyBody->GetPosition()), 12.0f);
 			}
 		}
 	}

@@ -283,9 +283,8 @@ void character::Player::TakeDamage(float dmg) {
 	health -= dmg;
 	if (health < 0) {
 		health = 0;
-	} else {
-		PlaySound(sound::manager::Get(sound::manager::Name::Ouch));
 	}
+	PlaySound(sound::manager::Get(sound::manager::Name::Ouch));
 }
 
 glm::vec3 character::Player::GetPosition() {

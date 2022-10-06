@@ -12,6 +12,7 @@ character::Turret::Turret(glm::vec3 pos) : Enemy(new physics::CapsuleBody(pos,
 	{0, 1.005f, 0}, {0, 1.0f, 0}, 1.0f), model::manager::Get(model::manager::Name::Turret)) {
 	body->SetLookAngleOffsets({PI / 2.0f, 0});
 	cooldown = TURRET_FIRE_RATE;
+	meleeCooldown = 3600.0f;
 }
 
 void character::Turret::Draw(float deltaTime) {
