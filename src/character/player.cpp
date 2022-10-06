@@ -223,11 +223,9 @@ std::vector<character::Projectile*> character::Player::Shoot() {
 				health = 0;
 			}
 
-			float damage = 6.0f;
+			float damage = 35.0f;
 			if (useBoostedDamage) {
 				damage *= ((1.0f - health / maxHealth) * 4.0f) + 1.0f;
-			} else if (health <= 0) {
-				damage *= 0.66f;
 			}
 			pistolCooldown = PISTOL_FIRE_RATE;
 			projectiles.push_back(new character::PistolProjectile(damage, this->GetCameraPosition() + offset, dir, rotMatrix));
@@ -244,11 +242,9 @@ std::vector<character::Projectile*> character::Player::Shoot() {
 				health = 0;
 			}
 
-			float damage = 12.0f;
+			float damage = 20.0f;
 			if (useBoostedDamage) {
-				damage *= ((1.0f - health / maxHealth) * 2.0f) + 1.0f;
-			} else if (health <= 0) {
-				damage *= 0.66f;
+				damage *= ((1.0f - health / maxHealth) * 4.0f) + 1.0f;
 			}
 			shotgunCooldown = SHOTGUN_FIRE_RATE;
 			for (int i = 0; i < 10; i++) {
@@ -268,11 +264,9 @@ std::vector<character::Projectile*> character::Player::Shoot() {
 				health = 0;
 			}
 
-			float damage = 75.0f;
+			float damage = 100.0f;
 			if (useBoostedDamage) {
-				damage *= ((1.0f - health / maxHealth) * 2.0f) + 1.0f;
-			} else if (health <= 0) {
-				damage *= 0.66f;
+				damage *= ((1.0f - health / maxHealth) * 4.0f) + 1.0f;
 			}
 			sniperCooldown = SNIPER_FIRE_RATE;
 			projectiles.push_back(new character::SniperProjectile(damage, this->GetCameraPosition() + offset, dir, rotMatrix));

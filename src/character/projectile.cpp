@@ -43,13 +43,13 @@ void character::Projectile::Draw(float deltaTime) {
 }
 
 character::PistolProjectile::PistolProjectile(float damage, glm::vec3 pos, glm::vec3 dir, glm::mat4 rotMatrix) :
-	Projectile(true, 50.0f, 0.2f, damage, 2.0f, pos, dir, rotMatrix) {}
+	Projectile(true, 40.0f, 0.2f, damage, 2.0f, pos, dir, rotMatrix) {}
 
 character::ShotgunProjectile::ShotgunProjectile(float damage, glm::vec3 pos, glm::vec3 dir, glm::mat4 rotMatrix) :
-	Projectile(true, 25.0f, 0.2f, damage, 2.5f, pos, dir, rotMatrix) {}
+	Projectile(true, 25.0f, 0.2f, damage, 1.2f, pos, dir, rotMatrix) {}
 
 character::SniperProjectile::SniperProjectile(float damage, glm::vec3 pos, glm::vec3 dir, glm::mat4 rotMatrix) :
-	Projectile(true, 100.0f, 0.2f, damage, 3.0f, pos, dir, rotMatrix) {}
+	Projectile(true, 50.0f, 0.2f, damage, 3.0f, pos, dir, rotMatrix) {}
 
 character::SkullProjectile::SkullProjectile(glm::vec3 pos, glm::vec3 dir, glm::mat4 rotMatrix) :
 	Projectile(false, 10.0f, 0.2f, 7, 10.0f, pos, dir, rotMatrix) {}
