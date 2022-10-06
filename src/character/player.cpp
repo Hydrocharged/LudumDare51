@@ -13,6 +13,7 @@
 #include <random.h>
 #include <render/model.h>
 #include <glm/gtx/quaternion.hpp>
+#include <sound/raylib.h>
 
 const glm::vec3 cameraHeight = {0, 1.84f, 0};
 
@@ -73,18 +74,18 @@ void character::Player::Draw(float deltaTime) {
 
 void character::Player::UpdatePosition(mouse::Info& mouse, float deltaTime) {
 	dashReserves += deltaTime;
-	if(dashReserves > 1.2f) {
+	if (dashReserves > 1.2f) {
 		dashReserves = 1.2f;
 	}
 	invincibilityTimer -= deltaTime;
-	if(invincibilityTimer < 0.0f) {
+	if (invincibilityTimer < 0.0f) {
 		invincibilityTimer = 0.0f;
 	}
-	if(IsKeyPressed(KEY_UP)) {
+	if (IsKeyPressed(KEY_UP)) {
 		mouseSensitivity += 0.04f;
-	} else if(IsKeyPressed(KEY_DOWN)) {
+	} else if (IsKeyPressed(KEY_DOWN)) {
 		mouseSensitivity -= 0.04f;
-		if(mouseSensitivity <= 0) {
+		if (mouseSensitivity <= 0) {
 			mouseSensitivity = 0.04f;
 		}
 	}
@@ -125,10 +126,10 @@ void character::Player::UpdatePosition(mouse::Info& mouse, float deltaTime) {
 		}
 	}
 	if (IsKeyPressed(KEY_SPACE)) {
-		if(glm::abs(body->GetVelocity().y) < 0.1f) {
+		if (glm::abs(body->GetVelocity().y) < 0.1f) {
 			body->ApplyInstantForce({0, 1.0f, 0}, jumpForce);
 			jumpReserves = 1;
-		} else if(jumpReserves > 0) {
+		} else if (jumpReserves > 0) {
 			body->ApplyInstantForce({0, 1.0f, 0}, jumpForce);
 			jumpReserves -= 1;
 		}
@@ -179,11 +180,12 @@ std::vector<character::Projectile*> character::Player::Shoot() {
 
 	std::vector<character::Projectile*> projectiles;
 	bool useBoostedDamage = false;
-	if(ammo > 0) {
+	if (ammo > 0) {
 		useBoostedDamage = true;
 	}
 	switch (currentWeapon) {
 		case PISTOL: {
+			PlaySound(sound::manager::Get(sound::manager::Name::Pistol));
 			ammo -= PISTOL_AMMO;
 			if (ammo < 0) {
 				health += ammo;
@@ -196,7 +198,7 @@ std::vector<character::Projectile*> character::Player::Shoot() {
 			float damage = 6.0f;
 			if (useBoostedDamage) {
 				damage *= ((1.0f - health / maxHealth) * 4.0f) + 1.0f;
-			} else if(health <= 0) {
+			} else if (health <= 0) {
 				damage *= 0.66f;
 			}
 			pistolCooldown = PISTOL_FIRE_RATE;
@@ -204,7 +206,7 @@ std::vector<character::Projectile*> character::Player::Shoot() {
 			break;
 		}
 		case SHOTGUN: {
-
+			PlaySound(sound::manager::Get(sound::manager::Name::Shotgun));
 			ammo -= SHOTGUN_AMMO;
 			if (ammo < 0) {
 				health += ammo;
@@ -217,7 +219,7 @@ std::vector<character::Projectile*> character::Player::Shoot() {
 			float damage = 12.0f;
 			if (useBoostedDamage) {
 				damage *= ((1.0f - health / maxHealth) * 4.0f) + 1.0f;
-			} else if(health <= 0) {
+			} else if (health <= 0) {
 				damage *= 0.66f;
 			}
 			shotgunCooldown = SHOTGUN_FIRE_RATE;
@@ -228,19 +230,20 @@ std::vector<character::Projectile*> character::Player::Shoot() {
 			break;
 		}
 		case SNIPER:
+			PlaySound(sound::manager::Get(sound::manager::Name::Sniper));
 			ammo -= SNIPER_AMMO;
-			if(ammo < 0) {
+			if (ammo < 0) {
 				health += ammo;
 				ammo = 0;
 			}
-			if(health < 0) {
+			if (health < 0) {
 				health = 0;
 			}
 
 			float damage = 50.0f;
 			if (useBoostedDamage) {
 				damage *= ((1.0f - health / maxHealth) * 4.0f) + 1.0f;
-			} else if(health <= 0) {
+			} else if (health <= 0) {
 				damage *= 0.66f;
 			}
 			sniperCooldown = SNIPER_FIRE_RATE;
@@ -249,6 +252,18 @@ std::vector<character::Projectile*> character::Player::Shoot() {
 	}
 
 	return projectiles;
+}
+
+void character::Player::TakeDamage(float dmg) {
+	if (invincibilityTimer > 0) {
+		return;
+	}
+	health -= dmg;
+	if (health < 0) {
+		health = 0;
+	} else {
+		PlaySound(sound::manager::Get(sound::manager::Name::Ouch));
+	}
 }
 
 glm::vec3 character::Player::GetPosition() {

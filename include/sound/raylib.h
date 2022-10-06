@@ -10,7 +10,10 @@
 
 namespace sound::manager {
 	enum class Name {
-		GunShot,
+		Pistol,
+		Shotgun,
+		Sniper,
+		Ouch,
 	};
 	Sound Get(Name name);
 }

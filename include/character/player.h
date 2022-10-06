@@ -34,9 +34,15 @@ namespace character {
 		float GetAmmo() { return ammo; }
 		float GetMaxAmmo() { return maxAmmo; }
 
-		void AddHealth(float extra) { health += extra; if(health > maxHealth) { health = maxHealth; } }
-		void AddAmmo(float extra) { ammo += extra; if(ammo > maxAmmo) { ammo = maxAmmo; } }
-		void TakeDamage(float dmg) { if(invincibilityTimer > 0) { return; } health -= dmg; if(health < 0) { health = 0; } }
+		void AddHealth(float extra) {
+			health += extra;
+			if (health > maxHealth) { health = maxHealth; }
+		}
+		void AddAmmo(float extra) {
+			ammo += extra;
+			if (ammo > maxAmmo) { ammo = maxAmmo; }
+		}
+		void TakeDamage(float dmg);
 		bool CanShoot();
 
 		std::vector<Projectile*> Shoot();

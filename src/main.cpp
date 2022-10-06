@@ -7,6 +7,7 @@
 #include <raylib.h>
 #include <gui/gui.h>
 #include <model/manager.h>
+#include <sound/manager.h>
 #include <level/level.h>
 #include <render/render.h>
 #include <stats/frame.h>
@@ -56,9 +57,11 @@ int main(void) {
 	SetConfigFlags(FLAG_MSAA_4X_HINT);
 	screenRect = gui::DrawRect{0, 0, 1280, 720};
 	InitWindow((int)screenRect.ContainerWidth, (int)screenRect.ContainerHeight, "10 Seconds Till Death");
+	InitAudioDevice();
 	SetTargetFPS(GetMonitorRefreshRate(GetCurrentMonitor()));
 
 	SetExitKey(0);
+	sound::manager::Load();
 	model::manager::Load();
 	gui::fontmanager::Load();
 	mouseInfo = mouse::Info{};
@@ -171,6 +174,8 @@ int main(void) {
 
 	gui::fontmanager::Unload();
 	model::manager::Unload();
+	sound::manager::Unload();
+	CloseAudioDevice();
 	CloseWindow();
 	return 0;
 }
@@ -218,7 +223,7 @@ void UpdateDrawFrame(void) {
 	playableLevel->Draw(deltaTime);
 	EndMode3D();
 	stats::Frame::EndFrame();
-	if(!playableLevel->IsGameOver()) {
+	if (!playableLevel->IsGameOver()) {
 		if (!playableLevel->IsPaused()) {
 			menu->Draw(screenRect.PosX, screenRect.PosY, screenRect.ContainerWidth, screenRect.ContainerHeight);
 			centerDot->Draw(screenRect.PosX, screenRect.PosY, screenRect.ContainerWidth, screenRect.ContainerHeight);
