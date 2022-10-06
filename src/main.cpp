@@ -73,7 +73,7 @@ int main(void) {
 			gui::NewProgressBar([&]()->float {
 				return (playableLevel->GetPlayer()->GetWeaponCooldownPercentage() * 0.9f) + 0.1f;
 			}, {})->SetXScale(((screenRect.ContainerHeight / screenRect.ContainerWidth) * centerDotSize) * 10.0f)->
-			SetYScale(centerDotSize)->SetColor({0, 0, 0, 255})->SetAlignment(gui::Alignment::Center)
+				SetYScale(centerDotSize)->SetColor({0, 0, 0, 255})->SetAlignment(gui::Alignment::Center)
 		})->SetAlignment(gui::Alignment::Center)
 	);
 	menu = std::unique_ptr<gui::Component>(

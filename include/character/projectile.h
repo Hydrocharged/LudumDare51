@@ -27,6 +27,7 @@ namespace character {
 
 		physics::SphereBody* GetBody() { return body; }
 		float GetDamage() { return damage; }
+		void DecreaseDamage(float amount) { damage -= amount; if (damage < 0) { damage = 0; } }
 		float GetLifeSpan() { return lifeSpan; }
 		virtual bool IsFromPlayer() = 0;
 		virtual ProjectileType Type() = 0;

@@ -149,9 +149,13 @@ void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
 			if (projectileBody->CollidesWith(enemyBody)) {
 				frameStats->ProjectileCollisions++;
 				frameStats->EnemyCollisions++;
-				enemy->TakeDamage(playerProjectile->GetDamage());
-				wasDeleted = true;
-				toDeleteProjectiles.emplace(playerProjectile);
+				float projectileDamage = playerProjectile->GetDamage();
+				playerProjectile->DecreaseDamage(enemy->GetHealth());
+				enemy->TakeDamage(projectileDamage);
+				if (playerProjectile->GetDamage() <= 0.0f) {
+					wasDeleted = true;
+					toDeleteProjectiles.emplace(playerProjectile);
+				}
 				if (enemy->GetHealth() <= 0.0f && enemy->CanSpawnCrate()) {
 					score += 5 + (uint64_t)(10.0f - deathTimer);
 					enemy->DisableCrateSpawn();
@@ -161,7 +165,9 @@ void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
 						spawnedCrate->GetBody()->ApplyInstantForce(glm::normalize(glm::vec3{rando::GetRandomRange(-0.5f, 0.5f), 0.25f, rando::GetRandomRange(-0.5f, 0.5f)}), 15.0f);
 					}
 				}
-				break;
+				if (wasDeleted) {
+					break;
+				}
 			}
 		}
 		if (wasDeleted) {
@@ -173,8 +179,11 @@ void level::Level::Update(mouse::Info& mouseInfo, float deltaTime) {
 			if (projectileBody->CollidesWith(enemyProjectile->GetBody())) {
 				toDeleteProjectiles.emplace(enemyProjectile);
 				if (playerProjectile->Type() != character::ProjectileType::Sniper) {
-					toDeleteProjectiles.emplace(playerProjectile);
-					break;
+					playerProjectile->DecreaseDamage(20.0f);
+					if (playerProjectile->GetDamage() <= 0.0f) {
+						toDeleteProjectiles.emplace(playerProjectile);
+						break;
+					}
 				}
 			}
 		}

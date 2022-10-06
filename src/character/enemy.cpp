@@ -17,7 +17,7 @@ bool redTextureInitialized = false;
 Texture2D redTexture;
 
 character::Enemy::Enemy(physics::CapsuleBody* body, Model model) {
-	if(!redTextureInitialized) {
+	if (!redTextureInitialized) {
 		redTexture = LoadTexture((enemyTexturePrefix + "assets/textures/red.png").c_str());
 	}
 	this->body = body;
@@ -29,7 +29,7 @@ character::Enemy::Enemy(physics::CapsuleBody* body, Model model) {
 }
 
 void character::Enemy::TintModel() {
-	if(health <= 0.0f) {
+	if (health <= 0.0f) {
 		for (int i = 0; i < model.meshCount; i++) {
 			model.materials[model.meshMaterial[i]].maps[MATERIAL_MAP_DIFFUSE].texture = redTexture;
 		}
